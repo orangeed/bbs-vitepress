@@ -21,7 +21,7 @@ jobs:
 
       # 3. 安装依赖并构建项目
       - name: Install dependencies
-        run: npm ci  # 如果是 pnpm 请改成 pnpm install，yarn 改成 yarn install
+        run: npm install  # 如果是 pnpm 请改成 pnpm install，yarn 改成 yarn install
       - name: Build VitePress
         run: npm run build  # 执行 VitePress 的构建命令
 
