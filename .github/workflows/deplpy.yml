@@ -35,6 +35,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "docs/.vitepress/dist/*"  # VitePress 默认的输出目录
           target: "/home/orangecj"  # ⚠️ 替换成你服务器上存放网站文件的真实路径
-          # strip_components: 4  # 去掉多余的前置目录层级，直接把文件放到 target 下
+          strip_components: 2  # 去掉多余的前置目录层级，直接把文件放到 target 下
           rm: true  # 同步前先清空目标目录中的旧文件
           
