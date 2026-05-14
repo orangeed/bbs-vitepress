@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: debian
     steps:
       # 1. 检出代码
       - name: Checkout
@@ -20,9 +20,9 @@ jobs:
           cache: 'npm'  # 如果你用的是 pnpm 或 yarn，这里改成对应的值
 
       # 3. 安装依赖并构建项目
-      - name: Install dependencies
+      - name: 安装依赖
         run: npm install  # 如果是 pnpm 请改成 pnpm install，yarn 改成 yarn install
-      - name: Build VitePress
+      - name: 构建项目
         run: npm run build  # 执行 VitePress 的构建命令
 
       # 4. 通过 SSH 将构建产物同步到你的服务器
