@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: [self-hosted, linux, debian-12]
+    runs-on: ubuntu-latest
     steps:
       # 1. 检出代码
       - name: Checkout
