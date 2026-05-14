@@ -1,0 +1,13 @@
+.article-box {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+
+.text-indetent {
+    text-indent: 2em;
+}
+
+.article-img{
+    height: 300px;
+}
