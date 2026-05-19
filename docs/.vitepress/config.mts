@@ -58,7 +58,7 @@ export default defineConfig({
     plugins: [
       artalkPlugin({
         site: "橘子的分享",
-        server: "https://www.orangecj.cn/artalk/",
+        server: "https://orangecj.cn/artalk/",
       }),
     ],
   },

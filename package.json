@@ -5,7 +5,7 @@
   "author": "橘子orange",
   "license": "MIT",
   "scripts": {
-    "dev": "vitepress dev docs",
+    "dev": "vitepress dev docs --open",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs"
   },

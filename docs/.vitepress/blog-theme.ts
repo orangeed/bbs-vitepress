@@ -82,10 +82,6 @@ const blogTheme = getThemeConfig({
         type: "text",
         content: "欢迎大家加群&私信交流",
       },
-      {
-        type: "text",
-        content: "有个bug，在文章页面评论区需要刷新才会显示...后面慢慢改...",
-      },
       // {
       //   type: 'text',
       //   content: '文章首/文尾有群二维码',
