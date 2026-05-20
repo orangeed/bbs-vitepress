@@ -1,5 +1,6 @@
 import { defineConfig } from "vitepress";
 import { artalkPlugin } from "vitepress-plugin-artalk";
+import { La51Plugin } from "vitepress-plugin-51la";
 // 导入主题的配置
 import { blogTheme } from "./blog-theme";
 
@@ -43,10 +44,7 @@ export default defineConfig({
     //     'https://github.com/ATQQ/sugar-blog/tree/master/packages/blogpress/:path',
     //   text: '去 GitHub 上编辑内容'
     // },
-    // nav: [
-    //   { text: "首页", link: "/" },
-    //   { text: "关于作者", link: "https://sugarat.top/aboutme.html" },
-    // ],
+    nav: [{ text: "工具箱", link: "https://doc.orangecj.cn" }],
     // socialLinks: [
     //   {
     //     icon: 'github',
@@ -58,9 +56,12 @@ export default defineConfig({
     plugins: [
       artalkPlugin({
         site: "橘子的分享",
-        server: "https://orangecj.cn/artalk/",
+        server: "https://orangecj.cn/artalk",
+      }),
+      La51Plugin({
+        id: "3Pza9oQ74JEgxtxN",
+        ck: "3Pza9oQ74JEgxtxN",
       }),
     ],
   },
-
 });

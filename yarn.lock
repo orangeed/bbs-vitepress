@@ -2011,6 +2011,11 @@ vitepress-markdown-timeline@^1.2.1:
   dependencies:
     dayjs "^1.11.7"
 
+vitepress-plugin-51la@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/vitepress-plugin-51la/-/vitepress-plugin-51la-0.1.2.tgz"
+  integrity sha512-MMeWIh3CPtOFycvYUVzRzfaIUUz9vp1Gp8XvKh7yxRaANx9JZbaUy7LbGw7W3/sAzAt4KwWcstCCLO1EWKy/KQ==
+
 vitepress-plugin-announcement@0.1.8:
   version "0.1.8"
   resolved "https://registry.npmjs.org/vitepress-plugin-announcement/-/vitepress-plugin-announcement-0.1.8.tgz"

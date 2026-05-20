@@ -13,5 +13,7 @@ blog:
 
 # 设置 inspiringTimeout 可以实现自动切换
  inspiringTimeout: 3000
- pageSize: 6
+ pageSize: 10
+ # 设置头像分离展示模式
+#  avatarMode: split
 ---

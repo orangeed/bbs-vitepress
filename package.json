@@ -12,6 +12,7 @@
   "dependencies": {
     "@sugarat/theme": "^0.5.19",
     "artalk": "^2.9.1",
+    "vitepress-plugin-51la": "^0.1.2",
     "vitepress-plugin-artalk": "^0.1.1"
   },
   "directories": {

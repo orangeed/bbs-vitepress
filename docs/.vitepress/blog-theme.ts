@@ -38,7 +38,7 @@ const blogTheme = getThemeConfig({
     },
     version: false,
     // securityRecord: {
-    //   name: '公网安备xxxxx',
+    //   name: '公网安备xxxxx',  
     //   link: 'https://www.beian.gov.cn/portal/index.do'
     // },
   },
