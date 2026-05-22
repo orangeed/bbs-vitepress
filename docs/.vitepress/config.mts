@@ -19,7 +19,7 @@ export default defineConfig({
   // base,
   lang: "zh-cn",
   title: "橘子的分享",
-  description: "橘子的分享，分享华丽花哨，乱七八糟的东西",
+  description: "记录自己看过的，认为不错的电影，电视剧，动漫，小说，软件等...",
   // lastUpdated: true,
   // 详见：https://vitepress.dev/zh/reference/site-config#head
   head: [
