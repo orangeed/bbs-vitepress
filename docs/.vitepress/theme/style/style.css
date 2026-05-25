@@ -1,10 +1,49 @@
-/* 定义遮罩样式 */
+/* 1. 容器需要设置相对定位，并定义两个变量 */
 .VPHome {
-  background: radial-gradient(ellipse, rgba(var(--bg-gradient-home), 1) 0%, rgba(var(--bg-gradient-home), 0) 150%);
+  position: relative;
+  /* 始终保存当前正在显示的背景图 */
+  --current-bg-img: url('../assets/bg1.webp');
+  /* 准备淡入的新背景图 */
+  --next-bg-img: none;
+  background: radial-gradient(ellipse, rgba(var(--bg-gradient-home), 0.8) 0%, rgba(var(--bg-gradient-home), 0) 150%);
 }
 
-/* 自定义首页背景图 */
+/* 2. 底层：始终显示当前图片 */
 .VPHome::before {
-  background-image: url(../assets/bg.webp);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--current-bg-img);
   background-size: cover;
-}  
+  background-position: center;
+  z-index: -2;
+  /* 放在最底层 */
+}
+
+/* 3. 顶层：专门用来做淡入效果的层 */
+.VPHome::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--next-bg-img);
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  /* 夹在 ::before 和网页内容中间 */
+
+  /* 核心：只对这一层设置透明度过渡，0.8秒淡入 */
+  transition: opacity 0.8s ease-in-out;
+  opacity: 0;
+  /* 默认是隐藏的 */
+}
+
+/* 4. 激活状态：当加上这个类名时，顶层新图缓缓浮现 */
+.VPHome.is-fading-in::after {
+  opacity: 1;
+}
