@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import BlogTheme from '@sugarat/theme'
 import { useData } from 'vitepress'
 import { toggleDark } from './Dark'
+import BG from './assets/bg1.webp'
+import { ElImage } from 'element-plus'
 
 const { Layout } = BlogTheme
 const { isDark } = useData()
@@ -12,7 +14,7 @@ toggleDark(isDark)
 
 // --- 响应式变量 ---
 const showPreview = ref(false)       // 控制弹窗的显示与隐藏
-const currentImgUrl = ref('')        // 记录【当前大背景】正在使用的 Blob URL
+const currentImgUrl = ref(BG)        // 记录【当前大背景】正在使用的 Blob URL
 const isInitialLoading = ref(true)   // 页面初次加载第一张图的 Loading 状态
 
 // --- 核心逻辑 ---
@@ -30,19 +32,6 @@ const fetchRandomBlobUrl = async () => {
         return '';
     }
 }
-
-// 页面初始化：获取第一张背景图并直接应用
-onMounted(async () => {
-    const bg = document.getElementsByClassName('VPHome')[0];
-    const blobUrl = await fetchRandomBlobUrl();
-    if (blobUrl) {
-        currentImgUrl.value = blobUrl;
-        if (bg) {
-            bg.style.setProperty('--current-bg-img', `url(${blobUrl})`);
-        }
-    }
-    isInitialLoading.value = false;
-})
 
 // 点击“切换背景”按钮
 const handleChangeBg = async () => {
@@ -89,18 +78,14 @@ const togglePopover = (e) => {
     <Layout>
         <template #nav-bar-content-after>
             <div class="change-bg-wrapper">
-                
+
                 <div class="click-area" @click="handleChangeBg" title="点击切换下一张背景">
                     <span>切换背景</span>
                     <img src='../../public/change.png' width="20" alt="切换背景" />
                 </div>
 
-                <div 
-                    class="view-eye-btn" 
-                    :class="{ 'is-active': showPreview }"
-                    @click="togglePopover" 
-                    title="查看/右键下载当前背景"
-                >
+                <div class="view-eye-btn" :class="{ 'is-active': showPreview }" @click="togglePopover"
+                    title="查看/右键下载当前背景">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
@@ -109,9 +94,12 @@ const togglePopover = (e) => {
 
                 <div v-if="showPreview" class="bg-current-popover">
                     <div class="popover-arrow"></div>
-                    <div class="popover-title">当前背景（可右键另存为）</div>
+                    <div class="popover-title">当前背景（点击放大保存）</div>
                     <div class="popover-content">
-                        <img v-if="currentImgUrl" :src="currentImgUrl" alt="当前背景图，右键另存为下载" />
+                        <el-image v-if="currentImgUrl" :src="currentImgUrl"
+                            :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[currentImgUrl]"
+                            show-progress :preview-teleported="true" :initial-index="4" fit="cover" />
+                        <!-- <img v-if="currentImgUrl" :src="currentImgUrl" class="content-container" alt="当前背景图，右键另存为下载" /> -->
                         <div v-else-if="isInitialLoading" class="loading-text">背景初始化中...</div>
                         <div v-else class="loading-text">暂无背景数据</div>
                     </div>
@@ -125,7 +113,8 @@ const togglePopover = (e) => {
 <style scoped>
 /* 包含按钮和弹窗的组合容器 */
 .change-bg-wrapper {
-    position: relative; /* 子绝父相基准 */
+    position: relative;
+    /* 子绝父相基准 */
     margin-left: 10px;
     display: flex;
     align-items: center;
@@ -151,6 +140,7 @@ const togglePopover = (e) => {
         color: var(--vp-c-text-1);
     }
 }
+
 .click-area:hover {
     background: var(--vp-c-bg);
 }
@@ -166,7 +156,9 @@ const togglePopover = (e) => {
     color: var(--vp-c-text-2);
     transition: all 0.2s;
 }
-.view-eye-btn:hover, .view-eye-btn.is-active {
+
+.view-eye-btn:hover,
+.view-eye-btn.is-active {
     color: var(--vp-c-brand-1);
     background: var(--vp-c-bg);
 }
@@ -174,10 +166,13 @@ const togglePopover = (e) => {
 /* 弹出层主面板 */
 .bg-current-popover {
     position: absolute;
-    top: 100%;          /* 刚好在按钮下方 */
-    right: 0;           /* 靠右对齐，防止溢出屏幕 */
+    top: 100%;
+    /* 刚好在按钮下方 */
+    right: 0;
+    /* 靠右对齐，防止溢出屏幕 */
     margin-top: 10px;
-    width: 220px;       /* 稍微放大一点，方便用户看清和右键 */
+    width: 220px;
+    /* 稍微放大一点，方便用户看清和右键 */
     background: rgba(var(--vp-c-bg-rgb, 255, 255, 255), 0.9);
     border: 1px solid var(--vp-c-divider);
     border-radius: 8px;
@@ -206,7 +201,8 @@ const togglePopover = (e) => {
 /* 图片容器 */
 .popover-content {
     width: 100%;
-    height: 112px; /* 16:9 比例 */
+    height: 112px;
+    /* 16:9 比例 */
     border-radius: 4px;
     overflow: hidden;
     background: var(--vp-c-bg-mute);
@@ -219,7 +215,8 @@ const togglePopover = (e) => {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    cursor: context-menu; /* 提示用户这里可以唤起右键菜单 */
+    cursor: context-menu;
+    /* 提示用户这里可以唤起右键菜单 */
     transition: opacity 0.3s;
 }
 
@@ -227,7 +224,8 @@ const togglePopover = (e) => {
 .popover-arrow {
     position: absolute;
     top: -6px;
-    right: 10px; /* 箭头对齐眼睛图标 */
+    right: 10px;
+    /* 箭头对齐眼睛图标 */
     transform: rotate(45deg);
     width: 10px;
     height: 10px;
@@ -248,7 +246,14 @@ const togglePopover = (e) => {
 
 /* 弹窗淡入动画 */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>

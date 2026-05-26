@@ -24,6 +24,16 @@ export default defineConfig({
   // 详见：https://vitepress.dev/zh/reference/site-config#head
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],
+    // 导入样式
+    [
+      "link",
+      { rel: "stylesheet", href: "//unpkg.com/element-plus/dist/index.css" },
+    ],
+    // 导入 Vue 3
+    ["script", { src: "//unpkg.com/vue@3" }],
+    // 导入组件库
+    ["script", { src: "//unpkg.com/element-plus" }],
+
     // ["link", { rel: "stylesheet", href: "./theme/style/base.css" }],
   ],
   themeConfig: {
