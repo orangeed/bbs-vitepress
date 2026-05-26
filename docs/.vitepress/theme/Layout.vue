@@ -5,6 +5,7 @@ import { useData } from 'vitepress'
 import { toggleDark } from './Dark'
 import BG from './assets/bg1.webp'
 import { ElImage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 const { Layout } = BlogTheme
 const { isDark } = useData()
@@ -35,6 +36,7 @@ const fetchRandomBlobUrl = async () => {
 
 // 点击“切换背景”按钮
 const handleChangeBg = async () => {
+    ElMessage.warning('切换背景中...')
     const bg = document.getElementsByClassName('VPHome')[0];
     if (!bg) return;
 
@@ -62,7 +64,7 @@ const handleChangeBg = async () => {
 
             // 6. 释放上一张图的内存
             if (oldUrl) URL.revokeObjectURL(oldUrl);
-
+            ElMessage.success('切换成功！')
         }, 800);
     });
 };
@@ -96,9 +98,9 @@ const togglePopover = (e) => {
                     <div class="popover-arrow"></div>
                     <div class="popover-title">当前背景（点击放大保存）</div>
                     <div class="popover-content">
-                        <el-image v-if="currentImgUrl" :src="currentImgUrl"
-                            :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[currentImgUrl]"
-                            show-progress :preview-teleported="true" :initial-index="4" fit="cover" />
+                        <el-image v-if="currentImgUrl" :src="currentImgUrl" :zoom-rate="1.2" :max-scale="7"
+                            :min-scale="0.2" :preview-src-list="[currentImgUrl]" show-progress
+                            :preview-teleported="true" :initial-index="4" fit="cover" />
                         <!-- <img v-if="currentImgUrl" :src="currentImgUrl" class="content-container" alt="当前背景图，右键另存为下载" /> -->
                         <div v-else-if="isInitialLoading" class="loading-text">背景初始化中...</div>
                         <div v-else class="loading-text">暂无背景数据</div>
