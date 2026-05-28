@@ -38,24 +38,44 @@ const fetchRandomBlobUrl = async () => {
 const handleChangeBg = async () => {
     ElMessage.warning('切换背景中...')
     const bg = document.getElementsByClassName('VPHome')[0];
-    if (!bg) return;
+    const bgLayout = document.getElementsByClassName('VPContent')[0];
+    if (!bg && !bgLayout) return;
 
     // 1. 去后台偷偷下载一张新图
     const newBlobUrl = await fetchRandomBlobUrl();
     if (!newBlobUrl) return;
 
+    sessionStorage.setItem('currentImgUrl', newBlobUrl);
+
     // 2. 先塞给隐藏的顶层
-    bg.style.setProperty('--next-bg-img', `url(${newBlobUrl})`);
+    if (bg) {
+        bg.style.setProperty('--next-bg-img', `url(${newBlobUrl})`);
+    }
+    if (bgLayout) {
+        bgLayout.style.setProperty('--next-bg-img', `url(${newBlobUrl})`);
+    }
 
     requestAnimationFrame(() => {
         // 3. 拉开大幕，新图缓缓淡入
-        bg.classList.add('is-fading-in');
+        if (bg) {
+            bg.classList.add('is-fading-in');
+        }
+        if (bgLayout) {
+            bgLayout.classList.add('is-fading-in');
+        }
 
         setTimeout(() => {
             // 4. 800ms 动画结束，底层老图无缝替换成新图
-            bg.style.setProperty('--current-bg-img', `url(${newBlobUrl})`);
-            bg.classList.remove('is-fading-in');
-            bg.style.setProperty('--next-bg-img', 'none');
+            if (bg) {
+                bg.style.setProperty('--current-bg-img', `url(${newBlobUrl})`);
+                bg.classList.remove('is-fading-in');
+                bg.style.setProperty('--next-bg-img', 'none');
+            }
+            if (bgLayout) {
+                bgLayout.style.setProperty('--current-bg-img', `url(${newBlobUrl})`);
+                bgLayout.classList.remove('is-fading-in');
+                bgLayout.style.setProperty('--next-bg-img', 'none');
+            }
 
             // 5. ✨【关键改动】大图完全切换成功后，再更新响应式变量
             // 这样弹窗里的图片就会自动刷新成最新的当前背景
@@ -74,6 +94,7 @@ const togglePopover = (e) => {
     e.stopPropagation(); // 阻止冒泡，防止触发全局关闭
     showPreview.value = !showPreview.value;
 }
+
 </script>
 
 <template>
