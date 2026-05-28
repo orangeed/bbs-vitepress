@@ -80,7 +80,7 @@ const blogTheme = getThemeConfig({
       },
       {
         type: "text",
-        content: "欢迎大家加群&私信交流",
+        content: "欢迎大家私信交流，如果没有想要的资源，私信我，帮你补起来!",
       },
       // {
       //   type: 'text',
