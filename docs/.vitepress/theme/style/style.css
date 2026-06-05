@@ -2,7 +2,7 @@
 .VPHome {
   position: relative;
   /* 始终保存当前正在显示的背景图 */
-  --current-bg-img: url('../assets/bg1.webp');
+  --current-bg-img: url('../assets/bg2.jpg');
   /* 准备淡入的新背景图 */
   --next-bg-img: none;
   background: radial-gradient(ellipse, rgba(var(--bg-gradient-home), 0.8) 0%, rgba(var(--bg-gradient-home), 0) 150%);
@@ -51,7 +51,7 @@
 .VPContent {
   position: relative;
   /* 始终保存当前正在显示的背景图 */
-  --current-bg-img: url('../assets/bg1.webp');
+  --current-bg-img: url('../assets/bg2.jpg');
   /* 准备淡入的新背景图 */
   --next-bg-img: none;
   background: radial-gradient(ellipse, rgba(var(--bg-gradient-home), 0.8) 0%, rgba(var(--bg-gradient-home), 0) 150%);
