@@ -2,12 +2,23 @@
     display: flex;
     flex-direction: row;
     margin-top: 20px;
+    /* align-items: center; */
 }
 
 .text-indetent {
     text-indent: 2em;
 }
 
-.article-img{
+.article-img {
     height: 300px;
+}
+
+.article-box img {
+    margin-right: 20px !important;
+    border-radius: 10px;
+}
+
+.article-box ul {
+    font-size: 14px;
+    margin-top: 0
 }
