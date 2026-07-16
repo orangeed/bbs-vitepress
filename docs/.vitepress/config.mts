@@ -54,7 +54,11 @@ export default defineConfig({
     //     'https://github.com/ATQQ/sugar-blog/tree/master/packages/blogpress/:path',
     //   text: '去 GitHub 上编辑内容'
     // },
-    nav: [{ text: "工具箱", link: "https://doc.orangecj.cn" }, { text: "导航", link: "/navhub" }],
+    nav: [
+      { text: "工具箱", link: "https://doc.orangecj.cn" },
+      { text: "导航", link: "/navhub" },
+      { text: "电影票房", link: "/movieMoney" },
+    ],
     // socialLinks: [
     //   {
     //     icon: 'github',
