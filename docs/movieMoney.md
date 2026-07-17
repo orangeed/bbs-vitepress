@@ -29,4 +29,8 @@ head:
 import MovieMoney from './components/CinemaBoxOffice.vue'
 </script>
 
-<MovieMoney apiKey='54e17a11b869adc4b782905be71335fb'/>
+<MovieMoney 
+  api-base="https://1208917130.workers.dev"
+  image-base="https://1208917130.workers.dev/img"
+  region="CN"
+/>
