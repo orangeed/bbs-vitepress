@@ -30,7 +30,12 @@ import MovieMoney from './components/CinemaBoxOffice.vue'
 </script>
 
 <MovieMoney 
-  api-base="https://1208917130.workers.dev"
-  image-base="https://1208917130.workers.dev/img"
+  api-base="https://movie-money.orangecj.cn"
+  image-base="https://movie-money.orangecj.cn/img"
   region="CN"
 />
+<!-- <MovieMoney 
+  api-base="https://movie-money.orangecj.cn"
+  image-base="https://movie-money.orangecj.cn/img"
+  region="CN"
+/> -->

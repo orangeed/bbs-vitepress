@@ -7,22 +7,30 @@
 //
 // 用法：
 //   import CinemaBoxOffice from './CinemaBoxOffice.vue'
+//   // 国内直连 TMDB 被墙，推荐走代理（见 proxy/cf-worker.js），代理持有 key、浏览器不暴露：
+//   <CinemaBoxOffice api-base="https://your-proxy.workers.dev" region="CN" />
+//   // 也可直连（仅限可访问 TMDB 的网络）：
 //   <CinemaBoxOffice api-key="你的TMDB_Key" region="CN" />
-// 不传 api-key 时自动回退到内置示例数据（演示实时刷新交互）。
+// 不传 api-key 且不指定代理时自动回退到内置示例数据（演示实时刷新交互）。
 // ============================================================
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 
 const props = defineProps({
-  apiKey: { type: String, default: '54e17a11b869adc4b782905be71335fb' },
+  apiKey: { type: String, default: '' },
+  // 代理基址：国内直连 api.themoviedb.org 会被墙，设为你的代理（如 Cloudflare Worker）即可。
+  // 例：api-base="https://your-proxy.workers.dev"
+  apiBase: { type: String, default: 'https://api.themoviedb.org/3' },
+  // 海报图片基址：image.tmdb.org 在国内也可能不稳定，可由代理一并代理（见 /img/ 路由）。
+  imageBase: { type: String, default: 'https://image.tmdb.org/t/p' },
   region: { type: String, default: 'CN' },
   refreshInterval: { type: Number, default: 60000 },
   pageSizes: { type: Array, default: () => [18, 20, 40, 100] },
-  defaultPageSize: { type: Number, default: 18 },
+  defaultPageSize: { type: Number, default: 20 },
   title: { type: String, default: '影脉' },
 })
 
 // ---------- 常量 ----------
-const BASE = 'https://api.themoviedb.org/3'
+const DEFAULT_BASE = 'https://api.themoviedb.org/3'
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p'
 const TMDB_PAGE_SIZE = 20
 const RMB_RATE = 7.2
@@ -63,12 +71,18 @@ const SAMPLE_MOVIES = [
 const listCache = new Map()
 const detailsCache = new Map()
 
-const isLive = () => !!String(props.apiKey || '').trim()
-function imgPath(path, size) { return path ? `${TMDB_IMAGE_BASE}/${size}${path}` : null }
+// 实时模式判定：传了 apiKey，或指定了非默认的代理地址（代理自行注入 key）即视为实时。
+const isLive = () => !!(String(props.apiKey || '').trim() || (props.apiBase && props.apiBase !== DEFAULT_BASE))
+function imgPath(path, size) {
+  const base = (props.imageBase || TMDB_IMAGE_BASE).replace(/\/+$/, '')
+  return path ? `${base}/${size}${path}` : null
+}
 
 async function tmdb(path, params = {}) {
-  const url = new URL(BASE + path)
-  url.searchParams.set('api_key', props.apiKey)
+  const base = (props.apiBase || DEFAULT_BASE).replace(/\/+$/, '')
+  const url = new URL(base + path)
+  // 仅当浏览器端持有 key 时才带上；若走代理且代理自行注入 key，则不传（避免暴露）。
+  if (String(props.apiKey || '').trim()) url.searchParams.set('api_key', props.apiKey)
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v)
   const res = await fetch(url.toString())
   if (!res.ok) throw new Error(`TMDB ${res.status}`)
