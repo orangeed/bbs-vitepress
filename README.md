@@ -34,4 +34,4 @@ pnpm serve
 
 ## 问题
 
-- 电影票房的接口国内无法访问，使用了cloudfare的worker，作为了代理。
+- 电影票房的接口国内无法访问，使用了cloudfare的worker，作为了代理。同时worker绑定了自定义二级域名，根域名的dns交给了cloudfare托管。
