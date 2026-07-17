@@ -31,3 +31,7 @@ pnpm build
 ```sh
 pnpm serve
 ```
+
+## 问题
+
+- 电影票房的接口国内无法访问，使用了cloudfare的worker，作为了代理。
