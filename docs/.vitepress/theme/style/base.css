@@ -22,3 +22,21 @@
     font-size: 14px;
     margin-top: 0
 }
+
+@media (max-width: 768px) {
+    .article-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .article-box img {
+        margin-right: 0 !important;
+        margin-bottom: 16px;
+        /* width: 100%; */
+        height: auto;
+    }
+
+    .article-img {
+        height: 100px;
+    }
+}
