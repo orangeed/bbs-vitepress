@@ -640,6 +640,18 @@ export const categories: Category[] = [
     desc: "持续学习，不断成长",
     iconBg: "rgba(16,185,129,0.15)",
     sites: [
+       {
+        name: "考试酷",
+        url: "https://www.examcoo.com/",
+        displayUrl: "https://www.examcoo.com/",
+        desc: "免费专为各类学校和培训机构提供考试系统，包括自测练习、组织统一考试、开展知识竞赛、布置课外作业或假期作业、智能组卷、答卷评阅与成绩管理等众多功能；也可用于政府机构、企事业单位内部的入职考试、员工考核、内部培训考试等。",
+        favicon: "考",
+        faviconBg: "#fe1140",
+        tag: "免费考试",
+        tagBg: "rgba(254, 17, 64, 0.12)",
+        tagColor: "#fe1140",
+        accent: "#fe1140c0",
+      },
       {
         name: "Coursera",
         url: "https://www.coursera.org",
