@@ -31,7 +31,7 @@ export const categories: Category[] = [
       {
         name: "橘子的分享",
         url: "https://orangecj.cn",
-        displayUrl: "https://orangecj.cn",
+        displayUrl: "orangecj.cn",
         desc: "自己看的资源",
         favicon: "橘",
         faviconBg: "#e99527",
@@ -43,7 +43,7 @@ export const categories: Category[] = [
       {
         name: "3y论坛",
         url: "https://www.3ylt.xyz",
-        displayUrl: "https://www.3ylt.xyz",
+        displayUrl: "www.3ylt.xyz",
         desc: "纯净的网盘资源分享社区",
         favicon: "3y",
         faviconBg: "#c2c2c2",
@@ -55,7 +55,7 @@ export const categories: Category[] = [
       {
         name: "光鸭资源社",
         url: "https://www.guangya.cc/",
-        displayUrl: "https://www.guangya.cc",
+        displayUrl: "www.guangya.cc",
         desc: "专注免费分享光鸭云盘资源",
         favicon: "光",
         faviconBg: "#d46b07",
@@ -67,7 +67,7 @@ export const categories: Category[] = [
       {
         name: "海盗湾",
         url: "https://thepiratebay.org/",
-        displayUrl: "https://thepiratebay.org/",
+        displayUrl: "thepiratebay.org/",
         desc: "海盗湾磁力网站，需要科学上网",
         favicon: "海",
         faviconBg: "#a3734d",
@@ -79,7 +79,7 @@ export const categories: Category[] = [
       {
         name: "uindex",
         url: "https://uindex.org/",
-        displayUrl: "https://uindex.org/",
+        displayUrl: "uindex.org/",
         desc: "uindex磁力网站，需要科学上网",
         favicon: "U",
         faviconBg: "#5ebb1e",
@@ -91,7 +91,7 @@ export const categories: Category[] = [
       {
         name: "纸鸳磁力",
         url: "https://magnet.kiteyuan.info/",
-        displayUrl: "https://magnet.kiteyuan.info/",
+        displayUrl: "magnet.kiteyuan.info/",
         desc: "纸鸳磁力聚合网站",
         favicon: "鸳",
         faviconBg: "#005bc0",
@@ -103,7 +103,7 @@ export const categories: Category[] = [
       {
         name: "BT磁力",
         url: "https://www.btbtla.com/",
-        displayUrl: "https://www.btbtla.com/",
+        displayUrl: "www.btbtla.com/",
         desc: "BT磁力网站，我用的比较多的磁力网站",
         favicon: "BT",
         faviconBg: "rgb(220, 93, 31)",
@@ -115,7 +115,7 @@ export const categories: Category[] = [
       {
         name: "电影天堂",
         url: "https://www.xl720.com/",
-        displayUrl: "https://www.xl720.com/",
+        displayUrl: "www.xl720.com/",
         desc: "用过的都懂，这个网站版本很多",
         favicon: "影",
         faviconBg: "rgb(31, 138, 204)",
@@ -136,7 +136,7 @@ export const categories: Category[] = [
       {
         name: "爱壹帆",
         url: "https://www.yifan.tv/",
-        displayUrl: "https://www.yifan.tv",
+        displayUrl: "www.yifan.tv",
         desc: "海量高清视频免费在线观看",
         favicon: "爱",
         faviconBg: "#6addff",
@@ -148,7 +148,7 @@ export const categories: Category[] = [
       {
         name: "泥巴影院",
         url: "https://nbyy.tv/",
-        displayUrl: "https://nbyy.tv/",
+        displayUrl: "nbyy.tv/",
         desc: "海外华人在线影院",
         favicon: "泥",
         faviconBg: "#f3c232",
@@ -160,7 +160,7 @@ export const categories: Category[] = [
       {
         name: "奈飞工厂",
         url: "https://yanetflix.com/",
-        displayUrl: "https://yanetflix.com/",
+        displayUrl: "yanetflix.com/",
         desc: "一个致力于免费提供Netflix影剧动漫的流媒体播放平台",
         favicon: "奈",
         faviconBg: "#e10916",
@@ -172,7 +172,7 @@ export const categories: Category[] = [
       {
         name: "爱迪影视",
         url: "https://aidi.tv/",
-        displayUrl: "https://aidi.tv/",
+        displayUrl: "aidi.tv/",
         desc: "爱迪影视分享4K资源,1080P高清,Netflix奈菲最新电影,韩剧,日剧,电视剧,欧美剧,动漫等在线观看。",
         favicon: "爱",
         faviconBg: "#3fcf92",
@@ -577,7 +577,7 @@ export const categories: Category[] = [
       {
         name: "考试酷",
         url: "https://www.examcoo.com/",
-        displayUrl: "https://www.examcoo.com/",
+        displayUrl: "www.examcoo.com/",
         desc: "免费专为各类学校和培训机构提供考试系统，包括自测练习、组织统一考试、开展知识竞赛、布置课外作业或假期作业、智能组卷、答卷评阅与成绩管理等众多功能；也可用于政府机构、企事业单位内部的入职考试、员工考核、内部培训考试等。",
         favicon: "考",
         faviconBg: "#fe1140",
@@ -775,7 +775,7 @@ export const categories: Category[] = [
       {
         name: "故宫壁纸",
         url: "https://www.dpm.org.cn/lights/royal.html",
-        displayUrl: "https://www.dpm.org.cn/lights/royal.html",
+        displayUrl: "www.dpm.org.cn/lights/royal.html",
         desc: "故宫官网自己出品的壁纸网站",
         favicon: "故",
         faviconBg: "rgb(163, 34, 21)",
@@ -787,7 +787,7 @@ export const categories: Category[] = [
       {
         name: "壁纸汇",
         url: "https://www.bizhihui.com/",
-        displayUrl: "https://www.bizhihui.com/",
+        displayUrl: "www.bizhihui.com/",
         desc: "居然有8K壁纸，厉害厉害",
         favicon: "汇",
         faviconBg: "#10a37f",
@@ -799,7 +799,7 @@ export const categories: Category[] = [
       {
         name: "pexels",
         url: "https://www.pexels.com/zh-cn/",
-        displayUrl: "https://www.pexels.com/zh-cn/",
+        displayUrl: "/www.pexels.com/zh-cn/",
         desc: "都是摄影师拍摄的",
         favicon: "P",
         faviconBg: "rgb(57, 57, 57)",
@@ -811,7 +811,7 @@ export const categories: Category[] = [
       {
         name: "拾光壁纸",
         url: "https://gallery.timeline.ink/",
-        displayUrl: "https://gallery.timeline.ink/",
+        displayUrl: "gallery.timeline.ink/",
         desc: "有网站、小程序和客户端的壁纸网站",
         favicon: "拾",
         faviconBg: "rgb(78, 205, 196)",
@@ -823,7 +823,7 @@ export const categories: Category[] = [
       {
         name: "哲风壁纸",
         url: "https://haowallpaper.com/",
-        displayUrl: "https://haowallpaper.com/",
+        displayUrl: "haowallpaper.com/",
         desc: "有网站和客户端的壁纸网站，免费下载有次数限制，客户端需要付费，一键买断制。",
         favicon: "哲",
        faviconBg: "rgb(57, 57, 57)",
@@ -835,7 +835,7 @@ export const categories: Category[] = [
       {
         name: "致美化",
         url: "https://zhutix.com/",
-        displayUrl: "https://zhutix.com/",
+        displayUrl: "zhutix.com/",
         desc: "壁纸只是其中的一部分，他还有电脑主题美化等",
         favicon: "致",
         faviconBg: "#10a37f",
@@ -847,7 +847,7 @@ export const categories: Category[] = [
       {
         name: "壁纸湖",
         url: "https://bizihu.com/",
-        displayUrl: "https://bizihu.com/",
+        displayUrl: "bizihu.com/",
         desc: "壁纸湖不仅有网站，还有小程序，每月一更，小程序会更新的多",
         favicon: "Cl",
         faviconBg: "#a855f7",
@@ -859,7 +859,7 @@ export const categories: Category[] = [
       {
         name: "wallspic",
         url: "https://wallspic.com/",
-        displayUrl: "https://wallspic.com/",
+        displayUrl: "wallspic.com/",
         desc: "免费下载适用于 Windows、Mac、iPhone 和 Android 屏幕的壁纸和桌面背景。",
         favicon: "W",
         faviconBg: "rgb(239, 195, 1)",
@@ -871,7 +871,7 @@ export const categories: Category[] = [
       {
         name: "wallsbyjfl",
         url: "https://sites.google.com/view/wallsbyjfl/my-stuff",
-        displayUrl: "https://sites.google.com/view/wallsbyjfl/my-stuff",
+        displayUrl: "sites.google.com/view/wallsbyjfl/my-stuff",
         desc: "一个存在google网盘的壁纸网站，所以需要科学上网",
         favicon: "J",
         faviconBg: "#06b6d4",
@@ -883,7 +883,7 @@ export const categories: Category[] = [
       {
         name: "gratisography",
         url: "https://gratisography.com/",
-        displayUrl: "https://gratisography.com/",
+        displayUrl: "gratisography.com/",
         desc: "一个UI看起来非常充满活力的壁纸网站",
         favicon: "G",
         faviconBg: "rgb(255, 102, 102)",
@@ -895,7 +895,7 @@ export const categories: Category[] = [
       {
         name: "bestwallpapers",
         url: "https://bestwallpapers.net/",
-        displayUrl: "https://bestwallpapers.net/",
+        displayUrl: "bestwallpapers.net/",
         desc: "一个有4K壁纸的网站",
         favicon: "B",
         faviconBg: "#eab308",
@@ -907,7 +907,7 @@ export const categories: Category[] = [
       {
         name: "alphacoders",
         url: "https://wall.alphacoders.com/",
-        displayUrl: "https://wall.alphacoders.com/",
+        displayUrl: "wall.alphacoders.com/",
         desc: "一个平平无奇的壁纸网站",
         favicon: "A",
         faviconBg: "#3b82f6",
@@ -919,7 +919,7 @@ export const categories: Category[] = [
       {
         name: "wallpapershome",
         url: "https://wallpapershome.com/",
-        displayUrl: "https://wallpapershome.com/",
+        displayUrl: "wallpapershome.com/",
         desc: "一个打开就是4k分类的壁纸网站",
         favicon: "W",
         faviconBg: "#3b82f6",
@@ -930,8 +930,8 @@ export const categories: Category[] = [
       },
       {
         name: "wallhaven",
-        url: "https://wallhaven.cc/",
-        displayUrl: "https://wallhaven.cc/",
+        url: "wallhaven.cc/",
+        displayUrl: "wallhaven.cc/",
         desc: "一个平平无奇的壁纸网站，国内打不开",
         favicon: "W",
         faviconBg: "#f5089a",
@@ -943,7 +943,7 @@ export const categories: Category[] = [
       {
         name: "wallpaperhub",
         url: "https://www.wallpaperhub.app/",
-        displayUrl: "https://www.wallpaperhub.app/",
+        displayUrl: "www.wallpaperhub.app/",
         desc: "一个打开就是全屏壁纸的壁纸网站",
         favicon: "W",
         faviconBg: "#06b6d4",
