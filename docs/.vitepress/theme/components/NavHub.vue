@@ -224,7 +224,7 @@ onUnmounted(() => {
     </header>
 
     <!-- Drawer Backdrop -->
-    <div class="drawer-backdrop" :class="{ visible: drawerOpen }" @click="closeDrawer" v-if="isMobile"></div>
+    <div class="drawer-backdrop" :class="{ visible: drawerOpen }" @click="closeDrawer" v-if="drawerOpen && isMobile"></div>
 
     <!-- Sidebar -->
     <aside class="sidebar" :class="{ open: drawerOpen && isMobile }">
