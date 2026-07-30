@@ -634,7 +634,6 @@ export const categories: Category[] = [
     desc: "涵盖前后端、开发流程、技术社区与求职面试的工具与文档导航，按分类归组",
     iconBg: "rgba(129,140,248,0.15)",
     sites: [
-      // ===== 通用工具 =====
       {
         name: "GitHub",
         url: "https://github.com",
@@ -719,7 +718,6 @@ export const categories: Category[] = [
         tagColor: "#cb171e",
         accent: "#cb171e",
       },
-      // ===== Java 开发 =====
       {
         name: "Oracle Java",
         url: "https://www.oracle.com/java/",
@@ -792,7 +790,6 @@ export const categories: Category[] = [
         tagColor: "#2c3e50",
         accent: "#2c3e50",
       },
-      // ===== JavaScript 开发 =====
       {
         name: "JavaScript.info",
         url: "https://javascript.info",
@@ -865,7 +862,6 @@ export const categories: Category[] = [
         tagColor: "#0084b4",
         accent: "#0084b4",
       },
-      // ===== Python 开发 =====
       {
         name: "Python 官网",
         url: "https://www.python.org",
@@ -950,7 +946,6 @@ export const categories: Category[] = [
         tagColor: "#2563eb",
         accent: "#2563eb",
       },
-      // ===== Node.js 开发 =====
       {
         name: "Node.js",
         url: "https://nodejs.org",
@@ -1011,7 +1006,6 @@ export const categories: Category[] = [
         tagColor: "#e0234e",
         accent: "#e0234e",
       },
-      // ===== 前端框架 =====
       {
         name: "Vue",
         url: "https://vuejs.org",
@@ -1031,10 +1025,34 @@ export const categories: Category[] = [
         desc: "用于构建用户界面的 JavaScript 库，前端生态基石",
         favicon: "R",
         faviconBg: "#0ea5b7",
-        tag: "UI 库",
+        tag: "框架",
         tagBg: "rgba(14,165,183,0.12)",
         tagColor: "#0ea5b7",
         accent: "#0ea5b7",
+      },
+      {
+        name: "Element Plus",
+        url: "https://element-plus.org/zh-CN",
+        displayUrl: "element-plus.org/zh-CN",
+        desc: "基于 Vue 3 的桌面端组件库，为开发者提供丰富的 UI 组件",
+        favicon: "E",
+        faviconBg: "#3f85ed",
+        tag: "UI 库",
+        tagBg: "rgba(63, 133, 237,.12)",
+        tagColor: "#3f85ed",
+        accent: "#3f85ed",
+      },
+      {
+        name: "Ant Design",
+        url: "https://ant.design/index-cn",
+        displayUrl: "ant.design/index-cn",
+        desc: "企业级 UI 设计语言和 React 实现",
+        favicon: "A",
+        faviconBg: "#3f85ed",
+        tag: "UI 库",
+        tagBg: "rgba(63, 133, 237,.12)",
+        tagColor: "#3f85ed",
+        accent: "#3f85ed",
       },
       {
         name: "Next.js",
@@ -1120,7 +1138,6 @@ export const categories: Category[] = [
         tagColor: "#3178c6",
         accent: "#3178c6",
       },
-      // ===== 开发流程 =====
       {
         name: "Git",
         url: "https://git-scm.com",
@@ -1217,7 +1234,6 @@ export const categories: Category[] = [
         tagColor: "#0052cc",
         accent: "#0052cc",
       },
-      // ===== 程序员论坛 =====
       {
         name: "V2EX",
         url: "https://www.v2ex.com",
@@ -1278,7 +1294,6 @@ export const categories: Category[] = [
         tagColor: "#ff4500",
         accent: "#ff4500",
       },
-      // ===== 面试刷题 =====
       {
         name: "LeetCode 力扣",
         url: "https://leetcode.cn",
@@ -1328,7 +1343,6 @@ export const categories: Category[] = [
         accent: "#00ea9e",
       },
 
-      // ===== 前端埋点 =====
       {
         name: "Google Analytics",
         url: "https://analytics.google.com",
@@ -1389,8 +1403,6 @@ export const categories: Category[] = [
         tagColor: "#7856FF",
         accent: "#7856FF",
       },
-
-      // ===== GIS =====
       {
         name: "高德地图开放平台",
         url: "https://lbs.amap.com",
