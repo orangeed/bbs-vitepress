@@ -1770,6 +1770,18 @@ export const categories: Category[] = [
         accent: "#3f85ed",
       },
       {
+        name: "Animal Island Vue",
+        url: "https://guokaigdg.github.io/animal-island-vue/",
+        displayUrl: "guokaigdg.github.io/animal-island-vue",
+        desc: "基于 Vue 的动物岛游戏实现，有vue和react版本",
+        favicon: "A",
+        faviconBg: "#3f85ed",
+        tag: "UI 库",
+        tagBg: "rgba(63, 133, 237,.12)",
+        tagColor: "#3f85ed",
+        accent: "#3f85ed",
+      },
+      {
         name: "Next.js",
         url: "https://nextjs.org",
         displayUrl: "nextjs.org",
