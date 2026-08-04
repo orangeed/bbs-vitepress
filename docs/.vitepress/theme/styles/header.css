@@ -1,0 +1,19 @@
+/* 隐藏 VitePress 默认导航栏和搜索弹窗 */
+.VPNav,
+.DocSearch-Modal,
+.DocSearch-Container {
+  display: none !important;
+}
+
+/* 页面内容补偿 header 高度 */
+.VPContent,
+.VPDoc {
+  padding-top: 64px !important;
+}
+
+@media (max-width: 768px) {
+  .VPContent,
+  .VPDoc {
+    padding-top: 56px !important;
+  }
+}

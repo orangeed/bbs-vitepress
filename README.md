@@ -1,4 +1,12 @@
-<h1 align="center"> 橘子的分享 </h1>
+<h1 align="center"> 橘子的分享v2版本 </h1>
+
+## 简介
+
+本次主题修改时看到了一个组件库`animal-island-vue`，动森风格的，感觉蛮有意思的，所以根据这个组件库，将现有的重构样式.
+
+采用的是`vitepress` + `animal-island-vue`开发。
+
+如果你也喜欢这个，不妨点个赞吧！
 
 ## Usage
 

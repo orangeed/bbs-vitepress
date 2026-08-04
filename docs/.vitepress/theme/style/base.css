@@ -23,6 +23,10 @@
     margin-top: 0
 }
 
+.vp-doc img{
+    max-width:200px;
+}
+
 @media (max-width: 768px) {
     .article-box {
         flex-direction: column;

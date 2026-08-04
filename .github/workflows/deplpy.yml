@@ -2,7 +2,7 @@ name: Deploy VitePress to Server
 
 on:
   push:
-    branches: [main]  # 当你推送到 main 分支时触发部署
+    branches: [v2]  # 当你推送到 main 分支时触发部署
 
 jobs:
   build-and-deploy:

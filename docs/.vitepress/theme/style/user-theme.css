@@ -2,21 +2,21 @@
 /* 自定义主题色示例，如下 */
 
 /* 浅色模式使用的变量 */
-html[theme] {
-  --vp-c-user-1: red;
-  --vp-c-user-2: blue;
-  --vp-c-user-3: green;
-  --vp-c-user-soft: rgba(255, 0, 0, .5);
-  --doc-bg: rgba(255, 255, 255, 0.7)
+html {
+  --vp-c-user-1: #6b4f3a;
+  --vp-c-user-2: #9c7b5d;
+  --vp-c-user-3: #f6a8b6;
+  --vp-c-user-soft: rgba(246, 168, 182, .5);
+  --doc-bg: rgba(255, 255, 255, 0.9)
 }
 
-/* 深色模式使用的变量 */
-html[theme].dark {
-  --vp-c-user-1: yellow;
-  --vp-c-user-2: purple;
-  --vp-c-user-3: orange;
-  --vp-c-user-soft: rgba(255, 255, 0, .5);
-  --doc-bg: rgba(20, 20, 20, 0.7)
+/* 深色模式使用的变量（VitePress 实际切换的是 html.dark） */
+html.dark {
+  --vp-c-user-1: #f3e9dd;
+  --vp-c-user-2: #c7b6a4;
+  --vp-c-user-3: #f6a8b6;
+  --vp-c-user-soft: rgba(246, 168, 182, .2);
+  --doc-bg: #374063;
 }
 
 /* 覆盖默认变量 */

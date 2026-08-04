@@ -3334,6 +3334,18 @@ export const categories: Category[] = [
         accent: "#2932e1",
       },
       {
+        name: "Coverly",
+        url: "https://cover.mysticstars.cn",
+        displayUrl: "cover.mysticstars.cn",
+        desc: "免登录的封面创作网站",
+        favicon: "C",
+        faviconBg: "#f4e7d9",
+        tag: "封面设计",
+        tagBg: "rgba(244, 231, 217,.12)",
+        tagColor: "#f4e7d9",
+        accent: "#f4e7d9",
+      },
+      {
         name: "创客贴",
         url: "https://www.chuangkit.com",
         displayUrl: "chuangkit.com",

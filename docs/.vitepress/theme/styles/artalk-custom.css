@@ -1,0 +1,442 @@
+/* ============================================================
+   Artalk 评论组件岛屿风格定制（使用 atk- 类名）
+   参考 https://www.mysticstars.cn/
+   ============================================================ */
+
+.artalk-comment-wrapper {
+  margin-top: 40px;
+  padding: 0 24px;
+  max-width: 752px;
+}
+
+/* Artalk 整体容器 */
+.artalk-comment-wrapper .atk {
+  position: relative;
+  padding: 28px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fdf6ec 0%, #f7e6c4 100%);
+  border: 1px solid #e9d3a3;
+}
+
+html.dark .artalk-comment-wrapper .atk {
+  background: linear-gradient(180deg, #2a231d 0%, #1f1a16 100%);
+  border-color: #3a3024;
+}
+
+/* 隐藏 Artalk 自带的 header（我们已自定义） */
+.artalk-comment-wrapper .atk-header {
+  display: none;
+}
+
+/* 编辑器区域 */
+.artalk-comment-wrapper .atk-main-editor {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 12px 16px;
+  margin-bottom: 24px;
+}
+
+html.dark .artalk-comment-wrapper .atk-main-editor {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* 昵称/邮箱/网址输入（行内式） */
+.artalk-comment-wrapper .atk-input-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.artalk-comment-wrapper .atk-input {
+  flex: 1;
+  background: transparent;
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0 !important;
+  padding: 6px 4px !important;
+  font-size: 14px;
+  color: #4a3b2f;
+}
+
+html.dark .artalk-comment-wrapper .atk-input {
+  color: #f3e9dd;
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.artalk-comment-wrapper .atk-input:focus {
+  outline: none;
+}
+
+.artalk-comment-wrapper .atk-input::placeholder {
+  color: #b8a692;
+}
+
+/* 文本编辑区 */
+.artalk-comment-wrapper .atk-textarea-wrap {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+
+html.dark .artalk-comment-wrapper .atk-textarea-wrap {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.artalk-comment-wrapper .atk-textarea {
+  background: transparent;
+  border: none !important;
+  outline: none;
+  width: 100%;
+  min-height: 60px;
+  font-size: 14px;
+  color: #4a3b2f;
+  font-family: inherit;
+  padding: 0 !important;
+}
+
+html.dark .artalk-comment-wrapper .atk-textarea {
+  color: #f3e9dd;
+}
+
+/* 编辑器底部操作区 */
+.artalk-comment-wrapper .atk-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.artalk-comment-wrapper .atk-plug-btn {
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  color: #6b4f3a;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.artalk-comment-wrapper .atk-plug-btn:hover {
+  background: #fff;
+  color: #4a3b2f;
+}
+
+html.dark .artalk-comment-wrapper .atk-plug-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #c7b6a4;
+}
+
+html.dark .artalk-comment-wrapper .atk-plug-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.artalk-comment-wrapper .atk-right-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.artalk-comment-wrapper .atk-editor-plug-preview {
+  background: none !important;
+  border: none !important;
+  color: #6b4f3a;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.artalk-comment-wrapper .atk-editor-plug-preview:hover {
+  background: rgba(107, 79, 58, 0.1);
+}
+
+html.dark .artalk-comment-wrapper .atk-editor-plug-preview {
+  color: #c7b6a4;
+}
+
+html.dark .artalk-comment-wrapper .atk-editor-plug-preview:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.artalk-comment-wrapper .atk-send-btn {
+  background: #2a8a7a !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 6px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  /* transition: all 0.2s ease; */
+  transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.artalk-comment-wrapper .atk-send-btn:hover {
+  background: #247a6c !important;
+  transform: translateY(-1px);
+}
+
+html.dark .artalk-comment-wrapper .atk-send-btn {
+  background: #5bbfb0 !important;
+}
+
+html.dark .artalk-comment-wrapper .atk-send-btn:hover {
+  background: #4aa89b !important;
+}
+
+/* 评论列表 */
+.artalk-comment-wrapper .atk-list {
+  margin-top: 14px;
+}
+
+.artalk-comment-wrapper .atk-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.artalk-comment-wrapper .atk-comment-count {
+  font-size: 15px;
+  font-weight: 700;
+  color: #4a3b2f;
+}
+
+.artalk-comment-wrapper .atk-comment-count-num {
+  color: #2a8a7a;
+  margin: 0 4px;
+}
+
+html.dark .artalk-comment-wrapper .atk-comment-count {
+  color: #f3e9dd;
+}
+
+/* 单条评论卡片 */
+.artalk-comment-wrapper .atk-comment {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+}
+
+.artalk-comment-wrapper .atk-comment:hover {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 14px rgba(107, 79, 58, 0.1);
+}
+
+html.dark .artalk-comment-wrapper .atk-comment {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .artalk-comment-wrapper .atk-comment:hover {
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.artalk-comment-wrapper .atk-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.artalk-comment-wrapper .atk-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #fdf6ec;
+  border: 1px solid #e9d3a3;
+}
+
+html.dark .artalk-comment-wrapper .atk-avatar {
+  border-color: #3a3024;
+}
+
+.artalk-comment-wrapper .atk-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artalk-comment-wrapper .atk-nick {
+  font-weight: 700;
+  font-size: 14px;
+  color: #6b4f3a;
+}
+
+html.dark .artalk-comment-wrapper .atk-nick {
+  color: #ffd66b;
+}
+
+.artalk-comment-wrapper .atk-meta {
+  font-size: 12px;
+  color: #8a7563;
+  margin-left: auto;
+}
+
+html.dark .artalk-comment-wrapper .atk-meta {
+  color: #c7b6a4;
+}
+
+.artalk-comment-wrapper .atk-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #4a3b2f;
+  margin: 8px 0;
+  padding: 0 !important;
+}
+
+html.dark .artalk-comment-wrapper .atk-content {
+  color: #f3e9dd;
+}
+
+.artalk-comment-wrapper .atk-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #8a7563;
+}
+
+html.dark .artalk-comment-wrapper .atk-actions {
+  color: #c7b6a4;
+}
+
+.artalk-comment-wrapper .atk-common-action-btn {
+  cursor: pointer;
+  background: none !important;
+  border: none !important;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  font-size: inherit;
+}
+
+.artalk-comment-wrapper .atk-common-action-btn:hover {
+  color: #2a8a7a;
+}
+
+html.dark .artalk-comment-wrapper .atk-common-action-btn:hover {
+  color: #5bbfb0;
+}
+
+/* 浏览器和系统元数据 */
+.artalk-comment-wrapper .atk-ua-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #8a7563;
+}
+
+html.dark .artalk-comment-wrapper .atk-ua-wrap {
+  color: #c7b6a4;
+}
+
+/* 排序按钮 */
+.artalk-comment-wrapper .atk-grp-switcher {
+  display: flex;
+  gap: 14px;
+}
+
+.artalk-comment-wrapper .atk-grp-switcher-item {
+  font-size: 13px;
+  color: #8a7563;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.artalk-comment-wrapper .atk-grp-switcher-item.is-active {
+  color: #2a8a7a;
+  font-weight: 600;
+}
+
+html.dark .artalk-comment-wrapper .atk-grp-switcher-item {
+  color: #c7b6a4;
+}
+
+html.dark .artalk-comment-wrapper .atk-grp-switcher-item.is-active {
+  color: #5bbfb0;
+}
+
+/* 子评论缩进 */
+.artalk-comment-wrapper .atk-comment-children {
+  margin-left: 20px;
+  margin-top: 12px;
+  padding-left: 14px;
+  border-left: 2px dashed rgba(107, 79, 58, 0.2);
+}
+
+html.dark .artalk-comment-wrapper .atk-comment-children {
+  border-left-color: rgba(255, 255, 255, 0.15);
+}
+
+/* 加载、错误状态 */
+.artalk-comment-wrapper .atk-loading {
+  color: #8a7563;
+}
+
+.artalk-comment-wrapper .atk-error {
+  background: rgba(255, 200, 200, 0.3);
+  color: #b94a4a;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .artalk-comment-wrapper .atk-input-wrap {
+    flex-direction: column;
+  }
+
+  .artalk-comment-wrapper .atk {
+    padding: 18px;
+  }
+
+  .artalk-comment-wrapper .atk-comment-children {
+    margin-left: 8px;
+  }
+}
+
+.atk-dropdown {
+  display: flex;
+  gap: 10px;
+}
+
+.atk-plug-btn-wrap {
+  display: flex;
+  gap: 10px;
+}
+
+.atk-grp {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.atk-item {
+  max-height: 100px;
+  max-width: 100px;
+}
+

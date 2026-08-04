@@ -1,35 +1,22 @@
 {
-  "name": "vitepress-blog",
+  "name": "animal-island-blog",
   "version": "1.0.0",
-  "private": true,
-  "author": "橘子orange",
-  "license": "MIT",
+  "description": "基于 VitePress 与 animal-island-vue 的博客项目",
+  "type": "module",
   "scripts": {
-    "dev": "vitepress dev docs --open",
+    "dev": "vitepress dev docs",
     "build": "vitepress build docs",
-    "serve": "vitepress serve docs"
+    "preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@sugarat/theme": "^0.5.19",
-    "artalk": "^2.9.1",
-    "sass": "^1.101.0",
-    "vitepress-plugin-51la": "^0.1.2",
-    "vitepress-plugin-artalk": "^0.1.2"
-  },
-  "directories": {
-    "doc": "docs"
+    "animal-island-vue": "^0.2.1",
+    "artalk": "^2.10.0",
+    "dayjs": "^1.11.21",
+    "typescript": "^5.7.5",
+    "vue": "^3.4.0"
   },
   "devDependencies": {
-    "pagefind": "^1.5.2",
-    "typescript": "^5.4.5",
-    "vitepress": "2.0.0-alpha.17"
-  },
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "@algolia/client-search",
-        "search-insights"
-      ]
-    }
+    "sass-embedded": "^1.100.0",
+    "vitepress": "^1.3.0"
   }
 }

@@ -1,6 +1,29 @@
-import BlogTheme from "@sugarat/theme";
-import Layout from "./Layout.vue";
+import { h } from 'vue'
+import type { Theme } from 'vitepress'
+import DefaultTheme from 'vitepress/theme'
+import 'animal-island-vue/style'
 
+// 全局注册 animal-island-vue 组件（按需）
+import {
+  Button,
+  Card,
+  Title,
+  Tabs,
+  Divider,
+  Footer as IslandFooter,
+  Time,
+  Icon,
+  Input,
+  Typewriter,
+  Switch,
+  Tooltip,
+  Modal,
+  Cursor
+} from 'animal-island-vue'
+
+import './styles/custom.css'
+import './styles/artalk-custom.css'
+import Layout from './Layout.vue'
 // 自定义样式重载
 import "./style/style.css";
 
@@ -11,7 +34,25 @@ import './style/dark.css'
 
 import './style/base.css'
 
+import './styles/header.css'
+
 export default {
-  ...BlogTheme,
+  extends: DefaultTheme,
   Layout,
-};
+  enhanceApp({ app }) {
+    app.component('AButton', Button)
+    app.component('ACard', Card)
+    app.component('ATitle', Title)
+    app.component('ATabs', Tabs)
+    app.component('ADivider', Divider)
+    app.component('AFooter', IslandFooter)
+    app.component('ATime', Time)
+    app.component('AIcon', Icon)
+    app.component('AInput', Input)
+    app.component('ATypewriter', Typewriter)
+    app.component('ASwitch', Switch)
+    app.component('ATooltip', Tooltip)
+    app.component('AModal', Modal)
+    app.component('ACursor', Cursor)
+  }
+} satisfies Theme

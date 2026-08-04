@@ -117,3 +117,7 @@
 .blog-comment-wrapper {
   padding: 0px 10px;
 }
+
+.aside-curtain {
+  display: none;
+}

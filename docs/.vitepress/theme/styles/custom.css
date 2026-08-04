@@ -1,0 +1,911 @@
+:root {
+  /* 动森风格暖色基调 */
+  --ai-bg: #ece6d4;
+  --ai-bg-soft: #fffaf2;
+  --ai-brown: #6b4f3a;
+  --ai-btn: #6b4f3a;
+  --ai-brown-soft: #9c7b5d;
+  --ai-pink: #f6a8b6;
+  --ai-teal: #5bbfb0;
+  --ai-yellow: #ffd66b;
+  --ai-text: #4a3b2f;
+  --ai-text-soft: #8a7563;
+  --ai-shadow: rgba(107, 79, 58, 0.15);
+  --ai-tag-checked: #fff;
+  --ai-bg-img: url('../../../public/light.webp');
+  --ai-bg-t: rgba(236, 230, 212, .75);
+}
+
+/* 整体背景 */
+.dark {
+  --ai-bg: #2d3554;
+  --ai-bg-soft: #2a231d;
+  --ai-text: #f3e9dd;
+  --ai-text-soft: #c7b6a4;
+  --ai-bg-img: url('../../../public/night.webp');
+  --ai-bg-t: rgba(45, 53, 84, .75);
+}
+
+html,
+body {
+  background: var(--ai-bg);
+  /* background-image: var(--ai-bg-img); */
+}
+
+/* ============================================================
+   全局自定义光标（forceAll = false）
+   - 默认使用自定义 SVG 光标
+   - 交互元素保留原生语义：a/button 仍为 pointer，input 仍为 text
+   ============================================================ */
+
+html,
+body,
+.island-home,
+.VPContent {
+  cursor: var(--ai-cursor);
+}
+
+/* 交互元素：保留原生语义（forceAll=false 的精髓） */
+a,
+button,
+a *,
+button *,
+[role='button'],
+label,
+summary,
+.clickable,
+.tab,
+.ai-tag,
+.pager__btn {
+  cursor: pointer;
+}
+
+input,
+textarea,
+select,
+[contenteditable='true'] {
+  cursor: text;
+}
+
+input[type='button'],
+input[type='submit'],
+input[type='reset'],
+input[type='checkbox'],
+input[type='radio'] {
+  cursor: pointer;
+}
+
+#app {
+  background-image: var(--ai-bg-img);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* 隐藏 VitePress 默认首屏内容，使用自定义首页（BlogHome 通过 #layout-top 注入） */
+.VPContent.is-home .VPHome {
+  display: none;
+}
+
+.VPContent.is-home {
+  padding-top: 0 !important;
+}
+
+/* 让首页内容铺满整行 */
+.VPContent.is-home .VPLayout .container,
+.VPContent.is-home .VPLayout {
+  max-width: 100% !important;
+}
+
+.VPContent.is-home .VPHome,
+.VPContent.is-home .VPDoc {
+  padding: 0 !important;
+}
+
+/* 导航栏配色微调，贴合暖色 */
+.VPNavBar {
+  background: var(--ai-bg-soft);
+  /* background: transparent; */
+  /* border-bottom: 2px dashed var(--ai-shadow); */
+}
+
+.VPNavBarTitle .title {
+  color: var(--ai-brown);
+  font-weight: 700;
+}
+
+/* 自定义首页容器 */
+.island-home {
+  padding: 24px 24px 0;
+  max-width: 1280px;
+  margin: 0 auto;
+  margin-top: 60px;
+}
+
+@media (min-width: 768px) {
+  .island-home {
+    padding: 32px 40px 0;
+  }
+}
+
+/* 通用卡片圆角、阴影 */
+.island-card {
+  border-radius: 18px !important;
+  box-shadow: 0 6px 18px var(--ai-shadow) !important;
+}
+
+/* 分页 */
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 30px 0 10px;
+}
+
+.pager__btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 12px;
+  border: 2px solid var(--ai-shadow);
+  background: var(--ai-bg-soft, #fffaf2);
+  color: var(--ai-brown, #6b4f3a);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.pager__btn:hover:not(:disabled):not(.is-active) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px var(--ai-shadow);
+}
+
+.pager__btn.is-active {
+  background: var(--ai-btn, #6b4f3a);
+  color: #fff;
+  border-color: var(--ai-btn, #6b4f3a);
+}
+
+.pager__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pager__ellipsis {
+  color: var(--ai-text-soft, #8a7563);
+  padding: 0 4px;
+}
+
+/* 文章描述：最多两行，超出省略 */
+.post-card .post-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 文章网格：一行一个 */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 20px;
+}
+
+/* 首页两栏布局 */
+.island-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  margin-top: 22px;
+}
+
+@media (min-width: 1024px) {
+  .island-layout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+}
+
+/* 右侧精选文章模块高亮 */
+.featured-wrap {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+}
+
+.featured-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.featured-item:hover {
+  background: rgba(251, 146, 60, 0.12);
+  transform: translateX(4px);
+}
+
+.featured-rank {
+  flex: 0 0 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--ai-yellow);
+  color: var(--ai-brown);
+  font-weight: 700;
+}
+
+.featured-item:nth-child(1) .featured-rank {
+  background: var(--ai-pink);
+}
+
+.featured-item:nth-child(2) .featured-rank {
+  background: var(--ai-teal);
+  color: #fff;
+}
+
+.featured-item:nth-child(3) .featured-rank {
+  background: var(--ai-brown-soft);
+  color: #fff;
+}
+
+/* 标签胶囊 */
+.ai-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgba(251, 146, 60, 0.18);
+  color: var(--ai-brown);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 6px 8px 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ai-tag.is-active {
+  background: var(--ai-brown);
+  color: var(--ai-tag-checked);
+  border-color: var(--ai-yellow);
+}
+
+.ai-tag:hover {
+  transform: translateY(-2px);
+}
+
+/* 轮播 */
+.hero-banner {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  min-height: 220px;
+  display: flex;
+  color: #fff;
+  box-shadow: 0 10px 30px var(--ai-shadow);
+  transition: background 0.6s ease;
+}
+
+.hero-banner__inner {
+  padding: 28px;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.45) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-banner__dots {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  gap: 8px;
+}
+
+.hero-banner__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.hero-banner__dot.is-active {
+  background: #fff;
+  transform: scale(1.2);
+}
+
+/* 通知条（固定最小高度，避免打字机切换时抖动） */
+.notice-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: rgba(91, 191, 176, 0.55);
+  color: var(--ai-brown);
+  font-weight: 600;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.notice-bar>*:nth-child(2) {
+  min-height: 1.5em;
+  flex: 1;
+  display: inline-block;
+}
+
+/* 工具类 */
+.ai-muted {
+  /* color: var(--ai-text-soft); */
+  /* color: var(--ai-bg-soft); */
+  color: #877358
+}
+
+.ai-meta {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  color: var(--ai-text-soft);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   明暗模式：文本 / 背景 / 边框 统一映射到动森主题变量
+   - 默认（浅色）用 --ai-text / --ai-bg
+   - .dark 下用 dark.css 中重定义的变量
+   让切换黑夜/白天时，正文与界面文字颜色真正跟随变化
+   ============================================================ */
+
+/* 正文文本颜色（VitePress 默认主题文本变量） */
+:root {
+  --vp-c-text-1: var(--ai-text);
+  --vp-c-text-2: var(--ai-text);
+  --vp-c-text-3: var(--ai-text-soft);
+  --vp-c-text-4: var(--ai-text-soft);
+  --vp-c-default-1: var(--ai-text);
+  --vp-c-default-2: var(--ai-text);
+  --vp-c-default-3: var(--ai-text-soft);
+  --vp-c-default-soft: var(--ai-text-soft);
+}
+
+/* 文档区背景、代码块、引用、表格等表面色跟随主题 */
+.VPDoc .content-container,
+.VPDoc .vp-doc,
+.vp-doc div[class*='language-'],
+.vp-doc pre,
+.vp-doc blockquote,
+.vp-doc table tr,
+.vp-doc table th,
+.vp-doc table td {
+  color: var(--ai-text);
+}
+
+/* 链接、标题在明暗下使用动森主色 */
+.vp-doc a,
+.vp-doc a>code,
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4 {
+  color: var(--ai-brown);
+}
+
+.dark .vp-doc a,
+.dark .vp-doc a>code,
+.dark .vp-doc h1,
+.dark .vp-doc h2,
+.dark .vp-doc h3,
+.dark .vp-doc h4 {
+  color: var(--ai-yellow);
+}
+
+/* 代码块与引用背景跟随主题 */
+.vp-doc blockquote {
+  border-left-color: var(--ai-brown);
+  background: var(--ai-bg-soft);
+}
+
+.dark .vp-doc blockquote {
+  border-left-color: var(--ai-yellow);
+}
+
+/* 行内代码 */
+.vp-doc :not(pre)>code {
+  color: var(--ai-brown);
+  background: var(--ai-bg-soft);
+}
+
+.dark .vp-doc :not(pre)>code {
+  color: var(--ai-yellow);
+}
+
+/* 侧边栏 / 导航文字 */
+.VPSidebar,
+.VPSidebarItem,
+.VPNavBarMenuLink,
+.VPNavBarTitle .title {
+  color: var(--ai-text);
+}
+
+/* 让页面整体滚动区域文字也跟随 */
+.vp-doc,
+.VPContent {
+  color: var(--ai-text);
+}
+
+/* ============================================================
+   文章列表卡片（PostCard）
+   ============================================================ */
+
+/* 深色模式主色提亮（供仍引用 --ai-brown 等的地方使用） */
+.dark {
+  --ai-brown: #f3e9dd;
+  --ai-brown-soft: #c7b6a4;
+  --ai-pink: #f6a8b6;
+  --ai-teal: #7fd8cb;
+  --ai-yellow: #ffd66b;
+  --ai-shadow: rgba(0, 0, 0, 0.4);
+  --ai-tag-checked: #f09b2d;
+  --ai-btn: #374063;
+}
+
+/* 卡片背景：白天 #f7f3e7，黑夜 #374063 */
+.post-card {
+  background: #f7f3e7 !important;
+  border: none !important;
+}
+
+.dark .post-card {
+  background: #374063 !important;
+}
+
+/* 标题：白天黑色，黑夜白色 */
+.post-card h2 {
+  color: #000;
+  margin: 4px 0 0;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.dark .post-card h2 {
+  color: #fff;
+}
+
+.featured-title {
+  color: #000;
+}
+
+.dark .featured-title {
+  color: #fff;
+}
+
+/* 描述/次要文字：白天与黑夜均为灰色 */
+.post-card .post-desc,
+.post-card .ai-muted,
+.post-card .ai-meta,
+.ai-meta {
+  color: #888 !important;
+}
+
+.dark .post-card .post-desc,
+.dark .post-card .ai-muted,
+.dark .post-card .ai-meta,
+.dark .ai-meta {
+  color: #aaa !important;
+}
+
+/* ============================================================
+   全局页脚（动森风格 AFooter + 备案/版权文本条）
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--ai-text-soft);
+  background: var(--ai-bg-soft);
+}
+
+.site-footer__inner {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--ai-text-soft);
+}
+
+.site-footer__inner a {
+  color: var(--ai-text-soft);
+  text-decoration: none;
+}
+
+.site-footer__inner a:hover {
+  color: var(--ai-brown);
+}
+
+/* ============================================================
+   自定义顶部导航栏
+   ============================================================ */
+
+/* 隐藏 VitePress 默认的 logo 图和站点标题文字（HeaderBrand 已包含） */
+.VPNavBarTitle .VPImage.logo,
+.VPNavBarTitle .title>span {
+  display: none !important;
+}
+
+/* 导航栏整体背景与高度（顶部无阴影，滚动后出现） */
+.VPNavBar {
+  background: var(--ai-bg-t) !important;
+  box-shadow: none !important;
+  height: 64px !important;
+}
+
+.VPNavBar:not(.top) {
+  box-shadow: 0 2px 12px var(--ai-shadow) !important;
+}
+
+.VPNavBar .container {
+  max-width: 1152px;
+  padding: 0 24px;
+}
+
+/* 中间菜单：居中 */
+.VPNavBarMenu {
+  margin: 0 auto;
+}
+
+.VPNavBarMenu .VPMenuLink {
+  font-size: 15px;
+  color: var(--ai-text);
+  padding: 6px 16px;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.VPNavBarMenu .VPMenuLink:hover {
+  color: var(--ai-brown);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.dark .VPNavBarMenu .VPMenuLink:hover {
+  color: var(--ai-yellow);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 激活态药丸（紫色） */
+.VPNavBarMenu .VPMenuLink.active {
+  background: #8b7ad1 !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* 搜索按钮样式优化（保留 VitePress 默认搜索功能） */
+.VPNavBarSearch .DocSearch-Button {
+  background: transparent !important;
+  border: 1px solid var(--ai-text-soft) !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  color: var(--ai-text-soft) !important;
+  box-shadow: none !important;
+}
+
+.VPNavBarSearch .DocSearch-Button:hover {
+  border-color: var(--ai-brown) !important;
+  color: var(--ai-brown) !important;
+}
+
+.dark .VPNavBarSearch .DocSearch-Button:hover {
+  border-color: var(--ai-yellow) !important;
+  color: var(--ai-yellow) !important;
+}
+
+.VPNavBarSearch .DocSearch-Button-Placeholder {
+  font-size: 14px;
+}
+
+.VPNavBarSearch .DocSearch-Button-Keys {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.VPNavBarSearch .DocSearch-Button-Key {
+  background: var(--ai-bg) !important;
+  color: var(--ai-text-soft) !important;
+  border: 1px solid var(--ai-text-soft) !important;
+  border-radius: 4px !important;
+  padding: 1px 4px !important;
+  font-size: 12px;
+  box-shadow: none !important;
+}
+
+/* 主题切换按钮（已用 ASwitch 替代，隐藏默认按钮） */
+.VPSwitchAppearance {
+  display: none !important;
+}
+
+.VPSwitchAppearance .check {
+  display: none;
+}
+
+.VPSwitchAppearance svg {
+  color: var(--ai-text-soft);
+  transition: color 0.2s ease;
+}
+
+.VPSwitchAppearance:hover svg {
+  color: var(--ai-brown);
+}
+
+.dark .VPSwitchAppearance:hover svg {
+  color: var(--ai-yellow);
+}
+
+/* 隐藏默认社交链接（若需要可删除此行显示） */
+.VPNavBarSocialLinks {
+  display: none !important;
+}
+
+/* 移动端导航栏优化 */
+@media (max-width: 768px) {}
+
+/* ============================================================
+   文章详情页样式优化（参考 mysticstars 风格）
+   ============================================================ */
+
+/* 正文排版：增大字号和行高 */
+.vp-doc {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.vp-doc p {
+  margin: 1em 0;
+}
+
+/* 一级标题：大字号、粗体 */
+.vp-doc h1 {
+  font-size: 2em;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--ai-text-soft);
+}
+
+/* 二级标题 */
+.vp-doc h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.6em;
+}
+
+/* 三级标题 */
+.vp-doc h3 {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+/* 引用块：左侧粗竖线 + 浅背景 */
+.vp-doc blockquote {
+  border-left: 4px solid var(--ai-brown);
+  background: var(--ai-bg-soft);
+  padding: 12px 20px;
+  margin: 1.2em 0;
+  border-radius: 0 10px 10px 0;
+  color: var(--ai-text);
+  font-style: italic;
+}
+
+.dark .vp-doc blockquote {
+  border-left-color: var(--ai-yellow);
+}
+
+/* 链接：hover 下划线 */
+.vp-doc a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.vp-doc a:hover {
+  text-decoration: underline;
+}
+
+/* 行内代码 */
+.vp-doc :not(pre)>code {
+  font-size: 0.9em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--ai-bg-soft);
+  color: var(--ai-brown);
+}
+
+.dark .vp-doc :not(pre)>code {
+  color: var(--ai-yellow);
+}
+
+/* 代码块 */
+.vp-doc pre {
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 图片：圆角 + 居中 + 最大宽度 */
+.vp-doc img {
+  border-radius: 12px;
+  display: block;
+  margin: 1.2em auto;
+  max-width: 100%;
+}
+
+/* 无序列表和有序列表 */
+.vp-doc ul,
+.vp-doc ol {
+  padding-left: 1.5em;
+  line-height: 1.8;
+}
+
+.vp-doc li {
+  margin: 0.3em 0;
+}
+
+/* 表格 */
+.vp-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.vp-doc th {
+  background: var(--ai-bg-soft);
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.vp-doc td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--ai-text-soft);
+}
+
+/* 分隔线 */
+.vp-doc hr {
+  border: none;
+  border-top: 1px solid var(--ai-text-soft);
+  margin: 2em 0;
+}
+
+/* 文章标签胶囊（frontmatter tag 在文章页的展示） */
+.vp-doc .article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1.5em;
+  padding-top: 1em;
+  border-top: 1px solid var(--ai-text-soft);
+}
+
+.vp-doc .article-tags a {
+  display: inline-block;
+  font-size: 13px;
+  padding: 3px 14px;
+  border-radius: 999px;
+  background: var(--ai-bg-soft);
+  border: 1px solid var(--ai-text-soft);
+  color: var(--ai-text);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.vp-doc .article-tags a:hover {
+  background: var(--ai-brown);
+  color: #fff;
+  border-color: var(--ai-brown);
+  text-decoration: none;
+}
+
+.dark .vp-doc .article-tags a:hover {
+  background: var(--ai-yellow);
+  color: #1f1a16;
+  border-color: var(--ai-yellow);
+}
+/* ============================================================
+   文章详情页右侧大纲区（去掉英文标题 + 美化）
+   ============================================================ */
+
+/* 隐藏 "On this page" 英文标题（保留高度，不影响 marker 定位） */
+.VPDocAsideOutline .outline-title {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+/* 大纲容器：去边框、改圆角 */
+.VPDocAsideOutline .content {
+  border-left: none !important;
+  padding-left: 12px;
+  font-size: 13px;
+  background: var(--ai-bg-soft);
+  border-radius: 12px;
+  padding: 30px 14px 30px 16px;
+  margin-top: 8px;
+}
+.dark .VPDocAsideOutline .content {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* 标记线位置 */
+.VPDocAsideOutline .outline-marker {
+  left: 0 !important;
+  background: var(--ai-brown) !important;
+  width: 3px !important;
+  border-radius: 2px;
+}
+.dark .VPDocAsideOutline .outline-marker {
+  background: var(--ai-yellow) !important;
+}
+
+/* 大纲链接 */
+.VPDocAsideOutline .outline-link {
+  color: var(--ai-text-soft);
+  padding: 6px 10px !important;
+  padding-left: 14px !important;
+  border-radius: 6px;
+  line-height: 1.6 !important;
+  transition: all 0.2s ease;
+  display: block;
+}
+.VPDocAsideOutline .outline-link:hover {
+  color: var(--ai-brown);
+  background: rgba(107, 79, 58, 0.08);
+}
+.dark .VPDocAsideOutline .outline-link:hover {
+  color: var(--ai-yellow);
+  background: rgba(255, 215, 107, 0.1);
+}
+.VPDocAsideOutline .outline-link.active {
+  color: var(--ai-brown);
+  font-weight: 600;
+  background: rgba(107, 79, 58, 0.1);
+}
+.dark .VPDocAsideOutline .outline-link.active {
+  color: var(--ai-yellow);
+  background: rgba(255, 215, 107, 0.15);
+}
+
+/* 嵌套缩进 */
+.VPDocAsideOutline .outline-link.nested {
+  padding-left: 24px !important;
+  font-size: 12px;
+}
+
+.VPLocalNav{
+  display: none;
+}
