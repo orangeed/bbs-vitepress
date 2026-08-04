@@ -1,44 +1,4 @@
-# name: Deploy VitePress to Server
-
-# on:
-#   push:
-#     branches: [v2]  # 当你推送到 main 分支时触发部署
-
-# jobs:
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
-#     steps:
-#       # 1. 检出代码
-#       - name: Checkout
-#         uses: actions/checkout@v4
-
-#       # 2. 安装 Node.js 环境
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 24
-#           cache: 'pnpm'  # 如果你用的是 pnpm 或 yarn，这里改成对应的值
-
-#       # 3. 安装依赖并构建项目
-#       - name: 安装依赖
-#         run: pnpm install  # 如果是 pnpm 请改成 pnpm install，yarn 改成 yarn install
-#       - name: 构建项目
-#         run: pnpm run build  # 执行 VitePress 的构建命令
-
-#       # 4. 通过 SSH 将构建产物同步到你的服务器
-#       - name: Deploy to Server
-#         uses: appleboy/scp-action@master
-#         with:
-#           host: ${{ secrets.SSH_HOST }}
-#           username: ${{ secrets.SSH_USERNAME }}
-#           port: ${{ secrets.SSH_PORT }}
-#           key: ${{ secrets.SSH_PRIVATE_KEY }}
-#           source: "docs/.vitepress/dist/*"  # VitePress 默认的输出目录
-#           target: "/home/orangecj"  # ⚠️ 替换成你服务器上存放网站文件的真实路径
-#           strip_components: 3  # 去掉多余的前置目录层级，直接把文件放到 target 下
-#           rm: true  # 同步前先清空目标目录中的旧文件
-          
-          name: Deploy VitePress to Server
+name: Deploy VitePress to Server
 
 on:
   push:
