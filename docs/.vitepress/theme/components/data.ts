@@ -1746,6 +1746,18 @@ export const categories: Category[] = [
         accent: "#cb3837",
       },
       {
+        name: "NVM",
+        url: "https://github.com/coreybutler/nvm-windows",
+        displayUrl: "github.com/coreybutler/nvm-windows",
+        desc: "windows版本的Node 版本管理器，多版本之间无缝切换",
+        favicon: "NV",
+        faviconBg: "#cb3837",
+        tag: "版本管理",
+        tagBg: "rgba(203,56,55,0.12)",
+        tagColor: "#cb3837",
+        accent: "#cb3837",
+      },
+      {
         name: "NestJS",
         url: "https://nestjs.com",
         displayUrl: "nestjs.com",
@@ -2105,7 +2117,6 @@ export const categories: Category[] = [
         tagColor: "#00ea9e",
         accent: "#00ea9e",
       },
-
       {
         name: "Google Analytics",
         url: "https://analytics.google.com",
