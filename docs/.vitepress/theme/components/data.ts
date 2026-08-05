@@ -1333,7 +1333,7 @@ export const categories: Category[] = [
         url: "https://z-library.bz",
         displayUrl: "z-library.bz",
         desc: "全球最大电子书库，千万级中英文书目免费借阅与下载",
-        favicon: "Z-Lib",
+        favicon: "Lib",
         faviconBg: "#b71c1c",
         tag: "电子书库",
         tagBg: "rgba(183, 28, 28, 0.12)",

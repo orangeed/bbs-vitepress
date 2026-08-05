@@ -133,9 +133,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   -webkit-backdrop-filter: blur(12px);
   height: 64px;
   position: fixed;
-  top: 0;
+  width: 100vw;
+  /* top: 0;
   left: 0;
-  right: 0;
+  right: 0; */
   z-index: 100;
   box-shadow: none;
   transition: box-shadow 0.3s ease;
@@ -144,6 +145,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 .header.has-shadow {
   box-shadow: 0 2px 12px var(--ai-shadow);
 }
+
 :global(html.dark) .header {
   background: rgba(31, 26, 22, 0.75) !important;
   backdrop-filter: blur(12px);
@@ -368,6 +370,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   }
 
   .header-nav {
+    display: none;
+  }
+
+  .header-search-input {
     display: none;
   }
 

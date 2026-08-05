@@ -196,12 +196,12 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="mobile-topbar-actions">
-          <button class="mobile-icon-btn" @click="focusSearch" aria-label="搜索">
+          <!-- <button class="mobile-icon-btn" @click="focusSearch" aria-label="搜索">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
-          </button>
+          </button> -->
           <button class="mobile-icon-btn" @click="toggleTheme" aria-label="切换明暗主题">
             <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
