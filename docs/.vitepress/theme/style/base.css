@@ -23,8 +23,8 @@
     margin-top: 0
 }
 
-.vp-doc img{
-    max-width:200px;
+.vp-doc img {
+    max-width: 200px;
 }
 
 @media (max-width: 768px) {
@@ -34,13 +34,21 @@
     }
 
     .article-box img {
-        margin-right: 0 !important;
-        margin-bottom: 16px;
+        /* margin-right: 0 !important; */
+        /* margin-bottom: 16px; */
         /* width: 100%; */
         height: auto;
     }
 
     .article-img {
         height: 100px;
+    }
+
+    .vp-doc{
+        padding: 0px 20px 10px 20px ;
+    }
+
+    .vp-doc img {
+        max-width: 100%;   
     }
 }

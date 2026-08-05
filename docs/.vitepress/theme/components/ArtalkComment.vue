@@ -108,7 +108,7 @@ watch(() => route.path, () => initArtalk())
 }
 @media (max-width: 768px) {
   .artalk-comment-wrapper {
-    padding: 0 16px;
+    padding: 0px 16px 20px 16px;
   }
 }
 </style>
