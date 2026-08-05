@@ -1,3 +1,7 @@
+---
+layout: false
+---
+
 <h1 align="center"> 橘子的分享v2版本 </h1>
 
 ## 简介
