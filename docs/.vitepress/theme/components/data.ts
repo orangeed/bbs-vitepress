@@ -931,7 +931,6 @@ export const categories: Category[] = [
     desc: "读书、网文与电子书平台，从找书、读到听书一站直达",
     iconBg: "rgba(180, 83, 9, 0.15)",
     sites: [
-      // ===== 阅读 App / 书城 =====
       {
         name: "微信读书",
         url: "https://weread.qq.com",
@@ -1042,7 +1041,7 @@ export const categories: Category[] = [
       },
       {
         name: "鸠摩搜书",
-        url: "https://www.jiumosearch.org/",
+        url: "https://www.jiumosearch.org",
         displayUrl: "jiumosearch.org",
         desc: "电子书垂直搜索引擎，聚合网盘与文库资源，找书下载极简高效",
         favicon: "鸠",
@@ -1306,7 +1305,7 @@ export const categories: Category[] = [
       },
       {
         name: "八零电子书",
-        url: "https://m.txt80.cc",
+        url: "https://txt80.cc",
         displayUrl: "txt80.cc",
         desc: "免费 TXT 小说下载站，无需注册即可整本下载，更新及时",
         favicon: "80",
@@ -1342,7 +1341,7 @@ export const categories: Category[] = [
       },
       {
         name: "稷下書院",
-        url: "https://www.novel543.com/",
+        url: "https://www.novel543.com",
         displayUrl: "novel543.com",
         desc: "免费的阅读网站，网络小说",
         favicon: "稷",
