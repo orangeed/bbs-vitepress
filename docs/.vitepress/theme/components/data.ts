@@ -3461,6 +3461,18 @@ export const categories: Category[] = [
         accent: "#e74c3c",
       },
       {
+        name: "次幂数据",
+        url: "https://www.cimidata.com/rank",
+        displayUrl: "cimidata.com",
+        desc: "自媒体排行榜单",
+        favicon: "次",
+        faviconBg: "#e74c3c",
+        tag: "数据选题",
+        tagBg: "rgba(231, 76, 60, 0.12)",
+        tagColor: "#e74c3c",
+        accent: "#e74c3c",
+      },
+      {
         name: "易撰",
         url: "https://www.yizhuan5.com",
         displayUrl: "yizhuan5.com",
