@@ -469,6 +469,18 @@ export const categories: Category[] = [
         tagColor: "rgb(255, 20, 147)",
         accent: "rgb(255, 20, 147)",
       },
+      {
+        name: "赛博竹知了",
+        url: "https://imsai.top",
+        displayUrl: "imsai.top",
+        desc: "个人开发小游戏",
+        favicon: "赛",
+        faviconBg: "rgb(175, 138, 69)",
+        tag: "小游戏",
+        tagBg: "rgba(175, 138, 69, .12)",
+        tagColor: "rgb(175, 138, 69)",
+        accent: "rgb(175, 138, 69)",
+      },
     ],
   },
   {
