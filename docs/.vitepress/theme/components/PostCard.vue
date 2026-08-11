@@ -42,7 +42,6 @@ const router = useRouter()
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     background 0.35s ease;
-  border: 1px solid var(--ai-shadow) !important;
 }
 
 .post-card:hover {
