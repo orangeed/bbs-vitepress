@@ -1,0 +1,695 @@
+/* ============================================================
+   VitePress Markdown 文章样式（动森暖色主题）
+   支持 PC / 移动端、日间 / 夜间模式
+   使用 !important 确保覆盖 custom.css 中的通用覆盖
+   ============================================================ */
+
+/* ========== 全局排版 ========== */
+.vp-doc {
+  font-size: 16px;
+  line-height: 1.9;
+  letter-spacing: 0.015em;
+  word-break: break-word;
+}
+
+.vp-doc p {
+  margin: 1.1em 0;
+}
+
+/* ============================================================
+   标题系统
+   ============================================================ */
+
+/* 标题通用 */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  scroll-margin-top: 80px;
+}
+
+/* H1 — 底部渐变线 + 字色棕/黄 */
+.vp-doc h1 {
+  font-size: 2rem;
+  color: var(--ai-brown) !important;
+  margin-top: 0;
+  margin-bottom: 0.8em;
+  padding-bottom: 0.4em;
+  border-bottom: 3px solid var(--ai-brown);
+  border-image: linear-gradient(90deg, var(--ai-brown) 0%, var(--ai-pink) 60%, transparent 100%) 1;
+}
+.dark .vp-doc h1 {
+  color: var(--ai-yellow) !important;
+  border-image: linear-gradient(90deg, var(--ai-yellow) 0%, var(--ai-pink) 60%, transparent 100%) 1;
+}
+
+/* H2 — 左侧彩色竖条 + 底部淡线 */
+.vp-doc h2 {
+  font-size: 1.5rem;
+  color: var(--ai-brown) !important;
+  margin-top: 2.2em;
+  margin-bottom: 0.75em;
+  padding: 0.3em 0 0.45em 0.85em;
+  border-bottom: 1px solid rgba(138, 117, 99, 0.2);
+  position: relative;
+}
+.vp-doc h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.5em;
+  width: 4px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--ai-brown), var(--ai-pink));
+}
+.dark .vp-doc h2 {
+  color: var(--ai-yellow) !important;
+  border-bottom-color: rgba(255, 214, 107, 0.15);
+}
+.dark .vp-doc h2::before {
+  background: linear-gradient(180deg, var(--ai-yellow), var(--ai-pink));
+}
+
+/* H3 — 左侧淡色点 + 字色 */
+.vp-doc h3 {
+  font-size: 1.25rem;
+  color: var(--ai-brown) !important;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  padding-left: 0.65em;
+  position: relative;
+}
+.vp-doc h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ai-pink);
+}
+.dark .vp-doc h3 {
+  color: var(--ai-yellow) !important;
+}
+
+/* H4 */
+.vp-doc h4 {
+  font-size: 1.08rem;
+  color: var(--ai-brown) !important;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+.dark .vp-doc h4 {
+  color: var(--ai-yellow) !important;
+}
+
+/* H5 / H6 */
+.vp-doc h5 {
+  font-size: 1rem;
+  color: var(--ai-text) !important;
+  margin-top: 1.3em;
+  margin-bottom: 0.4em;
+  font-weight: 600;
+}
+.vp-doc h6 {
+  font-size: 0.92rem;
+  color: var(--ai-text-soft) !important;
+  margin-top: 1.2em;
+  margin-bottom: 0.35em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   行内文字语义
+   ============================================================ */
+
+/* 加粗 — 暖棕/金黄 */
+.vp-doc strong {
+  color: #b45309 !important;
+  font-weight: 700;
+}
+.dark .vp-doc strong {
+  color: #fbbf24 !important;
+}
+
+/* 斜体 — 玫粉色调 */
+.vp-doc em {
+  color: #c2416b !important;
+  font-style: italic;
+}
+.dark .vp-doc em {
+  color: #f472b6 !important;
+}
+
+/* 删除线 */
+.vp-doc del {
+  color: var(--ai-text-soft) !important;
+  text-decoration-color: #ef4444;
+  opacity: 0.7;
+}
+
+/* mark 高亮 — 荧光黄渐变 */
+.vp-doc mark {
+  background: linear-gradient(120deg, rgba(255, 214, 107, 0.55), rgba(246, 168, 182, 0.35));
+  color: inherit;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+/* ============================================================
+   行内代码
+   ============================================================ */
+.vp-doc :not(pre) > code {
+  padding: 0.15em 0.5em;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.875em;
+  font-weight: 500;
+  background: rgba(107, 79, 58, 0.08) !important;
+  color: var(--ai-brown) !important;
+  border: 1px solid rgba(107, 79, 58, 0.12);
+  transition: background 0.2s ease;
+}
+.vp-doc :not(pre) > code:hover {
+  background: rgba(107, 79, 58, 0.15) !important;
+}
+.dark .vp-doc :not(pre) > code {
+  background: rgba(255, 214, 107, 0.1) !important;
+  color: var(--ai-yellow) !important;
+  border-color: rgba(255, 214, 107, 0.18);
+}
+.dark .vp-doc :not(pre) > code:hover {
+  background: rgba(255, 214, 107, 0.18) !important;
+}
+
+/* ============================================================
+   链接（含网址、外部链接等）
+   ============================================================ */
+.vp-doc a {
+  color: #6b4f3a !important;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1.5px dashed rgba(107, 79, 58, 0.35);
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  padding: 0 1px;
+}
+.vp-doc a:hover {
+  color: #3e2a1a !important;
+  border-bottom-color: #6b4f3a;
+  border-bottom-style: solid;
+  background: rgba(107, 79, 58, 0.07);
+  border-radius: 2px;
+}
+.dark .vp-doc a {
+  color: var(--ai-yellow) !important;
+  border-bottom-color: rgba(255, 214, 107, 0.35);
+}
+.dark .vp-doc a:hover {
+  color: #ffe89a !important;
+  border-bottom-color: var(--ai-yellow);
+  border-bottom-style: solid;
+  background: rgba(255, 214, 107, 0.1);
+}
+
+.vp-doc a > code {
+  color: inherit !important;
+}
+
+/* ============================================================
+   引用块
+   ============================================================ */
+.vp-doc blockquote {
+  margin: 1.8em 0;
+  padding: 1.2rem 1.4rem 1.2rem 1.6rem;
+  border-left: 4px solid var(--ai-brown) !important;
+  background: linear-gradient(135deg, rgba(107, 79, 58, 0.05) 0%, rgba(246, 168, 182, 0.04) 100%) !important;
+  border-radius: 0 12px 12px 0;
+  color: var(--ai-text) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 左上角大引号装饰 */
+.vp-doc blockquote::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  width: 32px;
+  height: 32px;
+  background: currentColor;
+  opacity: 0.08;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z'/%3E%3C/svg%3E");
+  mask-size: contain;
+  -webkit-mask-size: contain;
+}
+
+.vp-doc blockquote p {
+  margin: 0.3em 0;
+}
+.vp-doc blockquote p:first-child {
+  margin-top: 0;
+}
+.vp-doc blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.dark .vp-doc blockquote {
+  border-left-color: var(--ai-yellow) !important;
+  background: linear-gradient(135deg, rgba(255, 214, 107, 0.07) 0%, rgba(246, 168, 182, 0.04) 100%) !important;
+}
+
+/* ============================================================
+   自定义容器（tip / warning / danger / info / details）
+   ============================================================ */
+.vp-doc .custom-block {
+  margin: 1.5em 0;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  border: none !important;
+  box-shadow: 0 1px 4px var(--ai-shadow);
+}
+
+.vp-doc .custom-block .custom-block-title {
+  font-weight: 700;
+  margin-bottom: 0.35em;
+  font-size: 0.95rem;
+}
+
+/* tip — 青绿色 */
+.vp-doc .custom-block.tip {
+  background: rgba(91, 191, 176, 0.1);
+  border-left: 4px solid var(--ai-teal) !important;
+}
+.vp-doc .custom-block.tip .custom-block-title {
+  color: #2d7a6e;
+}
+.dark .vp-doc .custom-block.tip .custom-block-title {
+  color: var(--ai-teal);
+}
+
+/* info — 暖棕色 */
+.vp-doc .custom-block.info {
+  background: rgba(107, 79, 58, 0.07);
+  border-left: 4px solid var(--ai-brown) !important;
+}
+.vp-doc .custom-block.info .custom-block-title {
+  color: var(--ai-brown);
+}
+.dark .vp-doc .custom-block.info .custom-block-title {
+  color: var(--ai-yellow);
+}
+
+/* warning — 琥珀色 */
+.vp-doc .custom-block.warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 4px solid #f59e0b !important;
+}
+.vp-doc .custom-block.warning .custom-block-title {
+  color: #b45309;
+}
+.dark .vp-doc .custom-block.warning .custom-block-title {
+  color: #fbbf24;
+}
+
+/* danger — 红色 */
+.vp-doc .custom-block.danger {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 4px solid #ef4444 !important;
+}
+.vp-doc .custom-block.danger .custom-block-title {
+  color: #dc2626;
+}
+.dark .vp-doc .custom-block.danger .custom-block-title {
+  color: #f87171;
+}
+
+/* details — 折叠块 */
+.vp-doc .custom-block.details {
+  background: rgba(107, 79, 58, 0.04);
+  border: 1px solid rgba(107, 79, 58, 0.12) !important;
+  border-radius: 10px;
+}
+
+.dark .vp-doc .custom-block {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+.dark .vp-doc .custom-block.tip {
+  background: rgba(91, 191, 176, 0.08);
+}
+.dark .vp-doc .custom-block.info {
+  background: rgba(255, 214, 107, 0.06);
+}
+.dark .vp-doc .custom-block.warning {
+  background: rgba(245, 158, 11, 0.12);
+}
+.dark .vp-doc .custom-block.danger {
+  background: rgba(239, 68, 68, 0.12);
+}
+.dark .vp-doc .custom-block.details {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ============================================================
+   代码块
+   ============================================================ */
+.vp-doc div[class*='language-'] {
+  margin: 1.5em 0;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+.vp-doc pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.875em;
+  line-height: 1.7;
+  padding: 1.25em 1.5em;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.dark .vp-doc div[class*='language-'] {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================================
+   表格
+   ============================================================ */
+.vp-doc table {
+  width: 100%;
+  margin: 1.5em 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px var(--ai-shadow);
+  font-size: 0.95em;
+}
+.vp-doc th {
+  background: var(--ai-bg-soft);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.8rem 1rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.03em;
+  color: var(--ai-brown) !important;
+  border-bottom: 2px solid rgba(107, 79, 58, 0.15);
+}
+.dark .vp-doc th {
+  color: var(--ai-yellow) !important;
+  border-bottom-color: rgba(255, 214, 107, 0.2);
+}
+.vp-doc td {
+  padding: 0.7rem 1rem;
+  border-top: 1px solid rgba(138, 117, 99, 0.12);
+}
+.vp-doc tr:hover td {
+  background: rgba(107, 79, 58, 0.04);
+}
+.dark .vp-doc tr:hover td {
+  background: rgba(255, 214, 107, 0.04);
+}
+.dark .vp-doc table {
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   列表
+   ============================================================ */
+.vp-doc ul,
+.vp-doc ol {
+  padding-left: 1.6em;
+  margin: 0.9em 0;
+  line-height: 1.85;
+}
+.vp-doc li {
+  margin: 0.35em 0;
+  padding-left: 0.15em;
+}
+.vp-doc li::marker {
+  color: var(--ai-brown);
+  font-weight: 600;
+}
+.dark .vp-doc li::marker {
+  color: var(--ai-yellow);
+}
+.vp-doc li > ul,
+.vp-doc li > ol {
+  margin: 0.2em 0;
+}
+
+/* 任务列表 */
+.vp-doc ul.contains-task-list {
+  padding-left: 0;
+  list-style: none;
+}
+.vp-doc .task-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+.vp-doc input[type="checkbox"] {
+  accent-color: var(--ai-brown);
+  width: 16px;
+  height: 16px;
+  margin-top: 0.35em;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.dark .vp-doc input[type="checkbox"] {
+  accent-color: var(--ai-yellow);
+}
+
+/* ============================================================
+   分割线
+   ============================================================ */
+.vp-doc hr {
+  margin: 2.5em 0;
+  border: none;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(107, 79, 58, 0.15) 15%,
+    var(--ai-brown) 50%,
+    rgba(107, 79, 58, 0.15) 85%,
+    transparent
+  );
+  border-radius: 1px;
+}
+.dark .vp-doc hr {
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 214, 107, 0.1) 15%,
+    var(--ai-yellow) 50%,
+    rgba(255, 214, 107, 0.1) 85%,
+    transparent
+  );
+}
+
+/* ============================================================
+   图片
+   ============================================================ */
+.vp-doc img {
+  border-radius: 12px;
+  box-shadow: 0 3px 16px var(--ai-shadow);
+  margin: 1.5em auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  cursor: zoom-in;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.vp-doc img:hover {
+  transform: scale(1.015);
+  box-shadow: 0 6px 24px rgba(107, 79, 58, 0.2);
+}
+.dark .vp-doc img {
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.4);
+  filter: brightness(0.85);
+}
+.dark .vp-doc img:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  filter: brightness(0.95);
+}
+
+/* ========== 图片灯箱 ========== */
+.doc-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  animation: lightboxFadeIn 0.25s ease;
+  padding: 5vw;
+}
+
+.doc-lightbox__img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  cursor: default;
+  animation: lightboxImgIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  object-fit: contain;
+}
+
+@keyframes lightboxFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lightboxImgIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ============================================================
+   其他
+   ============================================================ */
+
+/* 脚注 */
+.vp-doc .footnotes {
+  margin-top: 3em;
+  padding-top: 1.5em;
+  border-top: 1px solid var(--ai-text-soft);
+  font-size: 0.9em;
+  color: var(--ai-text-soft);
+}
+.vp-doc .footnotes ol {
+  padding-left: 1.2em;
+}
+
+/* 上标下标 */
+.vp-doc sub,
+.vp-doc sup {
+  font-size: 0.75em;
+  color: var(--ai-text-soft);
+}
+
+/* KBD 键盘按键 */
+.vp-doc kbd {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  font-size: 0.8em;
+  font-family: inherit;
+  background: var(--ai-bg-soft);
+  border: 1px solid var(--ai-text-soft);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--ai-text-soft);
+  color: var(--ai-text);
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+/* 视频 / iframe */
+.vp-doc video,
+.vp-doc iframe {
+  border-radius: 10px;
+  max-width: 100%;
+  margin: 1.2em 0;
+}
+
+/* ============================================================
+   移动端响应式
+   ============================================================ */
+@media (max-width: 768px) {
+  .vp-doc {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .vp-doc h1 {
+    font-size: 1.55rem;
+  }
+  .vp-doc h2 {
+    font-size: 1.25rem;
+    margin-top: 1.8em;
+    padding-left: 0.7em;
+  }
+  .vp-doc h2::before {
+    width: 3px;
+  }
+  .vp-doc h3 {
+    font-size: 1.1rem;
+    padding-left: 0.55em;
+  }
+  .vp-doc h4 {
+    font-size: 1rem;
+  }
+  .vp-doc h5,
+  .vp-doc h6 {
+    font-size: 0.95rem;
+  }
+
+  /* 表格横向滚动 */
+  .vp-doc table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  .vp-doc th,
+  .vp-doc td {
+    padding: 0.6rem 0.8rem;
+  }
+
+  /* 代码块 */
+  .vp-doc pre {
+    padding: 1em;
+    font-size: 0.8em;
+    border-radius: 8px;
+  }
+  .vp-doc div[class*='language-'] {
+    border-radius: 8px !important;
+  }
+
+  /* 引用块 */
+  .vp-doc blockquote {
+    padding: 0.9rem 1rem 0.9rem 1.2rem;
+  }
+
+  /* 图片 */
+  .vp-doc img {
+    border-radius: 8px;
+  }
+
+  /* 标题滚动偏移 */
+  .vp-doc h1,
+  .vp-doc h2,
+  .vp-doc h3,
+  .vp-doc h4,
+  .vp-doc h5,
+  .vp-doc h6 {
+    scroll-margin-top: 64px;
+  }
+
+  .vp-doc hr {
+    margin: 2em 0;
+  }
+}

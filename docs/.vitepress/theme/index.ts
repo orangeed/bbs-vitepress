@@ -18,7 +18,8 @@ import {
   Switch,
   Tooltip,
   Modal,
-  Cursor
+  Cursor,
+  Image
 } from 'animal-island-vue'
 
 import './styles/custom.css'
@@ -35,6 +36,8 @@ import './style/dark.css'
 import './style/base.css'
 
 import './styles/header.css'
+
+import './style/doc.css'
 
 export default {
   extends: DefaultTheme,
@@ -54,5 +57,6 @@ export default {
     app.component('ATooltip', Tooltip)
     app.component('AModal', Modal)
     app.component('ACursor', Cursor)
+    app.component('AImage', Image)
   }
 } satisfies Theme

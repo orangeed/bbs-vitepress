@@ -9,7 +9,7 @@
     "preview": "vitepress preview docs"
   },
   "dependencies": {
-    "animal-island-vue": "^0.2.1",
+    "animal-island-vue": "^1.0.0",
     "artalk": "^2.10.0",
     "dayjs": "^1.11.21",
     "typescript": "^5.7.5",

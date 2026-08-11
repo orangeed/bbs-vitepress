@@ -15,7 +15,11 @@ export default defineConfig({
         src: "//sdk.51.la/js-sdk-pro.min.js",
       },
     ],
-    ["script", {}, `LA.init({id: "3Pza9oQ74JEgxtxN", ck: "3Pza9oQ74JEgxtxN"})`],
+    [
+      "script",
+      {},
+      `document.getElementById('LA_COLLECT')?.addEventListener('load',function(){LA.init({id:"3Pza9oQ74JEgxtxN",ck:"3Pza9oQ74JEgxtxN"})})`,
+    ],
   ],
   vite: {
     ssr: {
