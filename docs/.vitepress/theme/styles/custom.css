@@ -76,6 +76,8 @@ input[type='radio'] {
 }
 
 #app {
+  /* background: var(--ai-bg); */
+
   background-image: var(--ai-bg-img);
   background-repeat: no-repeat;
   background-position: center top;
@@ -132,7 +134,7 @@ input[type='radio'] {
 /* 通用卡片圆角、阴影 */
 .island-card {
   border-radius: 18px !important;
-  box-shadow: 0 6px 18px var(--ai-shadow) !important;
+  /* box-shadow: 0 6px 18px var(--ai-shadow) !important; */
 }
 
 /* 分页 */
@@ -285,7 +287,6 @@ input[type='radio'] {
 .ai-tag:hover {
   transform: translateY(-2px);
 }
-
 /* 轮播 */
 .hero-banner {
   position: relative;

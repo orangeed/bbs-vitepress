@@ -8,7 +8,7 @@ const router = useRouter()
 </script>
 
 <template>
-  <ACard :color="post.color" class="island-card post-card" @click="router.go(post.href)">
+  <ACard class="island-card post-card" @click="router.go(post.href)">
     <div class="post-card__body">
       <div v-if="post.coverType === 'image'" class="post-card__cover is-image">
         <img :src="post.cover" :alt="post.title" loading="lazy" />
@@ -37,15 +37,19 @@ const router = useRouter()
 
 <style scoped>
 .post-card {
+  /* background: var(--ai-bg) !important; */
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background 0.35s ease;
+  border: 1px solid var(--ai-shadow) !important;
 }
 
 .post-card:hover {
-  /* transform: translateY(-8px); */
-  transform: scale(1.04);
+  transform: translateY(-4px) scale(1.02);
   box-shadow: 0 14px 28px var(--ai-shadow);
-} 
+  /* background: var(--ai-bg-soft) !important; */
+}
 
 .post-card__body {
   display: flex;
