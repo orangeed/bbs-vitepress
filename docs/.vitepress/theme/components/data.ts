@@ -1626,9 +1626,9 @@ export const categories: Category[] = [
       },
       {
         name: "爱下电子书",
-        url: "https://ixdzs.hk",
-        displayUrl: "ixdzs.hk",
-        desc: "免费的阅读网站，网络小说",
+        url: "https://ixdzs8.com",
+        displayUrl: "ixdzs8.com",
+        desc: "免费的阅读网站，网络小说，有台湾、香港网址，台湾：https://ixdzs.tw，香港：https://ixdzs.hk",
         favicon: "爱",
         faviconBg: "#b71c1c",
         tag: "电子书库",
