@@ -4,7 +4,7 @@
   "description": "基于 VitePress 与 animal-island-vue 的博客项目",
   "type": "module",
   "scripts": {
-    "dev": "vitepress dev docs",
+    "dev": "vitepress dev docs --host",
     "build": "vitepress build docs",
     "preview": "vitepress preview docs"
   },
