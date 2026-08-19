@@ -27,23 +27,23 @@ function goPreorder() {
     </header>
 
     <div class="action-wrapper">
-      <section class="action-card" @click="goMenu">
+      <div class="action-card" @click="goMenu">
         <div class="action-info">
           <h2 class="action-title">直接点菜</h2>
           <p class="action-desc">马上选菜，下单后自取</p>
           <button class="action-btn">开始点菜</button>
         </div>
         <div class="action-img direct-img">🍚</div>
-      </section>
+      </div>
 
-      <section class="action-card" @click="goPreorder">
+      <div class="action-card" @click="goPreorder">
         <div class="action-info">
           <h2 class="action-title">预点菜</h2>
           <p class="action-desc">提前安排周一到周五晚饭</p>
           <button class="action-btn">安排一周</button>
         </div>
         <div class="action-img preorder-img">📅</div>
-      </section>
+      </div>
     </div>
 
   </div>
