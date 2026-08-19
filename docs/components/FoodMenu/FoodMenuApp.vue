@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { store } from './useStore'
 import HomePage from './HomePage.vue'
 import MenuPage from './MenuPage.vue'
@@ -7,11 +8,17 @@ import PreorderDate from './PreorderDate.vue'
 import PreorderMenu from './PreorderMenu.vue'
 import PreorderSummary from './PreorderSummary.vue'
 import ProfilePage from './ProfilePage.vue'
+
+// 仅客户端挂载后渲染，避免 SSR/hydration 不一致导致子树丢失
+const mounted = ref(false)
+onMounted(() => {
+  mounted.value = true
+})
 </script>
 
 <template>
   <div class="food-menu-app">
-    <div class="phone-frame">
+    <div class="phone-frame" v-if="mounted">
       <HomePage v-if="store.currentPage === 'home'" />
       <MenuPage v-else-if="store.currentPage === 'menu'" />
       <DishDetail v-else-if="store.currentPage === 'detail'" />
