@@ -35,7 +35,7 @@ function goSummary() {
     <header class="page-header">
       <button class="back-btn" @click="goDate">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
         </svg>
       </button>
       <h1 class="page-title">预点菜</h1>
@@ -43,13 +43,8 @@ function goSummary() {
     </header>
 
     <div class="week-bar">
-      <button
-        v-for="(d, i) in weekDays"
-        :key="i"
-        class="week-tab"
-        :class="{ active: store.selectedPreOrderDayIndex === i }"
-        @click="store.selectedPreOrderDayIndex = i"
-      >
+      <button v-for="(d, i) in weekDays" :key="i" class="week-tab"
+        :class="{ active: store.selectedPreOrderDayIndex === i }" @click="store.selectedPreOrderDayIndex = i">
         <span class="week-day">{{ d.day }}</span>
         <span class="week-date">{{ d.date }}</span>
       </button>
@@ -57,39 +52,25 @@ function goSummary() {
 
     <div class="menu-body">
       <aside class="menu-sidebar">
-        <button
-          v-for="cat in subCategories"
-          :key="cat"
-          class="sidebar-item"
-          :class="{ active: activeSub === cat }"
-          @click="activeSub = cat"
-        >
+        <button v-for="cat in subCategories" :key="cat" class="sidebar-item" :class="{ active: activeSub === cat }"
+          @click="activeSub = cat">
           {{ cat }}
         </button>
       </aside>
 
       <main class="menu-list">
-        <div
-          v-for="dish in filteredDishes"
-          :key="dish.id"
-          class="dish-item"
-          @click="goDishDetail(dish.id)"
-        >
+        <div v-for="dish in filteredDishes" :key="dish.id" class="dish-item" @click="goDishDetail(dish.id)">
           <img class="dish-img" :src="dish.image" :alt="dish.name" />
           <div class="dish-info">
             <h3 class="dish-name">{{ dish.name }}</h3>
             <p class="dish-price">¥{{ dish.price }}</p>
           </div>
-          <button
-            class="add-btn"
-            :class="{ selected: isSelected(dish.id) }"
-            @click.stop="toggleDish(dish.id)"
-          >
+          <button class="add-btn" :class="{ selected: isSelected(dish.id) }" @click.stop="toggleDish(dish.id)">
             <svg v-if="!isSelected(dish.id)" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
             </svg>
             <svg v-else viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
             </svg>
           </button>
         </div>

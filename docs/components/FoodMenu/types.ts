@@ -21,6 +21,7 @@ export interface CartItem {
 export interface OrderItem {
   name: string
   qty: number
+  price?: number
 }
 
 export interface Order {
@@ -33,6 +34,7 @@ export interface Order {
   status: '已完成' | '配送中' | '待确认'
   type: 'direct' | 'preorder'
   preDays?: PreOrderDay[]
+  pickup?: string
 }
 
 export interface PreOrderDay {

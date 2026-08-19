@@ -20,6 +20,9 @@ importers:
       html-to-image:
         specifier: ^1.11.13
         version: 1.11.13
+      lunar-javascript:
+        specifier: ^1.7.7
+        version: 1.7.7
       typescript:
         specifier: ^5.7.5
         version: 5.9.3
@@ -772,6 +775,9 @@ packages:
   is-what@5.5.0:
     resolution: {integrity: sha512-oG7cgbmg5kLYae2N5IVd3jm2s+vldjxJzK1pcu9LfpGuQ93MQSzo0okvRna+7y5ifrD+20FE8FvjusyGaz14fw==}
     engines: {node: '>=18'}
+
+  lunar-javascript@1.7.7:
+    resolution: {integrity: sha512-u/KYiwPIBo/0bT+WWfU7qO1d+aqeB90Tuy4ErXenr2Gam0QcWeezUvtiOIyXR7HbVnW2I1DKfU0NBvzMZhbVQw==}
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -1786,6 +1792,8 @@ snapshots:
     optional: true
 
   is-what@5.5.0: {}
+
+  lunar-javascript@1.7.7: {}
 
   magic-string@0.30.21:
     dependencies:
