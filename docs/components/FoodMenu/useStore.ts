@@ -179,10 +179,9 @@ export function confirmOrder(dishList: Dish[]) {
   const createdAt = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
   const order: Order = {
     id: "o" + now.getTime(),
-    // date: `${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
-    date:"02-05",
+    date: `${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
     time: `${pad(now.getHours())}:${pad(now.getMinutes())}`,
-    createdAt: "2027-02-05 12:00:00",
+    createdAt,
     items: items.map((ci) => ({ name: ci.dish.name, qty: ci.qty, price: ci.dish.price })),
     total: getCartSubtotal(dishList),
     status: "待确认",
