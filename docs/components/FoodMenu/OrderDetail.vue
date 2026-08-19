@@ -25,16 +25,34 @@
         </div>
       </div>
 
-      <h3 class="section-title">菜品清单</h3>
-      <div class="detail-dishes">
-        <div class="detail-dish" v-for="item in detailItems" :key="item.name">
-          <div class="dd-info">
-            <span class="dd-name">{{ item.name }}</span>
-            <span class="dd-price">¥{{ item.price }} × {{ item.qty }}</span>
+      <template v-if="order.type === 'preorder' && order.preDays && order.preDays.length">
+        <div class="pre-day-block" v-for="day in order.preDays" :key="day.day">
+          <h3 class="day-title">{{ day.day }} <span class="day-date">{{ day.date }}</span></h3>
+          <div class="detail-dishes" v-if="day.dishes && day.dishes.length">
+            <div class="detail-dish" v-for="d in dayDishList(day)" :key="d.name">
+              <div class="dd-info">
+                <span class="dd-name">{{ d.name }}</span>
+                <span class="dd-price">¥{{ dishPrice(d.name) }} × {{ d.qty }}</span>
+              </div>
+              <span class="dd-subtotal">¥{{ dishPrice(d.name) * d.qty }}</span>
+            </div>
           </div>
-          <span class="dd-subtotal">¥{{ item.price * item.qty }}</span>
+          <p class="day-empty" v-else>暂未点菜</p>
         </div>
-      </div>
+      </template>
+
+      <template v-else>
+        <h3 class="section-title">菜品清单</h3>
+        <div class="detail-dishes">
+          <div class="detail-dish" v-for="item in detailItems" :key="item.name">
+            <div class="dd-info">
+              <span class="dd-name">{{ item.name }}</span>
+              <span class="dd-price">¥{{ item.price }} × {{ item.qty }}</span>
+            </div>
+            <span class="dd-subtotal">¥{{ item.price * item.qty }}</span>
+          </div>
+        </div>
+      </template>
 
       <div class="detail-total">
         <span>合计</span>
@@ -80,7 +98,31 @@ const detailItems = computed(() => order.value.items.map((it) => {
   }
 }))
 
-const total = computed(() => detailItems.value.reduce((sum, it) => sum + it.price * it.qty, 0))
+function dishPrice(name: string) {
+  const dish = dishList.find((d) => d.name === name)
+  return dish ? dish.price : 0
+}
+
+// 预点单的 day.dishes 是菜名字符串数组，按同名聚合数量
+function dayDishList(day: { dishes: string[] }) {
+  const map: Record<string, { name: string; qty: number }> = {}
+  for (const name of day.dishes) {
+    if (map[name]) map[name].qty++
+    else map[name] = { name, qty: 1 }
+  }
+  return Object.values(map)
+}
+
+const total = computed(() => {
+  const o = order.value
+  if (o.type === 'preorder' && o.preDays && o.preDays.length) {
+    // 预点单按各天汇总
+    return o.preDays.reduce((daySum, day) => {
+      return daySum + dayDishList(day).reduce((s, d) => s + dishPrice(d.name) * d.qty, 0)
+    }, 0)
+  }
+  return detailItems.value.reduce((sum, it) => sum + it.price * it.qty, 0)
+})
 </script>
 
 <style scoped>
@@ -98,10 +140,10 @@ const total = computed(() => detailItems.value.reduce((sum, it) => sum + it.pric
   top: 0;
   z-index: 10;
   padding: 14px 16px;
-  /* background: rgba(255, 255, 255, 0.72); */
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  /* border-bottom: 1px solid rgba(0, 0, 0, 0.06); */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
   flex-shrink: 0;
 }
@@ -199,6 +241,37 @@ const total = computed(() => detailItems.value.reduce((sum, it) => sum + it.pric
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 12px;
+}
+
+.pre-day-block {
+  margin-bottom: 18px;
+}
+
+.day-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e8920c;
+  margin: 4px 0 10px;
+}
+
+.day-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+}
+
+.day-empty {
+  margin: 2px 0 10px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px dashed rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  font-size: 14px;
+  color: #999;
+  text-align: center;
 }
 
 .detail-dishes {
