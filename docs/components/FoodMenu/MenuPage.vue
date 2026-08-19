@@ -105,11 +105,7 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
     <!-- 下单成功提示 -->
     <div v-if="store.showSuccess" class="success-mask" @click.self="closeSuccess">
       <div class="success-dialog">
-        <div class="success-icon">
-          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#52c41a" stroke-width="3">
-            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+        <div class="success-icon"></div>
         <h3 class="success-title">下单成功</h3>
         <p class="success-desc">订单已提交，我们会尽快为您准备</p>
         <button class="success-btn" @click="closeSuccess">确定</button>
@@ -494,14 +490,23 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 }
 
 .success-icon {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: #f0f9eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   margin: 0 auto 14px;
+}
+.success-icon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 15px;
+  height: 27px;
+  border: solid #52c41a;
+  border-width: 0 4px 4px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .success-title {

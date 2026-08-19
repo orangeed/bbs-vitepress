@@ -10,17 +10,22 @@ import ProfilePage from './ProfilePage.vue'
 </script>
 
 <template>
-  <div class="food-menu-app">
-    <div class="phone-frame">
-      <HomePage v-if="store.currentPage === 'home'" />
-      <MenuPage v-else-if="store.currentPage === 'menu'" />
-      <DishDetail v-else-if="store.currentPage === 'detail'" />
-      <PreorderDate v-else-if="store.currentPage === 'preorder-date'" />
-      <PreorderMenu v-else-if="store.currentPage === 'preorder-menu'" />
-      <PreorderSummary v-else-if="store.currentPage === 'preorder-summary'" />
-      <ProfilePage v-else-if="store.currentPage === 'profile'" />
+  <ClientOnly>
+    <div class="food-menu-app">
+      <div class="phone-frame">
+        <HomePage v-if="store.currentPage === 'home'" />
+        <MenuPage v-else-if="store.currentPage === 'menu'" />
+        <DishDetail v-else-if="store.currentPage === 'detail'" />
+        <PreorderDate v-else-if="store.currentPage === 'preorder-date'" />
+        <PreorderMenu v-else-if="store.currentPage === 'preorder-menu'" />
+        <PreorderSummary v-else-if="store.currentPage === 'preorder-summary'" />
+        <ProfilePage v-else-if="store.currentPage === 'profile'" />
+      </div>
     </div>
-  </div>
+    <template #fallback>
+      <div class="food-menu-loading">加载中…</div>
+    </template>
+  </ClientOnly>
 </template>
 
 <style scoped>
