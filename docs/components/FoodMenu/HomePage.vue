@@ -33,7 +33,7 @@ function goPreorder() {
           <p class="action-desc">马上选菜，下单后自取</p>
           <button class="action-btn">开始点菜</button>
         </div>
-        <div class="action-img direct-img"></div>
+        <div class="action-img direct-img">🍚</div>
       </section>
 
       <section class="action-card" @click="goPreorder">
@@ -42,7 +42,7 @@ function goPreorder() {
           <p class="action-desc">提前安排周一到周五晚饭</p>
           <button class="action-btn">安排一周</button>
         </div>
-        <div class="action-img preorder-img"></div>
+        <div class="action-img preorder-img">📅</div>
       </section>
     </div>
 
@@ -211,14 +211,19 @@ function goPreorder() {
   background-position: center;
   flex-shrink: 0;
   margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  line-height: 1;
 }
 
 .direct-img {
-  background-image: url('https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=200&h=200&fit=crop');
+  background: linear-gradient(135deg, #ffb347, #f5a623);
 }
 
 .preorder-img {
-  background-image: url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=200&h=200&fit=crop');
+  background: linear-gradient(135deg, #ff9a9e, #f56a23);
 }
 
 .promo-card {
