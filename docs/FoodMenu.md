@@ -17,4 +17,6 @@ head:
 import FoodMenu from './components/FoodMenu/FoodMenuApp.vue'
 </script>
 
-<FoodMenu />
+<ClientOnly>
+  <FoodMenu />
+</ClientOnly>
