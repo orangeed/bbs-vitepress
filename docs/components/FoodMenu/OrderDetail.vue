@@ -7,122 +7,50 @@
         </svg>
       </button>
       <h2 class="page-title">订单详情</h2>
+      <button class="save-btn" :disabled="saving" @click="saveImage">
+        {{ saving ? '保存中…' : '保存图片' }}
+      </button>
     </header>
 
     <div class="detail-scroll">
-      <div class="detail-meta">
-        <div class="meta-item">
-          <span class="meta-label">下单时间</span>
-          <span class="meta-value">{{ orderTime }}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">订单类型</span>
-          <span class="meta-value">{{ orderTypeText }}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">订单状态</span>
-          <span class="meta-value status" :class="{ [statusClass]: statusClass }">{{ orderStatusText }}</span>
-        </div>
-      </div>
-
-      <template v-if="order.type === 'preorder' && order.preDays && order.preDays.length">
-        <div class="pre-day-block" v-for="day in order.preDays" :key="day.day">
-          <h3 class="day-title">{{ day.day }} <span class="day-date">{{ day.date }}</span></h3>
-          <div class="detail-dishes" v-if="day.dishes && day.dishes.length">
-            <div class="detail-dish" v-for="d in dayDishList(day)" :key="d.name">
-              <div class="dd-info">
-                <span class="dd-name">{{ d.name }}</span>
-                <span class="dd-price">¥{{ dishPrice(d.name) }} × {{ d.qty }}</span>
-              </div>
-              <span class="dd-subtotal">¥{{ dishPrice(d.name) * d.qty }}</span>
-            </div>
-          </div>
-          <p class="day-empty" v-else>暂未点菜</p>
-        </div>
-      </template>
-
-      <template v-else>
-        <h3 class="section-title">菜品清单</h3>
-        <div class="detail-dishes">
-          <div class="detail-dish" v-for="item in detailItems" :key="item.name">
-            <div class="dd-info">
-              <span class="dd-name">{{ item.name }}</span>
-              <span class="dd-price">¥{{ item.price }} × {{ item.qty }}</span>
-            </div>
-            <span class="dd-subtotal">¥{{ item.price * item.qty }}</span>
-          </div>
-        </div>
-      </template>
-
-      <div class="detail-total">
-        <span>合计</span>
-        <span class="detail-total-price">¥{{ total }}</span>
-      </div>
+      <div class="mail-wrapper" ref="mailRef" v-html="mailHtml"></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { toPng } from 'html-to-image'
 import { store, closeOrderDetail } from './useStore'
-import { dishes as dishList } from './data'
+import { selectMailTemplate } from './mailTemplates'
 
 const order = computed(() => store.selectedOrder!)
+const mailRef = ref<HTMLElement | null>(null)
+const saving = ref(false)
 
-const orderTime = computed(() => {
-  // 优先使用完整下单时间 createdAt（年-月-日 时:分:秒）
-  if (order.value.createdAt) return order.value.createdAt
-  // 旧订单回退：即时单 time="HH:mm"，预点单 time="" 用 date
-  return order.value.time || order.value.date
-})
+// 订单详情直接复用发送邮件的同款 HTML 模板，保证样式一致
+const mailHtml = computed(() => selectMailTemplate(order.value).buildHtml(order.value))
 
-const orderTypeText = computed(() => order.value.type === 'preorder' ? '预点单' : '即时单')
-
-const orderStatusText = computed(() => order.value.status)
-
-const statusClass = computed(() => {
-  switch (order.value.status) {
-    case '待确认': return 'status-pending'
-    case '配送中': return 'status-doing'
-    case '已完成': return 'status-done'
-    default: return ''
+async function saveImage() {
+  const node = mailRef.value
+  if (!node) return
+  saving.value = true
+  try {
+    const dataUrl = await toPng(node, {
+      pixelRatio: 2,
+      cacheBust: true,
+      // backgroundColor: '#ffffff',
+    })
+    const link = document.createElement('a')
+    link.download = `订单-${order.value.id}.png`
+    link.href = dataUrl
+    link.click()
+  } catch (e) {
+    console.error('保存图片失败', e)
+  } finally {
+    saving.value = false
   }
-})
-
-const detailItems = computed(() => order.value.items.map((it) => {
-  const dish = dishList.find((d) => d.name === it.name)
-  return {
-    name: it.name,
-    price: dish ? dish.price : 0,
-    qty: it.qty,
-  }
-}))
-
-function dishPrice(name: string) {
-  const dish = dishList.find((d) => d.name === name)
-  return dish ? dish.price : 0
 }
-
-// 预点单的 day.dishes 是菜名字符串数组，按同名聚合数量
-function dayDishList(day: { dishes: string[] }) {
-  const map: Record<string, { name: string; qty: number }> = {}
-  for (const name of day.dishes) {
-    if (map[name]) map[name].qty++
-    else map[name] = { name, qty: 1 }
-  }
-  return Object.values(map)
-}
-
-const total = computed(() => {
-  const o = order.value
-  if (o.type === 'preorder' && o.preDays && o.preDays.length) {
-    // 预点单按各天汇总
-    return o.preDays.reduce((daySum, day) => {
-      return daySum + dayDishList(day).reduce((s, d) => s + dishPrice(d.name) * d.qty, 0)
-    }, 0)
-  }
-  return detailItems.value.reduce((sum, it) => sum + it.price * it.qty, 0)
-})
 </script>
 
 <style scoped>
@@ -174,7 +102,30 @@ const total = computed(() => {
   font-weight: 600;
   letter-spacing: 0.2px;
   color: #1a1a1a;
-  margin-right: 36px;
+  margin-right: 12px;
+}
+
+.save-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: rgba(245, 166, 35, 0.9);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(245, 166, 35, 0.3);
+  transition: transform 0.1s ease, opacity 0.2s ease;
+}
+
+.save-btn:active {
+  transform: scale(0.96);
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .detail-scroll {
@@ -183,154 +134,10 @@ const total = computed(() => {
   padding: 16px;
 }
 
-.detail-meta {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(245, 166, 35, 0.2);
+.mail-wrapper {
+  max-width: 480px;
+  margin: 0 auto;
   border-radius: 16px;
-  padding: 14px 16px;
-  margin-bottom: 18px;
-}
-
-.meta-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 7px 0;
-  font-size: 14px;
-}
-
-.meta-item + .meta-item {
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.meta-label {
-  color: #888;
-  flex-shrink: 0;
-}
-
-.meta-value {
-  color: #1a1a1a;
-  font-weight: 600;
-  text-align: right;
-  max-width: 70%;
-}
-
-.meta-value.status {
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 13px;
-}
-
-.status-pending {
-  background: rgba(245, 166, 35, 0.15);
-  color: #e8920c;
-}
-
-.status-doing {
-  background: rgba(33, 150, 243, 0.15);
-  color: #2196f3;
-}
-
-.status-done {
-  background: rgba(76, 175, 80, 0.15);
-  color: #4caf50;
-}
-
-.section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 12px;
-}
-
-.pre-day-block {
-  margin-bottom: 18px;
-}
-
-.day-title {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #e8920c;
-  margin: 4px 0 10px;
-}
-
-.day-date {
-  font-size: 13px;
-  font-weight: 500;
-  color: #999;
-}
-
-.day-empty {
-  margin: 2px 0 10px;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px dashed rgba(0, 0, 0, 0.12);
-  border-radius: 14px;
-  font-size: 14px;
-  color: #999;
-  text-align: center;
-}
-
-.detail-dishes {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(245, 166, 35, 0.2);
-  border-radius: 16px;
-  padding: 6px 16px;
-}
-
-.detail-dish {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-}
-
-.detail-dish + .detail-dish {
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.dd-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.dd-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.dd-price {
-  font-size: 13px;
-  color: #888;
-}
-
-.dd-subtotal {
-  font-size: 15px;
-  font-weight: 700;
-  color: #e8920c;
-}
-
-.detail-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 18px;
-  padding: 14px 16px;
-  background: rgba(245, 166, 35, 0.12);
-  border: 1px solid rgba(245, 166, 35, 0.25);
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-
-.detail-total-price {
-  color: #e8920c;
-  font-size: 18px;
+  overflow: hidden;
 }
 </style>

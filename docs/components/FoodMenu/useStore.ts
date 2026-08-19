@@ -1,6 +1,7 @@
 import { reactive, computed } from 'vue'
 import type { Dish, CartItem, Order, PreOrderDay } from './types'
 import { weekDays } from './data'
+import { getMailTemplate, selectMailTemplate } from './mailTemplates'
 
 /* ============== 直接点菜（购物车 / 订单） ============== */
 const ORDERS_KEY = 'chen-chuan-cai-orders'
@@ -63,121 +64,13 @@ function getPreorderKey(weekKey: string) {
 /* ============== 下单后发送邮件（调用后端 /mail/send） ============== */
 const ORDER_EMAIL = '1208917130@qq.com'
 
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
-
-function buildPreDayBlocks(order: Order): string {
-  // 预点菜按周一到周五分组展示
-  const days = order.preDays && order.preDays.length ? order.preDays : []
-  if (!days.length) {
-    return `<p style="color:#99805a;font-size:14px;margin:4px 0 0;">（未安排任何菜品）</p>`
-  }
-  return days
-    .map((d) => {
-      const dishList =
-        d.dishes && d.dishes.length
-          ? d.dishes
-              .map(
-                (name, i) => `
-                <div style="display:flex;align-items:center;padding:7px 12px;border-bottom:${i === d.dishes.length - 1 ? 'none' : '1px solid #f0e6d4'};">
-                  <span style="flex:1;color:#1a1a1a;font-size:14px;font-weight:600;">${escapeHtml(name)}</span>
-                  <span style="color:#666;font-size:13px;">x1</span>
-                </div>`
-              )
-              .join('')
-          : `<div style="padding:9px 12px;color:#b59b73;font-size:13px;">（未安排）</div>`
-      return `
-        <div style="background:#fff8ea;border-radius:12px;overflow:hidden;margin-bottom:10px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:linear-gradient(135deg,#ffb347,#f5a623);">
-            <span style="color:#fff;font-size:14px;font-weight:800;">${escapeHtml(d.day)}</span>
-            <span style="color:rgba(255,255,255,0.95);font-size:12px;">${escapeHtml(d.date || '')}</span>
-          </div>
-          ${dishList}
-        </div>`
-    })
-    .join('')
-}
-
-function buildOrderMailHtml(order: Order): string {
-  const typeText = order.type === 'preorder' ? '预点菜（本周）' : '直接点菜'
-
-  let detailHtml: string
-  if (order.type === 'preorder') {
-    // 预点菜：按周一到周五分组
-    detailHtml = `
-        <p style="color:#999;font-size:13px;margin:0 0 10px;">本周安排（周一到周五）</p>
-        ${buildPreDayBlocks(order)}`
-  } else {
-    // 直接点菜：扁平列表
-    const rows = order.items
-      .map(
-        (it, i) => `
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #f0e6d4;color:#888;font-size:14px;">${i + 1}</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #f0e6d4;color:#1a1a1a;font-size:15px;font-weight:600;">${escapeHtml(it.name)}</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #f0e6d4;color:#666;font-size:14px;text-align:center;">x${it.qty}</td>
-        </tr>`
-      )
-      .join('')
-    detailHtml = `
-        <table style="width:100%;border-collapse:collapse;background:#fff8ea;border-radius:12px;overflow:hidden;">
-          <thead>
-            <tr style="background:#fff1d6;">
-              <th style="padding:10px 12px;text-align:left;color:#c9760a;font-size:13px;">#</th>
-              <th style="padding:10px 12px;text-align:left;color:#c9760a;font-size:13px;">菜品</th>
-              <th style="padding:10px 12px;text-align:center;color:#c9760a;font-size:13px;">数量</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>`
-  }
-
-  return `
-  <div style="background:#f5f0e6;padding:24px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;">
-    <div style="max-width:480px;margin:0 auto;background:#fffcf5;border-radius:16px;overflow:hidden;box-shadow:0 6px 24px rgba(245,166,35,0.15);">
-      <div style="background:linear-gradient(135deg,#f5a623,#ff8c1a);padding:22px 24px;">
-        <h1 style="margin:0;color:#fff;font-size:20px;font-weight:800;">陈氏川菜小炒</h1>
-        <p style="margin:6px 0 0;color:rgba(255,255,255,0.9);font-size:13px;">您收到一份新订单</p>
-      </div>
-      <div style="padding:22px 24px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="color:#999;font-size:13px;">订单编号</span>
-          <span style="color:#1a1a1a;font-size:13px;font-weight:600;">${escapeHtml(order.id)}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="color:#999;font-size:13px;">下单时间</span>
-          <span style="color:#1a1a1a;font-size:13px;font-weight:600;">${escapeHtml(order.date)}${order.time ? ' ' + escapeHtml(order.time) : ''}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="color:#999;font-size:13px;">订单类型</span>
-          <span style="color:#1a1a1a;font-size:13px;font-weight:600;">${typeText}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
-          <span style="color:#999;font-size:13px;">订单状态</span>
-          <span style="color:#f5a623;font-size:13px;font-weight:700;">${escapeHtml(order.status)}</span>
-        </div>
-        ${detailHtml}
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:16px;border-top:1px dashed #e7d9bf;">
-          <span style="color:#666;font-size:14px;">合计金额</span>
-          <span style="color:#f5a623;font-size:22px;font-weight:800;">¥${order.total.toFixed(2)}</span>
-        </div>
-      </div>
-      <div style="padding:0 24px 22px;text-align:center;">
-        <p style="margin:0;color:#bbb;font-size:12px;">本邮件由陈氏川菜小炒点菜小程序自动发送</p>
-      </div>
-    </div>
-  </div>`
-}
-
-async function sendOrderEmail(order: Order) {
+async function sendOrderEmail(order: Order, templateKey?: string) {
   if (!isBrowser) return
-  const subject = `【陈氏川菜小炒】您有一个新订单 ${order.id}`
-  const html = buildOrderMailHtml(order)
+  const template = templateKey
+    ? getMailTemplate(templateKey)
+    : selectMailTemplate(order)
+  const subject = `${template.subjectPrefix} ${order.id}`
+  const html = template.buildHtml(order)
   try {
     await fetch('https://api.orangecj.cn/mail/send', {
       method: 'POST',
