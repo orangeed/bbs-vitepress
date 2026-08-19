@@ -179,7 +179,7 @@ async function sendOrderEmail(order: Order) {
   const subject = `【陈氏川菜小炒】您有一个新订单 ${order.id}`
   const html = buildOrderMailHtml(order)
   try {
-    await fetch('http://127.0.0.1:3001/mail/send', {
+    await fetch('https://api.orangecj.cn/mail/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -217,6 +217,7 @@ export const store = reactive({
   showCheckout: false,
   showSuccess: false,
   showPreSuccess: false,
+  selectedOrder: null as Order | null,
 })
 
 export function setPage(page: string) {
@@ -275,10 +276,12 @@ export function confirmOrder(dishList: Dish[]) {
   if (!items.length) return
   const now = new Date()
   const pad = (n: number) => (n < 10 ? '0' + n : '' + n)
+  const createdAt = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
   const order: Order = {
     id: 'o' + now.getTime(),
     date: `${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
     time: `${pad(now.getHours())}:${pad(now.getMinutes())}`,
+    createdAt,
     items: items.map((ci) => ({ name: ci.dish.name, qty: ci.qty })),
     total: getCartSubtotal(dishList),
     status: '待确认',
@@ -316,6 +319,20 @@ export function isPreSelected(dayIndex: number, id: string) {
   return (store.preOrderSelections[dayIndex] || []).includes(id)
 }
 
+export function clearPreOrder() {
+  store.preOrderSelections = {}
+}
+
+export function openOrderDetail(order: Order) {
+  store.selectedOrder = order
+  store.currentPage = 'order-detail'
+}
+
+export function closeOrderDetail() {
+  store.selectedOrder = null
+  store.currentPage = 'profile'
+}
+
 export function getPreDayDishes(dayIndex: number, dishList: Dish[]): string[] {
   const ids = store.preOrderSelections[dayIndex] || []
   return ids
@@ -332,6 +349,7 @@ export function confirmPreOrder(dishList: Dish[]) {
   const week = getWeekKey()
   const pad = (n: number) => (n < 10 ? '0' + n : '' + n)
   const now = new Date()
+  const createdAt = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
   // 汇总当前周所有天的菜品
   let totalQty = 0
   let totalPrice = 0
@@ -360,6 +378,7 @@ export function confirmPreOrder(dishList: Dish[]) {
     id: 'p' + now.getTime(),
     date: `本周(${pad(now.getMonth() + 1)}/${pad(now.getDate())}起)`,
     time: '',
+    createdAt,
     items,
     total: totalPrice,
     status: '待确认',

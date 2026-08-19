@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { store, goHome, goDishDetail, addToCart, openCheckout, closeCheckout, confirmOrder, closeSuccess, cartItems, getCartSubtotal, setPage } from './useStore'
+import { store, goHome, goDishDetail, addToCart, removeFromCart, clearCart, openCheckout, closeCheckout, confirmOrder, closeSuccess, cartItems, getCartSubtotal, setPage } from './useStore'
 import { dishes, subCategories } from './data'
 
 const activeSub = ref('爽口凉菜')
@@ -19,19 +19,21 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
     <header class="page-header">
       <button class="back-btn" @click="goHome">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
         </svg>
       </button>
       <h1 class="page-title">直接点菜</h1>
       <div class="header-actions">
         <button class="icon-btn" @click="setPage('profile')">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
           </svg>
         </button>
         <button class="icon-btn cart-btn" @click="setPage('profile')">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            <path
+              d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
           </svg>
           <span v-if="totalCount" class="cart-badge">{{ totalCount }}</span>
         </button>
@@ -40,42 +42,37 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 
     <div class="menu-body">
       <aside class="menu-sidebar">
-        <button
-          v-for="cat in subCategories"
-          :key="cat"
-          class="sidebar-item"
-          :class="{ active: activeSub === cat }"
-          @click="activeSub = cat"
-        >
+        <button v-for="cat in subCategories" :key="cat" class="sidebar-item" :class="{ active: activeSub === cat }"
+          @click="activeSub = cat">
           {{ cat }}
         </button>
       </aside>
 
       <main class="menu-list">
-        <div
-          v-for="dish in filteredDishes"
-          :key="dish.id"
-          class="dish-item"
-          @click="goDishDetail(dish.id)"
-        >
+        <div v-for="dish in filteredDishes" :key="dish.id" class="dish-item" @click="goDishDetail(dish.id)">
           <img class="dish-img" :src="dish.image" :alt="dish.name" />
           <div class="dish-info">
             <h3 class="dish-name">{{ dish.name }}</h3>
             <p class="dish-price">¥{{ dish.price }}</p>
           </div>
-          <button
-            class="add-btn"
-            @click.stop="addToCart(dish.id)"
-          >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-          </button>
+          <div class="dish-actions">
+            <button v-if="store.cart[dish.id]" class="minus-btn" @click.stop="removeFromCart(dish.id)">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M19 13H5v-2h14v2z" />
+              </svg>
+            </button>
+            <span v-if="store.cart[dish.id]" class="dish-qty">{{ store.cart[dish.id] }}</span>
+            <button class="add-btn" @click.stop="addToCart(dish.id)">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </main>
     </div>
 
-    <div v-if="totalCount" class="bottom-bar">
+    <div class="bottom-bar">
       <span class="bottom-info">已选 {{ totalCount }} 道菜 · ¥{{ totalPrice }}</span>
       <button class="bottom-btn" @click="openCheckout">去结算</button>
     </div>
@@ -98,7 +95,10 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
           <span>合计</span>
           <span class="checkout-total-price">¥{{ checkoutTotal }}</span>
         </div>
-        <button class="checkout-confirm" @click="confirmOrder(dishes)">确认下单</button>
+        <div class="checkout-actions">
+          <button class="checkout-clear" @click="clearCart">清空</button>
+          <button class="checkout-confirm" @click="confirmOrder(dishes)">确认下单</button>
+        </div>
       </div>
     </div>
 
@@ -116,7 +116,7 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 
 <style scoped>
 .menu-page {
-  height: 100vh;
+  height: 100%;
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -135,8 +135,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   justify-content: space-between;
   padding: 12px 16px;
   /* background: rgba(255, 255, 255, 0.22); */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .back-btn {
@@ -174,8 +172,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: #5a3e10;
   display: flex;
   align-items: center;
@@ -213,9 +209,7 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 
 .menu-sidebar {
   width: 90px;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.85);
   flex-shrink: 0;
   padding: 8px 0;
   overflow-y: auto;
@@ -250,8 +244,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 14px;
   padding: 10px 12px;
@@ -294,8 +286,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   border-radius: 10px;
   border: none;
   background: rgba(245, 166, 35, 0.85);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.5);
   color: #fff;
   display: flex;
@@ -305,14 +295,40 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   box-shadow: 0 3px 10px rgba(245, 166, 35, 0.3);
 }
 
+.dish-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.minus-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(245, 166, 35, 0.5);
+  background: rgba(255, 255, 255, 0.6);
+  color: #e8920c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.dish-qty {
+  min-width: 22px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 4px;
+}
+
 .bottom-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid rgba(255, 255, 255, 0.6);
   padding: 12px 16px;
   display: flex;
@@ -329,8 +345,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 
 .bottom-btn {
   background: rgba(245, 166, 35, 0.9);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 10px 24px;
@@ -356,8 +370,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   width: 100%;
   max-width: 414px;
   background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 20px 20px 0 0;
   padding: 18px 16px 22px;
@@ -366,8 +378,13 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 }
 
 @keyframes slide-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }
 
 .checkout-head {
@@ -446,8 +463,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 .checkout-confirm {
   width: 100%;
   background: rgba(245, 166, 35, 0.9);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 14px 0;
@@ -456,6 +471,28 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(245, 166, 35, 0.3);
+}
+
+.checkout-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkout-clear {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.55);
+  color: #e8920c;
+  border: 1px solid rgba(245, 166, 35, 0.4);
+  padding: 14px 20px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.checkout-actions .checkout-confirm {
+  flex: 1;
 }
 
 /* 下单成功提示 */
@@ -473,8 +510,6 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   width: 78%;
   max-width: 300px;
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
   padding: 28px 22px 22px;
@@ -485,8 +520,15 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
 }
 
 @keyframes pop-in {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .success-icon {
@@ -497,6 +539,7 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   position: relative;
   margin: 0 auto 14px;
 }
+
 .success-icon::after {
   content: '';
   position: absolute;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
-import { store, goHome, setPage, preorderWeekKey, removeOrder } from './useStore'
+import { store, goHome, setPage, preorderWeekKey, removeOrder, openOrderDetail } from './useStore'
 
 const historyOrders = computed(() => store.orders.filter((o) => o.type === 'direct'))
 const preOrders = computed(() => store.orders.filter((o) => o.type === 'preorder'))
@@ -45,7 +45,7 @@ function onPointerDown(e: PointerEvent, id: string) {
   drag.offset = openId.value === id ? -DELETE_WIDTH : 0
   drag.dragging = true
   drag.moved = false
-  ;(e.target as HTMLElement).setPointerCapture?.(e.pointerId)
+    ; (e.target as HTMLElement).setPointerCapture?.(e.pointerId)
 }
 
 function onPointerMove(e: PointerEvent) {
@@ -84,7 +84,7 @@ function cardStyle(id: string) {
   }
 }
 
-function onCardClick() {
+function onCardClick(order: any) {
   // 如果刚完成滑动，忽略本次 click，避免滑动后立刻被收起
   if (drag.moved) {
     drag.moved = false
@@ -93,7 +93,10 @@ function onCardClick() {
   // 点击已滑开的卡片，收起
   if (openId.value) {
     openId.value = ''
+    return
   }
+  // 否则进入订单详情
+  openOrderDetail(order)
 }
 
 // 删除二次确认
@@ -123,8 +126,8 @@ function confirmDelete() {
   <div class="profile-page">
     <header class="page-header">
       <button class="back-btn" @click="goHome">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
         </svg>
       </button>
       <h1 class="page-title">我的</h1>
@@ -134,74 +137,52 @@ function confirmDelete() {
     <div class="profile-scroll">
       <div class="user-card">
         <div class="avatar">何</div>
-        <div class="user-info">
+        <div>
           <h2 class="user-name">库库干饭的何女士</h2>
           <p class="user-meta">1521***1314 · 尊贵的永久会员</p>
         </div>
       </div>
 
-    <section class="order-section">
-      <h3 class="section-title">历史订单</h3>
-      <div
-        v-for="order in historyOrders"
-        :key="order.id"
-        class="swipe-item"
-      >
-        <button
-          class="swipe-delete"
-          @click="askDelete(order.id)"
-        >删除</button>
-        <div
-          class="order-card"
-          :style="cardStyle(order.id)"
-          @pointerdown="onPointerDown($event, order.id)"
-          @pointermove="onPointerMove"
-          @pointerup="onPointerUp"
-          @pointercancel="onPointerUp"
-          @click="onCardClick()"
-        >
-          <div class="order-head">
-            <span class="order-time">{{ order.date }} {{ order.time }}</span>
-            <span class="order-status" :class="statusClass(order.status)">{{ order.status }}</span>
-          </div>
-          <div class="order-body">
-            <p class="order-items">{{ order.items.map(i => `${i.name}×${i.qty}`).join('、') }}</p>
-            <div class="order-footer">
-              <span class="order-count">共{{ order.items.reduce((a, b) => a + b.qty, 0) }}件</span>
-              <span class="order-total">¥{{ order.total }}</span>
+      <section class="order-section">
+        <h3 class="section-title">历史订单</h3>
+        <div v-for="order in historyOrders" :key="order.id" class="swipe-item">
+          <button class="swipe-delete" @click="askDelete(order.id)">删除</button>
+          <div class="order-card" :style="cardStyle(order.id)" @pointerdown="onPointerDown($event, order.id)"
+            @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp" @click="onCardClick(order)">
+            <div class="order-head">
+              <span class="order-time">{{ order.date }} {{ order.time }}</span>
+              <span class="order-status" :class="statusClass(order.status)">{{ order.status }}</span>
+            </div>
+            <div class="order-body">
+              <p class="order-items">{{order.items.map(i => `${i.name}×${i.qty}`).join('、')}}</p>
+              <div class="order-footer">
+                <span class="order-count">共{{order.items.reduce((a, b) => a + b.qty, 0)}}件</span>
+                <span class="order-total">¥{{ order.total }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <p v-if="!historyOrders.length" class="order-empty">还没有下过单，去点几道菜吧～</p>
-    </section>
+        <p v-if="!historyOrders.length" class="order-empty">还没有下过单，去点几道菜吧～</p>
+      </section>
 
-    <section class="order-section">
-      <h3 class="section-title">预点订单</h3>
-      <div
-        v-for="order in preOrders"
-        :key="order.id"
-        class="order-card"
-      >
-        <div class="order-head">
-          <span class="order-time">{{ order.date }}</span>
-          <span class="order-status" :class="statusClass(order.status)">{{ order.status }}</span>
-        </div>
-        <div class="order-body">
-          <p class="order-items">{{ order.items.map(i => `${i.name}×${i.qty}`).join('、') }}</p>
-          <div class="order-footer">
-            <span class="order-count">共{{ order.items.reduce((a, b) => a + b.qty, 0) }}件</span>
-            <span class="order-total">¥{{ order.total }}</span>
+      <section class="order-section">
+        <h3 class="section-title">预点订单</h3>
+        <div v-for="order in preOrders" :key="order.id" class="order-card" @click="openOrderDetail(order)">
+          <div class="order-head">
+            <span class="order-time">{{ order.date }}</span>
+            <span class="order-status" :class="statusClass(order.status)">{{ order.status }}</span>
           </div>
-          <button
-            v-if="isCurrentWeek(order)"
-            class="edit-pre-btn"
-            @click="editPreOrder"
-          >修改本周预点菜</button>
-          <p v-else class="history-tip">历史预点单不可修改</p>
+          <div class="order-body">
+            <p class="order-items">{{order.items.map(i => `${i.name}×${i.qty}`).join('、')}}</p>
+            <div class="order-footer">
+              <span class="order-count">共{{order.items.reduce((a, b) => a + b.qty, 0)}}件</span>
+              <span class="order-total">¥{{ order.total }}</span>
+            </div>
+            <button v-if="isCurrentWeek(order)" class="edit-pre-btn" @click.stop="editPreOrder">修改本周预点菜</button>
+            <p v-else class="history-tip">历史预点单不可修改</p>
+          </div>
         </div>
-      </div>
-      <p v-if="!preOrders.length" class="order-empty">还没有预点订单，去安排本周晚饭吧～</p>
+        <p v-if="!preOrders.length" class="order-empty">还没有预点订单，去安排本周晚饭吧～</p>
       </section>
     </div>
 

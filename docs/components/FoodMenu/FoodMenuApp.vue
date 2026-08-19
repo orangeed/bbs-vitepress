@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { store } from './useStore'
 import HomePage from './HomePage.vue'
 import MenuPage from './MenuPage.vue'
@@ -8,17 +8,21 @@ import PreorderDate from './PreorderDate.vue'
 import PreorderMenu from './PreorderMenu.vue'
 import PreorderSummary from './PreorderSummary.vue'
 import ProfilePage from './ProfilePage.vue'
+import OrderDetail from './OrderDetail.vue'
 
-// 仅客户端挂载后渲染，避免 SSR/hydration 不一致导致子树丢失
-const mounted = ref(false)
+// 仅在浏览器端已挂载时才渲染交互子树，规避 SSR 预渲染导致的节点丢失。
+// 初始为 false（SSR 不输出内容），onMounted 后立刻翻 true。
+const show = ref(false)
 onMounted(() => {
-  mounted.value = true
+  nextTick(() => {
+    show.value = true
+  })
 })
 </script>
 
 <template>
   <div class="food-menu-app">
-    <div class="phone-frame" v-if="mounted">
+    <div class="phone-frame" v-show="show">
       <HomePage v-if="store.currentPage === 'home'" />
       <MenuPage v-else-if="store.currentPage === 'menu'" />
       <DishDetail v-else-if="store.currentPage === 'detail'" />
@@ -26,6 +30,7 @@ onMounted(() => {
       <PreorderMenu v-else-if="store.currentPage === 'preorder-menu'" />
       <PreorderSummary v-else-if="store.currentPage === 'preorder-summary'" />
       <ProfilePage v-else-if="store.currentPage === 'profile'" />
+      <OrderDetail v-else-if="store.currentPage === 'order-detail'" />
     </div>
   </div>
 </template>
@@ -44,12 +49,15 @@ onMounted(() => {
 .phone-frame {
   width: 100%;
   max-width: 414px;
-  min-height: 736px;
+  height: 100vh;
+  max-height: 896px;
   background: linear-gradient(160deg, #fff3dc 0%, #ffe9c9 50%, #ffd9a8 100%);
   border-radius: 32px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.18);
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 背景柔光斑点，增强毛玻璃层次感 */

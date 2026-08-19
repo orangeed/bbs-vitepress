@@ -27,6 +27,7 @@ export interface Order {
   id: string
   date: string
   time: string
+  createdAt?: string
   items: OrderItem[]
   total: number
   status: '已完成' | '配送中' | '待确认'
@@ -40,4 +41,4 @@ export interface PreOrderDay {
   dishes: string[]
 }
 
-export type PageName = 'home' | 'menu' | 'detail' | 'preorder-date' | 'preorder-menu' | 'preorder-summary' | 'profile'
+export type PageName = 'home' | 'menu' | 'detail' | 'preorder-date' | 'preorder-menu' | 'preorder-summary' | 'profile' | 'order-detail'

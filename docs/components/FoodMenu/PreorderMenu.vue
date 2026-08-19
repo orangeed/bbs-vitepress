@@ -105,7 +105,7 @@ function goSummary() {
 
 <style scoped>
 .preorder-menu-page {
-  height: 100vh;
+  height: 100%;
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -124,8 +124,6 @@ function goSummary() {
   justify-content: space-between;
   padding: 12px 16px;
   /* background: rgba(255, 255, 255, 0.22); */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .back-btn {
@@ -169,8 +167,6 @@ function goSummary() {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: #8a6d3b;
   cursor: pointer;
 }
@@ -201,9 +197,7 @@ function goSummary() {
 
 .menu-sidebar {
   width: 90px;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.85);
   flex-shrink: 0;
   padding: 8px 0;
   overflow-y: auto;
@@ -237,8 +231,6 @@ function goSummary() {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 14px;
   padding: 10px 12px;
@@ -281,8 +273,6 @@ function goSummary() {
   border-radius: 10px;
   border: none;
   background: rgba(245, 166, 35, 0.85);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.5);
   color: #fff;
   display: flex;
@@ -303,8 +293,6 @@ function goSummary() {
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid rgba(255, 255, 255, 0.6);
   padding: 12px 16px;
   display: flex;
@@ -321,8 +309,6 @@ function goSummary() {
 
 .bottom-btn {
   background: rgba(245, 166, 35, 0.9);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 10px 20px;

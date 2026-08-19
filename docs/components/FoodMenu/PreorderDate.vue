@@ -70,7 +70,7 @@ function viewWeek() {
 
 <style scoped>
 .preorder-page {
-  height: 100vh;
+  height: 100%;
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -89,8 +89,6 @@ function viewWeek() {
   justify-content: space-between;
   padding: 12px 16px;
   /* background: rgba(255, 255, 255, 0.22); */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .back-btn {
@@ -152,8 +150,6 @@ function viewWeek() {
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: #8a6d3b;
   cursor: pointer;
 }
@@ -177,8 +173,6 @@ function viewWeek() {
 
 .selected-card {
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 16px;
   padding: 18px;
@@ -213,8 +207,6 @@ function viewWeek() {
 .big-action-btn {
   margin: 0 16px 20px;
   background: rgba(245, 166, 35, 0.9);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 14px 0;

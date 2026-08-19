@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { store, setPage, confirmPreOrder, closePreSuccess } from './useStore'
+import { store, setPage, confirmPreOrder, clearPreOrder, closePreSuccess } from './useStore'
 import { dishes, weekDays } from './data'
 
 const email = ref('')
@@ -56,6 +56,7 @@ function confirm() {
     </div>
 
     <div class="summary-footer">
+      <button class="clear-btn" @click="clearPreOrder">清空</button>
       <span class="total-info">共 {{ totalCount }} 道菜</span>
       <button class="confirm-btn" @click="confirm">确认预点菜</button>
     </div>
@@ -78,7 +79,7 @@ function confirm() {
 
 <style scoped>
 .summary-page {
-  height: 100vh;
+  height: 100%;
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -97,8 +98,6 @@ function confirm() {
   justify-content: space-between;
   padding: 12px 16px;
   /* background: rgba(255, 255, 255, 0.22); */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .back-btn {
@@ -135,8 +134,6 @@ function confirm() {
 
 .day-card {
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 14px;
   padding: 16px;
@@ -176,8 +173,6 @@ function confirm() {
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   font-size: 14px;
   color: #333;
   outline: none;
@@ -194,8 +189,6 @@ function confirm() {
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid rgba(255, 255, 255, 0.6);
   padding: 12px 16px;
   display: flex;
@@ -211,12 +204,22 @@ function confirm() {
   color: #1a1a1a;
 }
 
+.clear-btn {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.55);
+  color: #e8920c;
+  border: 1px solid rgba(245, 166, 35, 0.4);
+  padding: 13px 18px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .confirm-btn {
   flex: 1;
-  margin-left: 16px;
+  margin-left: 12px;
   background: rgba(245, 166, 35, 0.9);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 13px 0;
@@ -242,8 +245,6 @@ function confirm() {
   width: 78%;
   max-width: 300px;
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
   padding: 28px 22px 22px;

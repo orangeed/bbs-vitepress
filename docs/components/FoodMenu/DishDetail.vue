@@ -79,7 +79,7 @@ function addAndBack() {
 
 <style scoped>
 .detail-page {
-  height: 100vh;
+  height: 100%;
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -98,8 +98,6 @@ function addAndBack() {
   justify-content: space-between;
   padding: 12px 16px;
   /* background: rgba(255, 255, 255, 0.22); */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .back-btn,
@@ -194,8 +192,6 @@ function addAndBack() {
 
 .ingredients {
   background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 14px;
   padding: 16px;
@@ -229,8 +225,6 @@ function addAndBack() {
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid rgba(255, 255, 255, 0.6);
   padding: 12px 16px;
   display: flex;
@@ -245,8 +239,6 @@ function addAndBack() {
   align-items: center;
   gap: 14px;
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 20px;
   padding: 4px 6px;
@@ -258,8 +250,6 @@ function addAndBack() {
   border-radius: 50%;
   border: none;
   background: rgba(245, 166, 35, 0.85);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   color: #fff;
   font-size: 18px;
   cursor: pointer;
@@ -278,8 +268,6 @@ function addAndBack() {
   flex: 1;
   margin-left: 16px;
   background: rgba(245, 166, 35, 0.9);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 13px 0;

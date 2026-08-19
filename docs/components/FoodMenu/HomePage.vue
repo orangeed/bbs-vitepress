@@ -28,7 +28,7 @@ function goPreorder() {
 
     <div class="action-wrapper">
       <div class="action-card" @click="goMenu">
-        <div class="action-info">
+        <div>
           <h2 class="action-title">直接点菜</h2>
           <p class="action-desc">马上选菜，下单后自取</p>
           <button class="action-btn">开始点菜</button>
@@ -37,7 +37,7 @@ function goPreorder() {
       </div>
 
       <div class="action-card" @click="goPreorder">
-        <div class="action-info">
+        <div>
           <h2 class="action-title">预点菜</h2>
           <p class="action-desc">提前安排周一到周五晚饭</p>
           <button class="action-btn">安排一周</button>
@@ -51,7 +51,7 @@ function goPreorder() {
 
 <style scoped>
 .home-page {
-  min-height: 100vh;
+  height: 100%;
   background: transparent;
   padding: 16px;
   box-sizing: border-box;
@@ -94,8 +94,6 @@ function goPreorder() {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: #5a3e10;
   display: flex;
   align-items: center;
@@ -162,18 +160,12 @@ function goPreorder() {
   justify-content: space-between;
   align-items: center;
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 18px;
   padding: 24px 18px;
   cursor: pointer;
   transition: transform 0.2s;
   box-shadow: 0 8px 24px rgba(245, 166, 35, 0.18);
-}
-
-.action-info {
-  flex: 1;
 }
 
 .action-card:active {
@@ -195,8 +187,6 @@ function goPreorder() {
 
 .action-btn {
   background: rgba(245, 166, 35, 0.85);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 8px 18px;
