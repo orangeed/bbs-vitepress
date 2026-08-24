@@ -4972,6 +4972,18 @@ export const categories: Category[] = [
         tagColor: "#4b5563",
         accent: "#4b5563",
       },
+      {
+        name: "BgSub",
+        url: "https://zh.bgsub.com",
+        displayUrl: "zh.bgsub.com",
+        desc: "免费无水印的AI抠图网站",
+        favicon: "BG",
+        faviconBg: "rgba(59, 113, 254,.12)",
+        tag: "AI抠图",
+        tagBg: "rgb(59, 113, 254)",
+        tagColor: "rgb(59, 113, 254)",
+        accent: "rgb(59, 113, 254)",
+      },
     ],
   },
   {
