@@ -1,11 +1,26 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { store, goHome, goDishDetail, addToCart, removeFromCart, clearCart, openCheckout, closeCheckout, confirmOrder, closeSuccess, cartItems, getCartSubtotal, setPage } from './useStore'
-import { dishes, subCategories } from './data'
+import { dishes, subCategories, hotpotGroups } from './data'
 
 const activeSub = ref('爽口凉菜')
+const activeHotpotGroup = ref(hotpotGroups[0])
 
-const filteredDishes = computed(() => dishes.filter(d => d.category === activeSub.value))
+// 切换左侧分类时，若进入火锅则重置顶部二级分组
+function selectSub(cat: string) {
+  activeSub.value = cat
+  if (cat === '火锅') activeHotpotGroup.value = hotpotGroups[0]
+}
+
+const isHotpot = computed(() => activeSub.value === '火锅')
+
+const filteredDishes = computed(() =>
+  dishes.filter(d =>
+    isHotpot.value
+      ? d.category === '火锅' && d.subGroup === activeHotpotGroup.value
+      : d.category === activeSub.value
+  )
+)
 
 const totalCount = computed(() => Object.values(store.cart).reduce((a, b) => a + b, 0))
 const totalPrice = computed(() => getCartSubtotal(dishes))
@@ -43,30 +58,38 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
     <div class="menu-body">
       <aside class="menu-sidebar">
         <button v-for="cat in subCategories" :key="cat" class="sidebar-item" :class="{ active: activeSub === cat }"
-          @click="activeSub = cat">
+          @click="selectSub(cat)">
           {{ cat }}
         </button>
       </aside>
 
-      <main class="menu-list">
-        <div v-for="dish in filteredDishes" :key="dish.id" class="dish-item" @click="goDishDetail(dish.id)">
-          <img class="dish-img" :src="dish.image" :alt="dish.name" />
-          <div class="dish-info">
-            <h3 class="dish-name">{{ dish.name }}</h3>
-            <p class="dish-price">¥{{ dish.price }}</p>
-          </div>
-          <div class="dish-actions">
-            <button v-if="store.cart[dish.id]" class="minus-btn" @click.stop="removeFromCart(dish.id)">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M19 13H5v-2h14v2z" />
-              </svg>
-            </button>
-            <span v-if="store.cart[dish.id]" class="dish-qty">{{ store.cart[dish.id] }}</span>
-            <button class="add-btn" @click.stop="addToCart(dish.id)">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-              </svg>
-            </button>
+      <main class="menu-content">
+        <div v-if="isHotpot" class="sub-group-tabs">
+          <button v-for="g in hotpotGroups" :key="g" class="sub-tab" :class="{ active: activeHotpotGroup === g }"
+            @click="activeHotpotGroup = g">
+            {{ g }}
+          </button>
+        </div>
+        <div class="menu-list" :class="{ 'hotpot-offset': isHotpot }">
+          <div v-for="dish in filteredDishes" :key="dish.id" class="dish-item" @click="goDishDetail(dish.id)">
+            <img class="dish-img" :src="dish.image" :alt="dish.name" />
+            <div class="dish-info">
+              <h3 class="dish-name">{{ dish.name }}</h3>
+              <p class="dish-price">¥{{ dish.price }}</p>
+            </div>
+            <div class="dish-actions">
+              <button v-if="store.cart[dish.id]" class="minus-btn" @click.stop="removeFromCart(dish.id)">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M19 13H5v-2h14v2z" />
+                </svg>
+              </button>
+              <span v-if="store.cart[dish.id]" class="dish-qty">{{ store.cart[dish.id] }}</span>
+              <button class="add-btn" @click.stop="addToCart(dish.id)">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </main>
@@ -234,10 +257,59 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
   font-weight: 700;
 }
 
+.menu-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .menu-list {
   flex: 1;
+  min-height: 0;
   padding: 12px;
   overflow-y: auto;
+}
+
+.menu-list.hotpot-offset {
+  margin-top: 50px;
+}
+
+.sub-group-tabs {
+  position: fixed;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  padding: 12px 12px 10px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  width: 100%;
+  border-bottom: 1px solid rgba(245, 166, 35, 0.18);
+  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.08);
+  z-index: 99;
+}
+
+.sub-tab {
+  flex: 0 0 auto;
+  border: 1px solid rgba(245, 166, 35, 0.4);
+  background: rgba(255, 255, 255, 0.5);
+  color: #8a6d3b;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.sub-tab.active {
+  background: rgba(245, 166, 35, 0.9);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .dish-item {

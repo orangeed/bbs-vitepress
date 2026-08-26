@@ -1,10 +1,25 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { store, setPage, goDishDetail, togglePreDish, isPreSelected } from './useStore'
-import { dishes, subCategories, weekDays } from './data'
+import { dishes, subCategories, hotpotGroups, weekDays } from './data'
 
 const activeSub = ref('爽口凉菜')
-const filteredDishes = computed(() => dishes.filter(d => d.category === activeSub.value))
+const activeHotpotGroup = ref(hotpotGroups[0])
+
+function selectSub(cat: string) {
+  activeSub.value = cat
+  if (cat === '火锅') activeHotpotGroup.value = hotpotGroups[0]
+}
+
+const isHotpot = computed(() => activeSub.value === '火锅')
+
+const filteredDishes = computed(() =>
+  dishes.filter(d =>
+    isHotpot.value
+      ? d.category === '火锅' && d.subGroup === activeHotpotGroup.value
+      : d.category === activeSub.value
+  )
+)
 
 const dayName = weekDays[store.selectedPreOrderDayIndex]?.day || '周一'
 
@@ -53,12 +68,19 @@ function goSummary() {
     <div class="menu-body">
       <aside class="menu-sidebar">
         <button v-for="cat in subCategories" :key="cat" class="sidebar-item" :class="{ active: activeSub === cat }"
-          @click="activeSub = cat">
+          @click="selectSub(cat)">
           {{ cat }}
         </button>
       </aside>
 
-      <main class="menu-list">
+      <main class="menu-content">
+        <div v-if="isHotpot" class="sub-group-tabs">
+          <button v-for="g in hotpotGroups" :key="g" class="sub-tab" :class="{ active: activeHotpotGroup === g }"
+            @click="activeHotpotGroup = g">
+            {{ g }}
+          </button>
+        </div>
+        <div class="menu-list">
         <div v-for="dish in filteredDishes" :key="dish.id" class="dish-item" @click="goDishDetail(dish.id)">
           <img class="dish-img" :src="dish.image" :alt="dish.name" />
           <div class="dish-info">
@@ -73,6 +95,7 @@ function goSummary() {
               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
             </svg>
           </button>
+        </div>
         </div>
       </main>
     </div>
@@ -202,10 +225,52 @@ function goSummary() {
   font-weight: 700;
 }
 
+.menu-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .menu-list {
   flex: 1;
+  min-height: 0;
   padding: 12px;
   overflow-y: auto;
+}
+
+.sub-group-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  padding: 12px 12px 10px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-bottom: 1px solid rgba(245, 166, 35, 0.18);
+  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.08);
+}
+
+.sub-tab {
+  flex: 0 0 auto;
+  border: 1px solid rgba(245, 166, 35, 0.4);
+  background: rgba(255, 255, 255, 0.5);
+  color: #8a6d3b;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.sub-tab.active {
+  background: rgba(245, 166, 35, 0.9);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .dish-item {

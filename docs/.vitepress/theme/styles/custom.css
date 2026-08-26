@@ -76,9 +76,9 @@ input[type='radio'] {
 }
 
 #app {
-  /* background: var(--ai-bg); */
+  background: var(--ai-bg);
 
-  background-image: var(--ai-bg-img);
+  /* background-image: var(--ai-bg-img); */
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;

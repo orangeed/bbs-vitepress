@@ -6,6 +6,7 @@ export interface Dish {
   category: string
   tags: string[]
   desc: string
+  subGroup?: string
   ingredients?: {
     main: string
     side: string
