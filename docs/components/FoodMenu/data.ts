@@ -16,25 +16,11 @@ export const subCategories = [
 // 火锅内部二级分类（仅在左侧选中「火锅」时，于顶部以横向 tab 展示）
 export const hotpotGroups = ['锅底', '肉类', '丸子', '蔬菜']
 
-// 本地内联 SVG 占位图：按菜名生成带文字的渐变卡片，无需联网即可显示
+// image 仅保存菜名，真正的 SVG 占位图在运行时（imageUtil.buildDishImage）生成，
+// 避免把 122 份 SVG 文本打进 bundle，页面 JS 体积从 ~1MB 降到几十 KB。
+// 若有真实图片，把 image 改为图片路径（如 "images/尖椒皮蛋.jpg"）即可自动优先使用。
 function img(name: string): string {
-  // 由菜名生成稳定色相
-  let hash = 0
-  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) % 360
-  const h1 = hash
-  const h2 = (hash + 40) % 360
-  const c1 = `hsl(${h1}, 70%, 62%)`
-  const c2 = `hsl(${h2}, 72%, 48%)`
-  const text = name.length > 6 ? name.slice(0, 6) : name
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/>
-  </linearGradient></defs>
-  <rect width="200" height="200" rx="16" fill="url(#g)"/>
-  <text x="100" y="108" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif"
-    font-size="30" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${text}</text>
-</svg>`
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`
+  return name
 }
 
 export const dishes: Dish[] = [

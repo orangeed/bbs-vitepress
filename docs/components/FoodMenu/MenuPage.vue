@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { store, goHome, goDishDetail, addToCart, removeFromCart, clearCart, openCheckout, closeCheckout, confirmOrder, closeSuccess, cartItems, getCartSubtotal, setPage } from './useStore'
 import { dishes, subCategories, hotpotGroups } from './data'
+import { dishImage } from './imageUtil'
 
 const activeSub = ref('爽口凉菜')
 const activeHotpotGroup = ref(hotpotGroups[0])
@@ -72,7 +73,7 @@ const checkoutTotal = computed(() => getCartSubtotal(dishes))
         </div>
         <div class="menu-list" :class="{ 'hotpot-offset': isHotpot }">
           <div v-for="dish in filteredDishes" :key="dish.id" class="dish-item" @click="goDishDetail(dish.id)">
-            <img class="dish-img" :src="dish.image" :alt="dish.name" />
+            <img class="dish-img" :src="dishImage(dish)" :alt="dish.name" loading="lazy" />
             <div class="dish-info">
               <h3 class="dish-name">{{ dish.name }}</h3>
               <p class="dish-price">¥{{ dish.price }}</p>

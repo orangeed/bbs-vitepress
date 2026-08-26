@@ -6,18 +6,19 @@ export default defineConfig({
   lang: "zh-CN",
   head: [
     ["meta", { name: "referrer", content: "no-referrer" }],
-    // 51la 数据统计
+    // 51la 数据统计（async 避免阻塞首屏渲染）
     [
       "script",
       {
         charset: "UTF-8",
         id: "LA_COLLECT",
         src: "//sdk.51.la/js-sdk-pro.min.js",
+        async: "",
       },
     ],
     [
       "script",
-      {},
+      { async: "" },
       `document.getElementById('LA_COLLECT')?.addEventListener('load',function(){LA.init({id:"3Pza9oQ74JEgxtxN",ck:"3Pza9oQ74JEgxtxN"})})`,
     ],
   ],
@@ -25,6 +26,10 @@ export default defineConfig({
     ssr: {
       // 该组件库依赖浏览器 API，构建时需避免 SSR 转换出错
       noExternal: ["animal-island-vue"],
+    },
+    build: {
+      // 拆分 chunk，避免单文件过大；并开启静态资源压缩提示
+      chunkSizeWarningLimit: 600,
     },
   },
   themeConfig: {

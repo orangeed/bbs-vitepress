@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { store, setPage, goDishDetail, togglePreDish, isPreSelected } from './useStore'
 import { dishes, subCategories, hotpotGroups, weekDays } from './data'
+import { dishImage } from './imageUtil'
 
 const activeSub = ref('爽口凉菜')
 const activeHotpotGroup = ref(hotpotGroups[0])
@@ -82,7 +83,7 @@ function goSummary() {
         </div>
         <div class="menu-list">
         <div v-for="dish in filteredDishes" :key="dish.id" class="dish-item" @click="goDishDetail(dish.id)">
-          <img class="dish-img" :src="dish.image" :alt="dish.name" />
+          <img class="dish-img" :src="dishImage(dish)" :alt="dish.name" loading="lazy" />
           <div class="dish-info">
             <h3 class="dish-name">{{ dish.name }}</h3>
             <p class="dish-price">¥{{ dish.price }}</p>
