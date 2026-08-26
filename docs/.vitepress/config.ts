@@ -47,6 +47,11 @@ export default defineConfig({
 
     search: {
       provider: "local",
+      options: {
+        // 排除体积庞大的影视/书籍等目录，避免把它们的全文塞进搜索索引 chunk，
+        // 从而大幅减小打包体积、提升加载速度。按需调整需被搜索的目录即可。
+        exclude: ["Movie/**", "TVDrama/**", "book/**", "Meteorological/**"],
+      },
     },
   },
 });
