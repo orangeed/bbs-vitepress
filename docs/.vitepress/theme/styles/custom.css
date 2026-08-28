@@ -490,11 +490,11 @@ input[type='radio'] {
 }
 
 .featured-title {
-  color: #000;
+  color: #3a3a3a;
 }
 
 .dark .featured-title {
-  color: #fff;
+  color: #f0f0f0;
 }
 
 /* 描述/次要文字：白天与黑夜均为灰色 */

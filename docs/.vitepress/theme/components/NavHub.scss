@@ -112,6 +112,26 @@
   --nav-active-bg: rgba(99, 102, 241, 0.1);
   --nav-active-count-bg: rgba(99, 102, 241, 0.15);
   --favicon-border: #c4c7ce;
+
+  /* 卡片背景（亮色模式使用，避免与页面背景同色看不清） */
+  --card-bg: #f7f3e7;
+  --card-bg-hover: #efe9d6;
+  --card-border: #d4d7de;
+  --hero-text: #1a1d26;
+  --hero-sub: #424a5e;
+  --cat-title: #1a1d26;
+  --cat-desc: #6b7280;
+}
+
+/* 暗色模式对应覆盖 */
+.navhub-app.is-dark {
+  --card-bg: var(--bg-surface);
+  --card-bg-hover: var(--bg-elevated);
+  --card-border: var(--border-subtle);
+  --hero-text: #ffffff;
+  --hero-sub: rgba(240, 246, 252, 0.75);
+  --cat-title: #f8ecec;
+  --cat-desc: #cfcfcf;
 }
 
 /* ============================================
@@ -132,6 +152,7 @@
     system-ui,
     sans-serif;
   color: var(--text-primary);
+  background: var(--bg-base);
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -377,7 +398,7 @@
   font-weight: 700;
   letter-spacing: -0.03em;
   // margin-bottom: var(--space-3);
-  color: #fff;
+  color: var(--hero-text);
 }
 
 .hero-title span {
@@ -389,7 +410,7 @@
 
 .hero-subtitle {
   font-size: 15px;
-  color: #fff;
+  color: var(--hero-sub);
   margin-top: 30px;
 }
 
@@ -409,6 +430,11 @@
   background: var(--search-bg);
   box-shadow: 0 4px var(--search-bg-shadow);
   border: 2px solid var(--search-bg);
+}
+
+/* 亮色模式搜索框与背景区分度低，加强边框 */
+.navhub-app.is-light .search-wrapper > .animal-input {
+  border-color: var(--border-default);
 }
 
 .search-box {
@@ -529,13 +555,12 @@
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #f8ecec;
+  color: var(--cat-title);
 }
 
 .category-desc {
   font-size: 13px;
-  // color: var(--text-tertiary);
-  color: #cfcfcf;
+  color: var(--cat-desc);
   margin-top: 2px;
 }
 
@@ -555,8 +580,8 @@
 }
 
 .site-card {
-  background: var(--ai-bg);
-  // border: 1px solid var(--border-subtle);
+  background: var(--card-bg);
+  border: none;
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   display: flex;
@@ -568,6 +593,7 @@
   overflow: hidden;
   text-decoration: none;
   animation: fadeInUp var(--transition-slow) ease-out backwards;
+  box-shadow: var(--shadow-sm);
 }
 
 .site-card::before {
@@ -583,8 +609,7 @@
 }
 
 .site-card:hover {
-  background: var(--bg-elevated);
-  border-color: var(--border-default);
+  background: var(--card-bg-hover);
   // transform: translateY(-3px);
   transform: scale(1.08);
   box-shadow: var(--shadow-lg);
@@ -648,6 +673,13 @@
   font-size: 11px;
   font-weight: 500;
   align-self: flex-start;
+  border: 1px solid transparent;
+}
+
+/* 亮色模式下标签半透明底易与卡片同色，加细边框提升辨识度 */
+.navhub-app.is-light .site-tag {
+  border-color: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(2px);
 }
 
 /* ============================================
