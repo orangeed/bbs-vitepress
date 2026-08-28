@@ -160,9 +160,9 @@
   display: flex;
   position: relative;
   z-index: 1;
-  transition:
-    background-color var(--transition-normal),
-    color var(--transition-normal);
+  /* 仅过渡根容器自身背景，子元素颜色由 CSS 变量驱动即时生效，
+     避免切换主题时对成百上千个节点逐个做颜色过渡（移动端卡顿主因） */
+  transition: background-color var(--transition-normal);
 }
 
 /* Ambient Background Glow */
@@ -914,6 +914,20 @@
 
 /* Mobile (<= 768px) — show topbar & drawer */
 @media (max-width: 768px) {
+  /* 移动端降低毛玻璃模糊、去掉主题切换过渡，避免切换黑白模式卡顿
+     （抽屉 transform 过渡在下方 .sidebar 规则中单独保留） */
+  .navhub-app,
+  .mobile-topbar {
+    transition: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .sidebar {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
   .sidebar {
     position: fixed;
     top: 0;
