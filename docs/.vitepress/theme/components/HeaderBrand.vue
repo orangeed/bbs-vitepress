@@ -32,7 +32,7 @@ function closeDrawer() { drawerOpen.value = false }
 const drawerLinks = [
   { label: '工具箱', href: 'https://doc.orangecj.cn', emoji: '🧰' },
   { label: '导航', href: '/navhub', emoji: '🧭' },
-  { label: '电影票房', href: '/movieMoney', emoji: '🎬' },
+  { label: '公众号排版', href: '/wxEditor', emoji: '🎬' },
 ]
 function navTo(href: string) {
   closeDrawer()
