@@ -36,7 +36,7 @@ export default defineConfig({
     nav: [
       { text: "工具箱", link: "https://doc.orangecj.cn" },
       { text: "导航", link: "/navhub" },
-      { text: "电影票房", link: "/movieMoney/" },
+      { text: "公众号排版", link: "/wxEditor" },
     ],
     socialLinks: [
       {

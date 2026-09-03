@@ -66,7 +66,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
     <div class="header-nav">
       <a href="https://doc.orangecj.cn" target="_blank">工具箱</a>
       <a href="/navhub" target="_blank">导航</a>
-      <a href="/movieMoney" target="_blank">电影票房</a>
+      <a href="/wxEditor" target="_blank">公众号排版</a>
     </div>
     <!-- 桌面端搜索 + Switch -->
     <div class="header-actions desktop-only">

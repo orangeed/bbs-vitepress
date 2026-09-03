@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>听风入画 · Markdown 排版工具</title>
+<!-- 本地 highlight.js（整站部署 / 打包 App 均离线可用）。若缺失则自动回退到内置自研高亮 -->
+<script src="./lib/highlight.min.js"></script>
+<script src="./lib/lang-javascript.min.js"></script>
+<script src="./lib/lang-typescript.min.js"></script>
+<script src="./lib/lang-python.min.js"></script>
+<script src="./lib/lang-bash.min.js"></script>
+<script src="./lib/lang-shell.min.js"></script>
+<script src="./lib/lang-sql.min.js"></script>
+<script src="./lib/lang-json.min.js"></script>
+<script src="./lib/lang-yaml.min.js"></script>
+<script src="./lib/lang-xml.min.js"></script>
+<script src="./lib/lang-css.min.js"></script>
+<script src="./lib/lang-c.min.js"></script>
+<script src="./lib/lang-cpp.min.js"></script>
+<script src="./lib/lang-csharp.min.js"></script>
+<script src="./lib/lang-objectivec.min.js"></script>
+<script src="./lib/lang-java.min.js"></script>
+<script src="./lib/lang-go.min.js"></script>
+<script src="./lib/lang-php.min.js"></script>
+<script>
+  /* 高亮开关：若 highlight.js 已加载则启用，并输出内联样式（公众号可保留颜色） */
+  window.__HLJS_AVAILABLE__ = !!(window.hljs && hljs.highlight);
+  if(window.__HLJS_AVAILABLE__){
+    try{ hljs.configure({style:true, ignoreIllegals:true}); }catch(e){}
+  }
+</script>
+<style>
+:root{
+  --primary:#1F3D3A;
+  --primary-soft:#2E5450;
+  --accent:#B08D57;
+  --accent-soft:#F3EDE2;
+  --bg:#F4F3F0;
+  --panel:#FFFFFF;
+  --ink:#2E2E2E;
+  --muted:#7C7C7C;
+  --line:#E4E0D8;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  font-size:14px;-webkit-font-smoothing:antialiased;
+}
+/* ---------- 顶栏 ---------- */
+header{
+  height:56px;background:var(--primary);display:flex;align-items:center;
+  padding:0 20px;gap:16px;color:#fff;position:sticky;top:0;z-index:20;
+}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand b{font-size:17px;letter-spacing:2px;font-weight:600}
+.brand span{font-size:12px;color:#C9B98F;letter-spacing:1px}
+.hint-bar{margin-left:auto;font-size:12px;color:#A9BDB8;display:flex;align-items:center;gap:14px}
+.hint-bar kbd{
+  background:rgba(255,255,255,.12);border-radius:4px;padding:2px 6px;
+  font-family:ui-monospace,Consolas,monospace;font-size:11px;color:#D8E2DF;
+}
+/* ---------- 布局 ---------- */
+main{
+  display:flex;height:calc(100vh - 56px);
+}
+.pane{display:flex;flex-direction:column;min-width:0}
+.pane-left{flex:0 0 46%;border-right:1px solid var(--line);background:#FCFBF9}
+.pane-right{flex:1;background:var(--bg);overflow:auto;position:relative}
+.pane-head{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:9px 14px;
+  border-bottom:1px solid var(--line);background:var(--panel);
+  position:sticky;top:0;z-index:20;
+  box-shadow:0 2px 10px rgba(31,61,58,.05);
+}
+.pane-head .title{
+  font-size:12px;color:var(--muted);letter-spacing:1px;margin-right:auto;
+  align-self:center;white-space:nowrap;padding:2px 0;
+}
+.pane-head .ctrl,.pane-head button{flex:0 0 auto}
+/* ---------- 按钮 ---------- */
+button{
+  font-family:inherit;font-size:12px;cursor:pointer;border-radius:6px;
+  border:1px solid var(--line);background:#fff;color:var(--ink);
+  padding:6px 11px;transition:all .15s;
+}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.primary:hover{background:#9E7C48;border-color:#9E7C48;color:#fff}
+button.ghost{border-color:transparent;background:transparent}
+button.ghost:hover{background:var(--accent-soft)}
+button.mini{padding:4px 9px;font-size:11px;border-radius:20px}
+.ctrl{
+  font-family:inherit;font-size:12px;border:1px solid var(--line);border-radius:6px;
+  padding:5px 8px;background:#fff;color:var(--ink);
+}
+input[type=range]{width:96px;accent-color:var(--accent)}
+label.ctrl{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+/* ---------- 编辑区 ---------- */
+#editor{
+  flex:1;width:100%;border:0;outline:none;resize:none;padding:20px 22px;
+  font-family:ui-monospace,"SFMono-Regular",Consolas,"Courier New",monospace;
+  font-size:13.5px;line-height:1.85;color:#3A3A3A;background:transparent;
+  tab-size:2;
+}
+#editor::placeholder{color:#BEBEBE}
+.snippets{
+  display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--line);
+  background:#fff;flex:0 0 auto;
+}
+.snippets .lbl{font-size:11px;color:var(--muted);margin-right:2px;align-self:center}
+.stat{padding:6px 14px;border-top:1px solid var(--line);background:#fff;font-size:11px;color:var(--muted);flex:0 0 auto}
+/* ---------- 预览 ---------- */
+.preview-wrap{padding:26px 20px 60px;display:flex;justify-content:center}
+.phone{
+  width:420px;background:#fff;border-radius:14px;box-shadow:0 6px 26px rgba(31,61,58,.10);
+  overflow:hidden;flex:0 0 auto;
+}
+.phone-bar{
+  height:30px;background:#fff;border-bottom:1px solid #F0EDE7;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.phone-bar i{width:5px;height:5px;border-radius:50%;background:#DDD8CE;display:block}
+.phone-body{padding:22px 20px 40px;min-height:520px;min-width:0;overflow-x:hidden}
+/* ---------- 速查 ---------- */
+.cheat{
+  position:fixed;right:0;top:56px;bottom:0;width:340px;background:#fff;
+  border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.06);
+  transform:translateX(105%);transition:transform .25s ease;z-index:45;overflow:auto;padding:18px 20px;
+}
+.cheat.open{transform:translateX(0)}
+.cheat h4{margin:16px 0 8px;font-size:13px;color:var(--primary)}
+.cheat h4:first-child{margin-top:0}
+/* GitHub 风格代码块（速查 & 正文统一语言） */
+.cheat code{
+  display:block;background:#F6F8FA;border:1px solid #D0D7DE;border-radius:6px;
+  padding:12px 14px;font-size:12.5px;line-height:1.7;color:#24292F;white-space:pre-wrap;
+  font-family:ui-monospace,"SFMono-Regular",Consolas,"Courier New",monospace;
+  overflow-x:auto;
+}
+.cheat p code{
+  display:inline;background:rgba(175,184,193,.2);border:0;border-radius:6px;
+  padding:.2em .4em;color:#24292F;font-size:12px;white-space:normal;
+}
+.cheat p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.7}
+.cheat-close{
+  position:sticky;top:0;float:right;margin:-6px -6px 0 0;border:0;background:transparent;
+  font-size:20px;line-height:1;color:var(--muted);padding:2px 8px;border-radius:6px;
+}
+.cheat-close:hover{background:var(--accent-soft);color:var(--primary)}
+
+/* ---------- 快捷键浮层（居中弹层） ---------- */
+.keys-modal{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);
+  width:min(440px,92vw);max-height:80vh;background:#fff;border:1px solid var(--line);
+  border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.18);
+  z-index:50;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.keys-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.keys-modal header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-bottom:1px solid var(--line);background:var(--soft);
+}
+.keys-modal .keys-title{font-size:14px;font-weight:600;color:var(--primary);letter-spacing:.5px}
+.keys-modal .keys-body{padding:14px 18px 18px;overflow:auto}
+.keys-modal h4{margin:14px 0 8px;font-size:12px;color:var(--muted);letter-spacing:1px;font-weight:600}
+.keys-modal h4:first-child{margin-top:0}
+.keys-modal dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center;margin:0}
+.keys-modal dt{display:flex;align-items:center;gap:3px;white-space:nowrap}
+.keys-modal dd{margin:0;font-size:12.5px;color:var(--ink);line-height:1.6}
+.keys-modal kbd{
+  display:inline-block;min-width:22px;padding:2px 7px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:11.5px;line-height:1.4;color:var(--primary);background:#fff;
+  border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;
+  text-align:center;font-weight:500;
+}
+.keys-modal .keys-hint{margin:14px 0 0;padding:10px 12px;background:var(--accent-soft);border-radius:6px;font-size:12px;color:var(--primary);line-height:1.7}
+/* 遮罩 + 图片清单 */
+.mask{
+  position:fixed;inset:0;background:rgba(31,61,58,.28);z-index:40;opacity:0;
+  pointer-events:none;transition:opacity .2s;
+}
+.mask.show{opacity:1;pointer-events:auto}
+.modal{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-48%) scale(.98);z-index:50;
+  width:min(560px,92vw);max-height:76vh;overflow:auto;background:#fff;border-radius:12px;
+  box-shadow:0 18px 50px rgba(0,0,0,.22);padding:20px 22px;opacity:0;pointer-events:none;
+  transition:all .2s;
+}
+.modal.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.modal h3{margin:0 0 4px;font-size:15px;color:var(--primary)}
+.modal .sub{margin:0 0 16px;font-size:12px;color:var(--muted);line-height:1.7}
+.img-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.img-row:last-of-type{border-bottom:0}
+.img-row img{width:88px;height:60px;object-fit:cover;border-radius:6px;background:#F2F2F2;flex:0 0 auto}
+.img-row .meta{flex:1;min-width:0}
+.img-row .name{font-size:13px;color:var(--ink);word-break:break-all;line-height:1.5}
+.img-row .tagx{display:inline-block;margin-top:5px;font-size:11px;padding:2px 7px;border-radius:20px}
+.tagx.local{background:#FBEDE9;color:#B4603F}
+.tagx.remote{background:var(--accent-soft);color:var(--primary)}
+.stat b{color:#B4603F;font-weight:600}
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);
+  background:var(--primary);color:#fff;padding:10px 20px;border-radius:22px;font-size:13px;
+  opacity:0;pointer-events:none;transition:all .25s;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.18);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:980px){
+  main{flex-direction:column;height:auto}
+  .pane-left{flex:none;height:52vh;border-right:0;border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><b>听风入画</b><span>Markdown 排版工具</span></div>
+  <div class="hint-bar">
+    <span><kbd>Ctrl</kbd>+<kbd>S</kbd> 存草稿</span>
+    <span><kbd>Ctrl</kbd>+<kbd>B</kbd> 加粗</span>
+    <span>右侧预览 · 一键粘进公众号</span>
+  </div>
+</header>
+
+<main>
+  <!-- 左：编辑 -->
+  <section class="pane pane-left">
+    <div class="pane-head">
+      <span class="title">MARKDOWN 原稿</span>
+      <button class="ghost" id="btnImages">图片清单</button>
+      <button class="ghost" id="btnImport">导入 .md</button>
+      <button class="ghost" id="btnSample">载入示例</button>
+      <button class="ghost" id="btnDownload">下载</button>
+      <button class="ghost" id="btnClear">清空</button>
+      <button class="ghost" id="btnKeys" title="查看所有快捷键（Ctrl+?）">⌨ 快捷键</button>
+    </div>
+    <textarea id="editor" spellcheck="false" placeholder="在这里粘贴或撰写 Markdown 原文……"></textarea>
+    <div class="snippets" id="snippets"><span class="lbl">快捷插入：</span></div>
+    <div class="stat" id="stat">0 字</div>
+  </section>
+
+  <!-- 右：预览 -->
+  <section class="pane pane-right">
+    <div class="pane-head">
+      <span class="title">公众号预览</span>
+      <select class="ctrl" id="themeSel" title="整体配色"></select>
+      <select class="ctrl" id="archiveSel" title="往期推荐模块样式">
+        <option value="dash">往期 · 虚线框</option>
+        <option value="card">往期 · 卡片列表</option>
+        <option value="plain">往期 · 简约条目</option>
+        <option value="dark">往期 · 深色块</option>
+      </select>
+      <select class="ctrl" id="followSel" title="关注引导模块样式">
+        <option value="card">引导 · 居中卡片</option>
+        <option value="quote">引导 · 左侧金条</option>
+        <option value="dark">引导 · 深色块</option>
+      </select>
+      <select class="ctrl" id="codeSel" title="代码块与行内代码样式">
+        <option value="github">代码 · GitHub 浅色</option>
+        <option value="github-dark">代码 · GitHub 深色</option>
+        <option value="theme">代码 · 跟随主题</option>
+      </select>
+      <label class="ctrl"><input type="checkbox" id="hlOn" checked> 语法高亮</label>
+      <label class="ctrl">字号 <input type="range" id="sizeRange" min="14" max="17" step="1" value="15"><span id="sizeVal">15px</span></label>
+      <label class="ctrl"><input type="checkbox" id="showUrl" checked> 显示链接地址</label>
+      <button class="ghost" id="btnCheat">语法速查</button>
+      <button class="ghost" id="btnHtml">复制 HTML</button>
+      <button class="primary" id="btnCopy">复制到公众号</button>
+    </div>
+    <div class="preview-wrap">
+      <div class="phone">
+        <div class="phone-bar"><i></i><i></i><i></i></div>
+        <div class="phone-body" id="preview"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 快捷键浮层（居中弹层） -->
+<aside class="keys-modal" id="keys" aria-hidden="true">
+  <header><span class="keys-title">⌨ 快捷键</span><button class="cheat-close" id="keysClose" title="关闭（Esc）">×</button></header>
+  <section class="keys-body">
+    <h4>撤销 / 重做</h4>
+    <dl>
+      <dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>撤销（Mac 同样为 ⌘+Z）</dd>
+      <dt><kbd>Ctrl</kbd>+<kbd>Y</kbd></dt><dd>重做</dd>
+      <dt><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></dt><dd>重做（Mac 习惯写法）</dd>
+    </dl>
+    <h4>格式</h4>
+    <dl>
+      <dt><kbd>Ctrl</kbd>+<kbd>B</kbd></dt><dd>加粗（无选区时插入「加粗」）</dd>
+      <dt><kbd>Ctrl</kbd>+<kbd>I</kbd></dt><dd>高亮 ==xx==（无选区时插入「高亮」）</dd>
+      <dt><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd></dt><dd>删除线 ~~xx~~（无选区时插入「删除线」）</dd>
+    </dl>
+    <h4>操作</h4>
+    <dl>
+      <dt><kbd>Ctrl</kbd>+<kbd>S</kbd></dt><dd>手动保存草稿到 localStorage</dd>
+      <dt><kbd>Esc</kbd></dt><dd>关闭弹窗 / 速查 / 快捷键面板</dd>
+    </dl>
+    <p class="keys-hint">提示：撤销/重做基于输入停顿 500ms 自动快照，最多保留 50 步历史。</p>
+  </section>
+</aside>
+
+<!-- 语法速查抽屉 -->
+<aside class="cheat" id="cheat">
+  <button class="cheat-close" id="cheatClose" title="关闭（Esc）">×</button>
+  <h4>站点卡片（分享软件/网站常用）</h4>
+  <code>::: card
+### 站点名称
+一句话说清它解决什么问题
+
+- 平台：Web / macOS / Windows
+- 价格：免费 · 部分付费
+- 适合：设计师 / 写作的人
+
+[访问官网](https://example.com)
+:::</code>
+  <p>渲染为带左侧金条的卡片区块，是「听风入画」正文的核心模块。</p>
+
+  <h4>提示块</h4>
+  <code>::: tip
+小技巧、补充说明
+:::
+
+::: info
+客观信息、注意事项
+:::
+
+::: warn
+坑点、限制、需要提醒的地方
+:::</code>
+
+  <h4>图片轮播（手动左右滑）</h4>
+  <code>::: carousel
+![图说 1](https://...)
+![图说 2](https://...)
+![图说 3](https://...)
+:::</code>
+  <p>把多张图变成可横向滑动的轮播：每张图占满当前宽度，用户用手指左右滑查看下一张/上一张。复制到公众号后同样支持滑动（纯 CSS 实现，无需 JS）。</p>
+
+  <h4>标签行</h4>
+  <code>::: tags
+效率工具, 免费, 无需注册, 国内可用
+:::</code>
+  <p>逗号 / 顿号 / 竖线 / 换行均可作为分隔符。</p>
+
+  <h4>往期推荐（4 种样式，右上角下拉切换）</h4>
+  <code>::: archive 往期推荐
+- [第 1 期 · 文章标题](https://mp.weixin.qq.com/s/xxx)
+- [第 2 期 · 文章标题](https://mp.weixin.qq.com/s/xxx)
+:::</code>
+  <p>每行一条，写成 <code>[标题](链接)</code> 的形式。链接用 mp.weixin.qq.com 的文章地址，公众号正文里可以直接点击跳转。</p>
+
+  <h4>关注引导（3 种样式，右上角下拉切换）</h4>
+  <code>::: follow 听风入画
+分享好用的软件与网站，安静、克制、不打扰。
+如果这期对你有用，点个「在看」，或者分享给需要的朋友。
+:::</code>
+  <p>第一行 <code>::: follow</code> 后面跟公众号名称，换行后每行一句文案。用它替代固定的引导图，更轻、更统一。</p>
+
+  <h4>分级推荐表格</h4>
+  <code>| 推荐 | 工具 | 一句话 |
+| :---: | --- | --- |
+| 🥇 | A | 日常首选 |
+| 🥈 | B | 备选 |</code>
+  <p>第二列写 <code>:---:</code> 即居中，<code>---:</code> 右对齐。</p>
+
+  <h4>行内语法</h4>
+  <code>**加粗**  *斜体*  ~~删除线~~
+==高亮==  `行内代码`
+[链接](https://a.com)  ![图片](url)</code>
+
+  <h4>代码块（自动语法高亮）</h4>
+  <code>```js
+const a = 1;
+```</code>
+  <p>语言标记会显示在代码块右上角，并决定高亮规则。支持 <b>js / ts / vue / html / css / json / bash / py / java / go / c++ / c# / sql / php / yaml</b> 等。</p>
+  <p><b>高亮引擎：</b>已内置 highlight.js（lib/ 目录，整站部署或打包 App 均离线可用），高亮更准、语言更多；若这些文件缺失（比如只单独打开 HTML），自动回退到内置自研高亮。深色/跟随主题模式用自研高亮以匹配主题色。</p>
+  <p>高亮输出为<b>内联样式</b>，复制进公众号后颜色仍保留。右上角「语法高亮」勾选框可一键关闭。</p>
+
+  <h4>图片与图注</h4>
+  <code>![这里写图注，会显示在图片下方](图片地址)</code>
+  <p>直接 <code>Ctrl+V</code> 把截图粘进左侧编辑器即可：会自动压缩到 1080px 宽、转成内嵌数据，并插入 <code>![图片描述](...)</code>——「图片描述」处于选中状态，<b>直接打字就能写图注</b>。拖拽图片文件进来同样可以。</p>
+  <p><b>注意：</b>本地图片粘贴进公众号后会丢失。点左栏「图片清单」可一键下载全部本地图，传到公众号后台后把链接替换回 Markdown 即可。</p>
+
+  <h4>其他</h4>
+  <code># 大标题（居中）
+## 章节标题（金条）
+### 小节标题
+> 引用
+- 列表   - [ ] 待办   - [x] 已完成
+---  分割线</code>
+  <p>单换行即换行，符合中文写作习惯，无需两个空格。</p>
+</aside>
+
+<div class="mask" id="mask"></div>
+<div class="modal" id="modal"></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept=".md,.markdown,.txt" style="display:none">
+
+<script>
+/* =========================================================
+   1. 主题配色
+   ========================================================= */
+const THEMES = {
+  moqing: {
+    name:'墨青 · 淡金（默认）',
+    primary:'#1F3D3A', accent:'#B08D57', accentSoft:'#F3EDE2',
+    soft:'#F7F5F0', ink:'#3A3A3A', muted:'#8C8C8C', line:'#EAE5DB',
+    codeBg:'#1F3D3A', codeFg:'#E7E1D5', codeBar:'#17302E', primaryLight:'#2A4E4A',
+    inlineBg:'#F5F1E9', inlineFg:'#9A7135'
+  },
+  sumo: {
+    name:'素墨 · 极简黑白',
+    primary:'#242424', accent:'#8A8A8A', accentSoft:'#F2F2F2',
+    soft:'#F7F7F7', ink:'#333333', muted:'#909090', line:'#E6E6E6',
+    codeBg:'#242424', codeFg:'#ECECEC', codeBar:'#171717', primaryLight:'#343434',
+    inlineBg:'#F2F2F2', inlineFg:'#5A5A5A'
+  },
+  dian: {
+    name:'靛蓝 · 暖橙',
+    primary:'#2B4570', accent:'#C0803F', accentSoft:'#F6EFE5',
+    soft:'#F5F6FA', ink:'#37393D', muted:'#8E9199', line:'#E5E7EE',
+    codeBg:'#22375B', codeFg:'#E6EAF2', codeBar:'#1A2B49', primaryLight:'#3A5C93',
+    inlineBg:'#F1F3F9', inlineFg:'#2B4570'
+  },
+  song: {
+    name:'松绿 · 朱砂',
+    primary:'#2F4F3E', accent:'#A8503A', accentSoft:'#F7EDE8',
+    soft:'#F4F7F3', ink:'#343A34', muted:'#8A9188', line:'#E3E8E1',
+    codeBg:'#2F4F3E', codeFg:'#E6EDE4', codeBar:'#24402F', primaryLight:'#3C624C',
+    inlineBg:'#F1F5EF', inlineFg:'#8A4230'
+  }
+};
+
+/* ---------- 语法高亮（零依赖手写词法分析，配色对齐 GitHub） ---------- */
+const HL_LIGHT = {kw:'#CF222E', str:'#0A3069', num:'#0550AE', com:'#6E7781', fn:'#8250DF', tag:'#116329', attr:'#0550AE', var:'#953800'};
+const HL_DARK  = {kw:'#FF7B72', str:'#A5D6FF', num:'#79C0FF', com:'#8B949E', fn:'#D2A8FF', tag:'#7EE787', attr:'#79C0FF', var:'#FFA657'};
+
+const KWS = {
+  js:'const let var function return if else for while do break continue new class extends super this typeof instanceof import export from default async await try catch finally throw switch case yield delete void in of static get set with debugger true false null undefined NaN Infinity',
+  ts:'const let var function return if else for while do break continue new class extends super this typeof instanceof import export from default async await try catch finally throw switch case yield delete void in of static get set as interface type enum implements readonly public private protected declare namespace abstract keyof is unknown never satisfies infer override true false null undefined',
+  html:'', css:'', json:'', yaml:'', md:'', plain:'',
+  bash:'if then else elif fi for while do done case esac function return in export local source alias unset eval exec sudo apt yum dnf brew npm npx yarn pnpm git curl wget chmod chown mkdir rmdir rm cp mv ls cat grep sed awk find tar zip unzip ssh scp docker systemctl echo cd test true false',
+  py:'def class return if elif else for while break continue pass import from as with try except finally raise lambda yield global nonlocal assert del not and or in is None True False self async await print len range',
+  java:'public private protected class interface extends implements static final void int long double float boolean char byte short new return if else for while do break continue switch case default try catch finally throw throws import package this super abstract native synchronized volatile transient instanceof enum assert record var',
+  go:'package import func var const type struct interface map chan go defer select case default if else for range break continue return switch fallthrough nil true false string int int8 int16 int32 int64 uint uint8 uint16 uint32 uint64 float32 float64 bool byte rune error make new len cap append copy delete panic recover',
+  c:'if else for while do break continue return switch case default sizeof typedef struct union enum static const volatile extern register auto void int char float double long short signed unsigned goto include define ifdef ifndef endif NULL true false delete class public private protected template namespace using try catch throw this virtual inline bool',
+  sql:'select from where insert into values update set delete create table drop alter add column primary key foreign references join left right inner outer on group by order having limit offset as distinct count sum avg max min case when then else end union all and or not null is in like between',
+  php:'echo print if else elseif for while do foreach function class new return public private protected static const var as use namespace try catch finally throw switch case default break continue array isset unset null true false require include extends implements interface abstract final'
+};
+
+function langKey(lang){
+  const l = String(lang || '').toLowerCase();
+  if(/^(js|jsx|javascript|mjs|cjs|node)$/.test(l)) return 'js';
+  if(/^(ts|tsx|typescript)$/.test(l)) return 'ts';
+  if(/^(vue|html|xml|svg|markup|htm|svelte)$/.test(l)) return 'html';
+  if(/^(css|scss|less|sass|stylus)$/.test(l)) return 'css';
+  if(/^(json|json5|jsonc)$/.test(l)) return 'json';
+  if(/^(sh|bash|shell|zsh|console|terminal|cmd|powershell|ps1)$/.test(l)) return 'bash';
+  if(/^(py|python)$/.test(l)) return 'py';
+  if(/^(java|kotlin|kt)$/.test(l)) return 'java';
+  if(/^(go|golang)$/.test(l)) return 'go';
+  if(/^(c|cpp|c\+\+|cc|cxx|h|hpp|objective-c|objc|csharp|c#)$/.test(l)) return 'c';
+  if(/^(sql|mysql|pgsql|sqlite)$/.test(l)) return 'sql';
+  if(/^php$/.test(l)) return 'php';
+  if(/^(yml|yaml)$/.test(l)) return 'yaml';
+  if(/^(md|markdown)$/.test(l)) return 'md';
+  return 'plain';
+}
+
+function highlight(code, lang, hl){
+  const L = langKey(lang);
+  const kwSet = new Set((KWS[L] || '').split(/\s+/).filter(Boolean));
+  const ci = (L === 'sql');                       // SQL 关键字大小写不敏感
+  const isHtml = L === 'html', isCss = L === 'css';
+  const isJson = L === 'json', isYaml = L === 'yaml';
+
+  const lineC = ['//'];
+  if(L === 'py' || L === 'bash' || L === 'yaml' || L === 'php') lineC.push('#');
+  if(L === 'sql') lineC.push('--');
+  const blockC = [['/*', '*/']];
+  if(isHtml) blockC.push(['<!--', '-->']);
+
+  const idChars = isHtml ? /[\w\-:.#]/ : (isCss ? /[\w\-]/ : /[\w$]/);
+  const out = [];
+  const push = s => out.push(esc(s));
+  const colored = (s, c) => out.push(`<span style="color:${c}">${esc(s)}</span>`);
+
+  const n = code.length;
+  let i = 0;
+  while(i < n){
+    const ch = code[i];
+    let hit = false;
+
+    for(const [bs, be] of blockC){                                  // 块注释
+      if(code.startsWith(bs, i)){
+        let end = code.indexOf(be, i + bs.length);
+        end = end === -1 ? n : end + be.length;
+        colored(code.slice(i, end), hl.com); i = end; hit = true; break;
+      }
+    }
+    if(hit) continue;
+
+    let lc = null;                                                  // 行注释
+    for(const s of lineC) if(code.startsWith(s, i)){ lc = s; break; }
+    if(lc){
+      let end = code.indexOf('\n', i); if(end === -1) end = n;
+      colored(code.slice(i, end), hl.com); i = end; continue;
+    }
+
+    if(ch === '"' || ch === "'" || ch === '`'){                     // 字符串
+      let j = i + 1;
+      while(j < n){
+        if(code[j] === '\\'){ j += 2; continue; }
+        if(code[j] === ch){ j++; break; }
+        if(ch !== '`' && code[j] === '\n') break;
+        j++;
+      }
+      const raw = code.slice(i, j);
+      if((isJson || isYaml) && /^\s*:/.test(code.slice(j))) colored(raw, hl.attr);
+      else colored(raw, hl.str);
+      i = j; continue;
+    }
+
+    if(/[0-9]/.test(ch) && !/[\w$.]/.test(i ? code[i - 1] : '')){   // 数字
+      let j = i;
+      while(j < n && /[0-9a-fA-FxX._]/.test(code[j])) j++;
+      if(/[eE]/.test(code[j] || '') && /[+-]/.test(code[j + 1] || '')) j += 2;
+      colored(code.slice(i, j), hl.num); i = j; continue;
+    }
+
+    if(/[A-Za-z_$@]/.test(ch)){                                     // 标识符 / 关键字
+      let j = i + 1;                    // 首字符无条件计入：否则 @ 等不被 idChars 接受的字符会让 j===i 而死循环
+      while(j < n && idChars.test(code[j])) j++;
+      const word = code.slice(i, j), after = code.slice(j);
+      let col = null;
+      if(word[0] === '@') col = hl.kw;                                      // CSS at-rule / 装饰器
+      else if(kwSet.has(word) || (ci && kwSet.has(word.toLowerCase()))) col = hl.kw;
+      else if(/^(true|false|null|nil|None|True|False|undefined|NaN|Infinity)$/.test(word)) col = hl.num;
+      else if(isHtml && /<[\/]?$/.test(code.slice(0, i))) col = hl.tag;     // HTML 标签名
+      else if((isHtml || isCss || isYaml) && /^\s*[:=]/.test(after)) col = hl.attr;
+      else if((L === 'bash' || L === 'php') && word[0] === '$') col = hl.var;
+      else if(/^[A-Z][A-Z0-9_]{1,}$/.test(word)) col = hl.tag;              // 类名 / 常量
+      else if(/^\s*\(/.test(after)) col = hl.fn;                            // 函数调用
+      if(col) colored(word, col); else push(word);
+      i = j; continue;
+    }
+
+    push(ch); i++;
+  }
+  return out.join('');
+}
+
+/* GitHub 代码配色：代码块 + 行内代码统一语言 */
+const GITHUB_LIGHT = {
+  bg:'#F6F8FA', fg:'#24292F', border:'#D0D7DE', barBg:'#EFF2F5', barFg:'#57606A',
+  inlineBg:'rgba(175,184,193,0.20)', inlineFg:'#24292F', hl:HL_LIGHT
+};
+const GITHUB_DARK = {
+  bg:'#0D1117', fg:'#C9D1D9', border:'#30363D', barBg:'#161B22', barFg:'#8B949E',
+  inlineBg:'rgba(110,118,129,0.40)', inlineFg:'#C9D1D9', hl:HL_DARK
+};
+function codeStyle(ctx){
+  const T = S();
+  const k = (ctx && ctx.codeStyle) || 'github';
+  if(k === 'github-dark') return GITHUB_DARK;
+  if(k === 'theme') return {bg:T.codeBg, fg:T.codeFg, border:T.codeBg, barBg:T.codeBar,
+                            barFg:'#9FB3AF', inlineBg:T.inlineBg, inlineFg:T.inlineFg, hl:HL_DARK};
+  return GITHUB_LIGHT;
+}
+
+/* =========================================================
+   2. Markdown 解析（零依赖，无 CDN）
+   ========================================================= */
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* 代码「硬保形」：把空格转 &nbsp;、换行转 <br>，不依赖 white-space:pre。
+   微信编辑器会过滤 white-space，导致代码被折叠/自动换行——mdnice 正是靠
+   &nbsp; + <br> 绕过该限制。转换只作用于文本节点，绝不能碰标签属性里的空格。 */
+function codeRigid(html){
+  let out = '', i = 0, n = html.length;
+  while(i < n){
+    const lt = html.indexOf('<', i);
+    if(lt < 0){
+      out += rigidText(html.slice(i));
+      break;
+    }
+    if(lt > i) out += rigidText(html.slice(i, lt));
+    const gt = html.indexOf('>', lt);
+    if(gt < 0){                       // 未闭合的 <，整段按文本处理，避免死循环
+      out += rigidText(html.slice(lt));
+      break;
+    }
+    out += html.slice(lt, gt + 1);    // 标签原样透传
+    i = gt + 1;
+  }
+  return out;
+}
+function rigidText(t){
+  // 标签已全部透传，此处只可能是纯文本：空格→&nbsp;，换行→<br>
+  return t.replace(/ /g,'&nbsp;').replace(/\n/g,'<br>');
+}
+
+/* 优先用 highlight.js（本地已加载时），失败返回 null 让调用方回退到自研高亮 */
+function tryHighlightJs(code, lang){
+  try{
+    if(!window.__HLJS_AVAILABLE__ || typeof hljs === 'undefined' || !hljs.highlight) return null;
+    const alias0 = (lang||'').toLowerCase();
+    if(!alias0 || !hljs.getLanguage(alias0)) return null;          // 语言不在 highlight.js 里
+    // highlight.js 已 configure({style:true})，输出为内联 style，公众号可保留颜色
+    const res = hljs.highlight(code, {language:alias0, ignoreIllegals:true});
+    return res && res.value ? hljsToInline(res.value) : null;
+  }catch(e){ return null; }
+}
+
+/* highlight.js 输出 class（v11 的 style:true 对 highlight() 无效），
+   这里按 github.min.css 官方配色转成内联 style，公众号才能保留颜色 */
+const HLJS_COLORS = {
+  'hljs-doctag':'#d73a49','hljs-keyword':'#d73a49','hljs-meta .hljs-keyword':'#d73a49',
+  'hljs-template-tag':'#d73a49','hljs-template-variable':'#d73a49','hljs-type':'#d73a49',
+  'hljs-variable.language_':'#d73a49',
+  'hljs-title':'#6f42c1','hljs-title.class_':'#6f42c1','hljs-title.class_.inherited__':'#6f42c1','hljs-title.function_':'#6f42c1',
+  'hljs-attr':'#005cc5','hljs-attribute':'#005cc5','hljs-literal':'#005cc5','hljs-meta':'#005cc5',
+  'hljs-number':'#005cc5','hljs-operator':'#005cc5','hljs-selector-attr':'#005cc5',
+  'hljs-selector-class':'#005cc5','hljs-selector-id':'#005cc5','hljs-variable':'#005cc5',
+  'hljs-meta .hljs-string':'#032f62','hljs-regexp':'#032f62','hljs-string':'#032f62',
+  'hljs-built_in':'#e36209','hljs-symbol':'#e36209',
+  'hljs-code':'#6a737d','hljs-comment':'#6a737d','hljs-formula':'#6a737d',
+  'hljs-name':'#22863a','hljs-quote':'#22863a','hljs-selector-pseudo':'#22863a','hljs-selector-tag':'#22863a',
+  'hljs-subst':'#24292e','hljs-section':'#005cc5','hljs-bullet':'#735c0f',
+  'hljs-emphasis':'#24292e','hljs-strong':'#24292e','hljs-addition':'#22863a','hljs-deletion':'#b31d28'
+};
+function hljsToInline(html){
+  // <span class="hljs-x ..."> → <span style="color:...">（保留 emphasis/strong 的字体样式）
+  return html.replace(/<span class="([^"]+)">/g, (m, cls) => {
+    const classes = cls.split(/\s+/);
+    let color = '', font = '';
+    for(const c of classes){
+      if(HLJS_COLORS[c]) color = HLJS_COLORS[c];
+      if(c === 'hljs-emphasis') font = 'font-style:italic;';
+      if(c === 'hljs-strong')   font = 'font-weight:700;';
+    }
+    return color || font
+      ? `<span style="${font}${color ? 'color:' + color + ';' : ''}">`
+      : '<span>';
+  });
+}
+
+function splitRow(line){
+  return line.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(s=>s.trim());
+}
+function alignOf(cell){
+  const t = cell.trim();
+  if(/^:-+:$/.test(t)) return 'center';
+  if(/^-+:$/.test(t))  return 'right';
+  if(/^:-+$/.test(t))  return 'left';
+  return '';
+}
+
+class MdParser{
+  constructor(lines){ this.lines = lines; this.i = 0; }
+  parseUntil(stop){
+    const nodes = [];
+    while(this.i < this.lines.length){
+      if(stop && stop(this.lines[this.i])) return nodes;
+      const before = this.i;
+      const n = this.parseBlock();
+      // 保险：任何分支都必须让行号前进，否则外层会反复解析同一行而死循环
+      if(this.i === before) this.i++;
+      if(n) nodes.push(n);
+    }
+    return nodes;
+  }
+  parseBlock(){
+    const line = this.lines[this.i];
+    if(!line.trim()){ this.i++; return null; }
+    let m;
+    // 代码块（语言标记放宽到 \w + # . - ，兼容 c++ / c# / objective-c 等）
+    if(m = /^```\s*([\w+#.\-]*)\s*$/.exec(line)){
+      const lang = m[1]; this.i++;
+      const buf = [];
+      while(this.i < this.lines.length && !/^```\s*$/.test(this.lines[this.i])) buf.push(this.lines[this.i++]);
+      this.i++;
+      return {t:'code', lang, text:buf.join('\n')};
+    }
+    // 容器 :::
+    if(m = /^:::\s*([\w-]+)\s*(.*)$/.exec(line)){
+      const type = m[1].toLowerCase(), arg = (m[2]||'').trim(); this.i++;
+      const children = this.parseUntil(l => /^:::\s*$/.test(l));
+      this.i++;
+      return {t:'container', type, arg, children};
+    }
+    // 标题
+    if(m = /^(#{1,6})\s+(.*)$/.exec(line)){ this.i++; return {t:'h', level:m[1].length, text:m[2]}; }
+    // 分割线
+    if(/^(\s*)([-*_])(\s*\2){2,}\s*$/.test(line)){ this.i++; return {t:'hr'}; }
+    // 引用
+    if(/^\s*>/.test(line)){
+      const buf = [];
+      while(this.i < this.lines.length && /^\s*>/.test(this.lines[this.i]))
+        buf.push(this.lines[this.i++].replace(/^\s*>\s?/,''));
+      return {t:'quote', children:new MdParser(buf).parseUntil(null)};
+    }
+    // 表格
+    if(/^\s*\|.*\|\s*$/.test(line) && this.i+1 < this.lines.length && /^\s*\|[\s:|-]+\|\s*$/.test(this.lines[this.i+1])){
+      const head = splitRow(line);
+      const align = splitRow(this.lines[this.i+1]).map(alignOf);
+      this.i += 2;
+      const rows = [];
+      while(this.i < this.lines.length && /^\s*\|.*\|\s*$/.test(this.lines[this.i])) rows.push(splitRow(this.lines[this.i++]));
+      return {t:'table', head, align, rows};
+    }
+    // 列表
+    if(/^\s*([-*+]|\d+[.)])\s+/.test(line)) return this.parseList();
+    // 独立图片
+    if(m = /^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)\s*$/.exec(line)){
+      this.i++; return {t:'image', alt:m[1], src:m[2]};
+    }
+    // 段落
+    const buf = [];
+    while(this.i < this.lines.length){
+      const l = this.lines[this.i];
+      if(!l.trim()) break;
+      // 关键：buf 为空时（即段落首行）不得 break，否则本行不被消费会死循环
+      if(buf.length){
+        if(/^(#{1,6}\s|```|:::|\s*>|\s*([-*+]|\d+[.)])\s)/.test(l)) break;
+        if(/^!\[[^\]]*\]\([^)]*\)\s*$/.test(l)) break;
+        if(/^\s*\|.*\|\s*$/.test(l)) break;
+        if(/^(\s*)([-*_])(\s*\2){2,}\s*$/.test(l)) break;
+      }
+      buf.push(l); this.i++;
+    }
+    return {t:'p', text:buf.join('\n')};
+  }
+  parseList(){
+    const items = [];
+    const re = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
+    let ordered = false, start = 1;
+    while(this.i < this.lines.length){
+      const m = re.exec(this.lines[this.i]);
+      if(!m){
+        if(items.length && /^\s+\S/.test(this.lines[this.i])){
+          items[items.length-1].text += '\n' + this.lines[this.i].trim(); this.i++; continue;
+        }
+        break;
+      }
+      if(/\d+[.)]/.test(m[2])){ if(!ordered && !items.length) start = parseInt(m[2],10); ordered = true; }
+      let text = m[3], checked = null;
+      const task = /^\[( |x|X)\]\s+(.*)$/.exec(text);
+      if(task){ checked = task[1].toLowerCase() === 'x'; text = task[2]; }
+      items.push({text, checked});
+      this.i++;
+    }
+    return {t:'list', ordered, start, items};
+  }
+}
+
+function parseMarkdown(src){
+  // 去掉 YAML front matter
+  src = src.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
+  const lines = src.replace(/\r\n?/g,'\n').split('\n');
+  return new MdParser(lines).parseUntil(null);
+}
+
+/* =========================================================
+   3. 行内解析
+   ========================================================= */
+function inline(str, ctx){
+  const rules = [
+    {re:/`([^`]+)`/g, fn:m => `<code style="${S(ctx).inlineCode}">${esc(m[1])}</code>`},
+    {re:/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g,
+     fn:m => `<img src="${imgSrc(m[2])}" alt="${esc(m[1])}" style="width:100%;border-radius:6px;display:block;margin:6px auto">`},
+    {re:/\[([^\]]+)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g,
+     fn:(m, rec) => {
+        const T = S(ctx);
+        const urlPart = ctx.showUrl
+          ? `<span style="color:${T.muted};font-size:12px"> · ${esc(m[2])}</span>` : '';
+        return `<a href="${esc(m[2])}" target="_blank" style="color:${T.accent};border-bottom:1px solid ${T.accent}40;padding-bottom:1px;text-decoration:none">${rec(m[1])}</a>${urlPart}`;
+     }},
+    {re:/\*\*([^*]+)\*\*/g, fn:(m, rec) => `<strong style="color:${S(ctx).primary};font-weight:600">${rec(m[1])}</strong>`},
+    {re:/__([^_]+)__/g,     fn:(m, rec) => `<strong style="color:${S(ctx).primary};font-weight:600">${rec(m[1])}</strong>`},
+    {re:/~~([^~]+)~~/g,     fn:m => `<span style="text-decoration:line-through;color:${S(ctx).muted}">${esc(m[1])}</span>`},
+    {re:/==([^=]+)==/g,     fn:(m, rec) => `<span style="background:linear-gradient(transparent 62%, ${S(ctx).accent}33 0);padding:0 1px">${rec(m[1])}</span>`},
+    {re:/\*([^*\n]+)\*/g, fn:(m, rec) => `<em style="font-style:normal;color:${S(ctx).muted}">${rec(m[1])}</em>`},
+    {re:/_([^_\n]+)_/g,   fn:(m, rec) => `<em style="font-style:normal;color:${S(ctx).muted}">${rec(m[1])}</em>`}
+  ];
+  let res = '', i = 0;
+  while(i < str.length){
+    let best = null, bestIdx = Infinity;
+    for(const r of rules){
+      r.re.lastIndex = i;
+      const m = r.re.exec(str);
+      if(m && m.index < bestIdx){ bestIdx = m.index; best = {r, m}; }
+    }
+    if(!best){ res += esc(str.slice(i)); break; }
+    if(bestIdx > i) res += esc(str.slice(i, bestIdx));
+    res += best.r.fn(best.m, s => inline(s, ctx));
+    i = bestIdx + best.m[0].length;
+  }
+  return res;
+}
+
+/* =========================================================
+   4. 渲染为公众号 HTML（全部内联样式）
+   ========================================================= */
+let CUR = THEMES.moqing;
+const S = () => CUR;
+
+/* ⚠️ 字体名必须用单引号：这两个常量会被插入 style="..." 属性，
+   内部若用双引号会提前闭合 style 属性，导致其后所有样式（含 overflow、background）全部失效。
+   这是此前「代码块滚动条不生效 / 复制到公众号有背景色」的根本原因。 */
+const FONT = "-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue','Microsoft YaHei',Arial,sans-serif";
+const MONO = "ui-monospace,SFMono-Regular,Consolas,'Courier New',monospace";
+
+/* dataURL → blob URL 缓存：避免每次重渲染都让浏览器重新解码几 MB 的 base64 */
+const blobCache = new Map();
+function imgSrc(src){
+  if(!/^data:/.test(src)) return src;
+  if(blobCache.has(src)) return blobCache.get(src);
+  if(typeof URL === 'undefined' || !URL.createObjectURL || typeof atob === 'undefined') return src;
+  try{
+    const bin = atob(src.split(',')[1]);
+    const arr = new Uint8Array(bin.length);
+    for(let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    // 从 data URI 取真实 MIME，不能硬编码 image/png（否则 SVG 会被当 PNG 解码而显示失败）
+    const mime = /^data:([^;,]+)/.exec(src);
+    const url = URL.createObjectURL(new Blob([arr], {type: mime ? mime[1] : 'image/png'}));
+    blobCache.set(src, url);
+    return url;
+  }catch(e){ return src; }
+}
+
+function px(v){ return v + 'px'; }
+
+function renderNodes(nodes, ctx, inContainer){
+  return nodes.map((n, idx) => renderNode(n, ctx, inContainer && idx === 0)).join('');
+}
+
+function renderNode(n, ctx, isFirst){
+  const T = S();
+  const fs = ctx.fontSize;
+  const mt = isFirst ? 0 : null;
+  switch(n.t){
+    case 'h': {
+      const txt = inline(n.text, ctx);
+      if(n.level === 1){
+        return `<h1 style="margin:${mt===0?0:30}px 0 6px;font-size:${fs+8}px;line-height:1.45;font-weight:700;color:${T.primary};text-align:center;letter-spacing:1px;background:transparent">${txt}</h1>`
+             + `<p style="text-align:center;margin:0 0 26px;line-height:0;background:transparent"><span style="display:inline-block;width:44px;height:2px;background:${T.accent}">&nbsp;</span></p>`;
+      }
+      if(n.level === 2){
+        return `<h2 style="margin:${mt===0?0:30}px 0 14px;font-size:${fs+3}px;line-height:1.5;font-weight:700;color:${T.primary};border-left:4px solid ${T.accent};padding-left:11px;letter-spacing:.5px;background:transparent">${txt}</h2>`;
+      }
+      if(n.level === 3){
+        return `<h3 style="margin:${mt===0?0:24}px 0 12px;font-size:${fs+1}px;line-height:1.5;font-weight:600;color:${T.primary};background:transparent">`
+             + `<span style="color:${T.accent};margin-right:6px">■</span>${txt}</h3>`;
+      }
+      return `<h${n.level} style="margin:${mt===0?0:20}px 0 10px;font-size:${fs}px;font-weight:600;color:${T.accent};line-height:1.6;background:transparent">${txt}</h${n.level}>`;
+    }
+    case 'p':
+      return `<p style="margin:${mt===0?0:0} 0 ${Math.round(fs*1.25)}px;font-size:${fs}px;line-height:1.8;color:${T.ink};letter-spacing:.3px;text-align:justify;word-break:break-word;background:transparent">`
+           + inline(n.text, ctx).replace(/\n/g,'<br>') + `</p>`;
+
+    case 'hr':
+      return `<p style="text-align:center;margin:${mt===0?0:26}px 0 ${mt===0?26:26}px;line-height:0;background:transparent">`
+           + `<span style="display:inline-block;width:52px;height:1px;background:${T.line}">&nbsp;</span>`
+           + `<span style="display:inline-block;width:5px;height:5px;background:${T.accent};border-radius:50%;margin:0 8px;vertical-align:middle">&nbsp;</span>`
+           + `<span style="display:inline-block;width:52px;height:1px;background:${T.line}">&nbsp;</span></p>`;
+
+    case 'quote': {
+      const inner = renderNodes(n.children, ctx, true);
+      return `<section style="margin:${mt===0?0:20}px 0 ${mt===0?0:20}px;padding:13px 15px;background:${T.soft};border-left:3px solid ${T.accent};border-radius:0 6px 6px 0">`
+           + `<div style="font-size:${fs-1}px;line-height:1.8;color:#6E6E6E;letter-spacing:.3px">${inner}</div></section>`;
+    }
+
+    case 'list': {
+      const items = n.items.map((it, idx) => {
+        const content = inline(it.text, ctx).replace(/\n/g,'<br>');
+        let mark;
+        if(it.checked !== null){
+          mark = `<span style="display:inline-block;width:14px;height:14px;line-height:14px;text-align:center;border:1px solid ${T.accent};border-radius:3px;font-size:10px;color:${T.accent};margin-right:9px;vertical-align:1px">${it.checked ? '✓' : ''}</span>`;
+        } else if(n.ordered){
+          mark = `<span style="display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;background:${T.accentSoft};color:${T.accent};font-size:11px;font-weight:600;border-radius:4px;margin-right:9px;vertical-align:2px">${n.start + idx}</span>`;
+        } else {
+          mark = `<span style="color:${T.accent};margin-right:8px">●</span>`;
+        }
+        return `<p style="margin:0 0 9px;font-size:${fs}px;line-height:1.8;color:${T.ink};letter-spacing:.3px;background:transparent">${mark}${content}</p>`;
+      }).join('');
+      return `<section style="margin:${mt===0?0:0} 0 ${Math.round(fs*1.25)}px;padding-left:2px">${items}</section>`;
+    }
+
+    case 'code': {
+      const cs = codeStyle(ctx);
+      let code;
+      if(ctx.hl){
+        // highlight.js 配色是 GitHub 浅色版，仅在浅色代码主题下使用；深色/跟随主题用自研（随主题取色）
+        code = (ctx.codeStyle === 'github' || ctx.codeStyle == null)
+              ? (tryHighlightJs(n.text, n.lang) || highlight(n.text, n.lang, cs.hl))
+              : highlight(n.text, n.lang, cs.hl);
+      } else {
+        code = esc(n.text);
+      }
+      // 去尾部换行，避免末尾多一个空行；再做「硬保形」（空格→&nbsp;、换行→<br>）
+      const rigid = codeRigid(String(code).replace(/\n+$/,''));
+      const bar = n.lang
+        ? `<p style="margin:0;padding:7px 14px;background:${cs.barBg};color:${cs.barFg};font-size:11px;letter-spacing:1px;font-family:${MONO};border:1px solid ${cs.border};border-bottom:0;border-radius:6px 6px 0 0">${esc(n.lang.toUpperCase())}</p>`
+        : '';
+      const radius = n.lang ? '0 0 6px 6px' : '6px';
+      // 结构与 mdnice 对齐：<pre> 只作 padding:0 的容器；滚动条在 <code> 上（display:-webkit-box + overflow-x:auto）
+      // 关键：不依赖 white-space（微信会过滤），靠 &nbsp; + <br> 保证不换行
+      return `<section style="margin:${mt===0?0:18}px 0 ${mt===0?0:18}px;max-width:100%;overflow:hidden;display:block">${bar}`
+           + `<pre style="margin:0;padding:0;background:${cs.bg};color:${cs.fg};border:1px solid ${cs.border};border-radius:${radius};max-width:100%;width:100%;min-width:0;box-sizing:border-box;display:block;-webkit-text-size-adjust:100%"><code style="display:-webkit-box;font-family:${MONO};font-size:13px;line-height:1.7;padding:14px 15px;overflow-x:auto;overflow-y:hidden">${rigid}</code></pre></section>`;
+    }
+
+    case 'image': {
+      const src = imgSrc(n.src);
+      return `<p style="margin:${mt===0?0:16}px 0 6px;text-align:center;background:transparent"><img src="${src}" alt="${esc(n.alt)}" style="width:100%;border-radius:6px;display:block"></p>`
+           + (n.alt ? `<p style="text-align:center;font-size:12px;color:${T.muted};margin:0 0 16px;background:transparent">${esc(n.alt)}</p>` : '');
+    }
+
+    case 'table': {
+      const A = n.align || [];
+      const th = n.head.map((c, i) =>
+        `<th style="padding:9px 10px;background:${T.primary};color:#FFFFFF;font-weight:600;font-size:${fs-1}px;text-align:${A[i]||'left'};border-bottom:1px solid ${T.primary}">${inline(c, ctx)}</th>`
+      ).join('');
+      const tb = n.rows.map((row, r) => {
+        const tds = row.map((c, i) =>
+          `<td style="padding:9px 10px;font-size:${fs-1}px;color:${T.ink};line-height:1.7;text-align:${A[i]||'left'};border-bottom:1px solid ${T.line};background:${r%2 ? T.soft : '#FFFFFF'}">${inline(c, ctx)}</td>`
+        ).join('');
+        return `<tr>${tds}</tr>`;
+      }).join('');
+      return `<section style="margin:${mt===0?0:18}px 0 ${mt===0?0:18}px;overflow-x:auto">`
+           + `<table style="width:100%;border-collapse:collapse;font-size:${fs-1}px"><thead><tr>${th}</tr></thead><tbody>${tb}</tbody></table></section>`;
+    }
+
+    case 'container':
+      return renderContainer(n, ctx, isFirst);
+
+    default: return '';
+  }
+}
+/* 说明：S() 返回当前主题配色对象，CUR.inlineCode 由 buildHtml() 在渲染前注入 */
+
+function renderContainer(n, ctx, isFirst){
+  const T = S();
+  const fs = ctx.fontSize;
+  const body = renderNodes(n.children, ctx, true);
+  const m0 = isFirst ? 0 : 20;
+
+  if(n.type === 'archive') return renderArchive(n, ctx, isFirst);
+  if(n.type === 'follow')  return renderFollow(n, ctx, isFirst);
+
+  /* 轮播图集 ::: carousel
+     公众号无 JS，用「横向滚动容器 + flex 定宽子项」实现手动轮播。
+     ⚠️ 关键：绝不能出现任何「宽度 > 100%」的元素。
+        公众号正文有全局规则 .rich_media_content *{max-width:100%!important}，
+        会强行把 width:300% 的滑动轨道压回 100%，N 张图被挤成一行平铺、且滚不动
+        ——这正是「本地预览正常、粘进公众号就横着平铺」的原因。
+        改法：滚动容器本身 100% 宽 + display:flex，每张 slide 也是 100% 宽且不可收缩
+        （flex:0 0 100% / min-width:100%），靠 flex 不压缩撑出 N 倍内容宽度，
+        元素自身宽度都不越界，max-width 就再也压不到它。
+        （同理不能依赖 white-space:nowrap，公众号会过滤该属性。） */
+  if(n.type === 'carousel'){
+    const imgs = n.children.filter(c => c.t === 'image');
+    if(!imgs.length) return '';
+    const cnt = imgs.length;
+    const slides = imgs.map((im, i) => {
+      const src = imgSrc(im.src);
+      const alt = esc(im.alt || '');
+      const pad = i < cnt - 1 ? 'padding-right:10px;' : '';   // 末张不留白，露出下一张边缘
+      const cap = im.alt
+        ? `<p style="margin:7px 0 0;font-size:${fs-2}px;color:${T.muted};text-align:center;line-height:1.6">${inline(im.alt, ctx)}</p>`
+        : '';
+      // flex:0 0 100% + min-width:100% 双保险：任一被过滤都不会被压缩成平铺
+      return `<section style="flex:0 0 100%;flex-shrink:0;width:100%;min-width:100%;max-width:100%;box-sizing:border-box;scroll-snap-align:start;${pad}">`
+           + `<img src="${src}" alt="${alt}" style="width:100%;display:block;border-radius:6px">${cap}</section>`;
+    }).join('');
+    const hint = `<p style="margin:9px 0 0;font-size:${fs-3}px;color:${T.muted};text-align:center;letter-spacing:.5px">← 左右滑动查看全部 ${cnt} 张 →</p>`;
+    // 单层滚动容器即可：元素宽度都不超过 100%，只有内容溢出 → 可横向滑动
+    return `<section style="margin:${m0}px 0 ${m0}px">`
+         + `<section style="display:-webkit-box;display:flex;box-sizing:border-box;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory">`
+         + slides
+         + `</section>` + hint + `</section>`;
+  }
+
+  if(n.type === 'tags'){
+    const raw = n.children.map(c => c.text || '').join('\n');
+    const tags = raw.split(/[,，、|\n·\/]+/).map(s => s.trim()).filter(Boolean);
+    const pills = tags.map(t =>
+      `<span style="display:inline-block;padding:3px 11px;margin:0 7px 7px 0;border:1px solid ${T.accent}55;color:${T.accent};background:${T.accentSoft};border-radius:20px;font-size:12px;line-height:1.6">${inline(t, ctx)}</span>`
+    ).join('');
+    return `<p style="margin:${m0}px 0 ${m0}px;line-height:1.8">${pills}</p>`;
+  }
+
+  if(n.type === 'card'){
+    const title = n.arg ? `<p style="margin:0 0 10px;font-size:${fs+1}px;font-weight:700;color:${T.primary}">${inline(n.arg, ctx)}</p>` : '';
+    return `<section style="margin:${m0}px 0 ${m0}px;padding:16px 17px;background:#FFFFFF;border:1px solid ${T.line};border-left:4px solid ${T.accent};border-radius:8px">`
+         + title + `<div style="font-size:${fs}px;line-height:1.8;color:${T.ink}">${body}</div></section>`;
+  }
+
+  const presets = {
+    tip : {bg:T.accentSoft, bar:T.accent,    fg:'#6B5B3E', label:'提示'},
+    info: {bg:T.soft,       bar:T.primary,   fg:'#5A5A5A', label:'说明'},
+    warn: {bg:'#FBF0EC',    bar:'#B4603F',   fg:'#7A4B38', label:'注意'}
+  };
+  const p = presets[n.type] || presets.info;
+  const head = n.arg
+    ? `<p style="margin:0 0 8px;font-size:${fs}px;font-weight:600;color:${p.bar}">${inline(n.arg, ctx)}</p>`
+    : `<p style="margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:1px;color:${p.bar};opacity:.85">${p.label}</p>`;
+  return `<section style="margin:${m0}px 0 ${m0}px;padding:14px 16px;background:${p.bg};border-left:3px solid ${p.bar};border-radius:0 6px 6px 0">`
+       + head + `<div style="font-size:${fs-1}px;line-height:1.8;color:${p.fg}">${body}</div></section>`;
+}
+
+/* ---------------------------------------------------------
+   往期推荐 ::: archive
+   4 种样式：dash 虚线框 / card 卡片列表 / plain 简约条目 / dark 深色块
+   --------------------------------------------------------- */
+function parseArchiveItems(nodes){
+  const items = [];
+  const push = raw => {
+    const s = String(raw).replace(/^\s*[-*]\s*/, '').trim();
+    if(!s) return;
+    const m = /\[([^\]]+)\]\(([^)\s]+)\)/.exec(s);
+    if(m) items.push({title:m[1], url:m[2]});
+    else items.push({title:s, url:''});
+  };
+  nodes.forEach(n => {
+    if(n.t === 'list') n.items.forEach(it => push(it.text));
+    else if(n.t === 'p') n.text.split('\n').forEach(push);
+  });
+  return items;
+}
+
+function renderArchive(n, ctx, isFirst){
+  const T = S(), fs = ctx.fontSize;
+  const items = parseArchiveItems(n.children);
+  const m0 = isFirst ? 0 : 24;
+  const st = ctx.archiveStyle || 'dash';
+  const title = n.arg || '往期推荐';
+  const head = `<p style="margin:0 0 10px;font-size:12px;letter-spacing:2px;color:${T.accent};font-weight:600">${inline(title, ctx)}</p>`;
+
+  const rows = items.map((it, i) => {
+    const txt = inline(it.title, ctx);
+    // 公众号正文中 mp.weixin.qq.com 链接可点击跳转，因此保留 <a>
+    const label = it.url
+      ? `<a href="${it.url}" style="color:inherit;text-decoration:none">${txt}</a>`
+      : txt;
+    const no = String(i + 1).padStart(2, '0');
+
+    if(st === 'card'){
+      return `<p style="margin:0 0 8px;padding:11px 13px;background:#FFFFFF;border:1px solid ${T.line};border-left:3px solid ${T.accent};border-radius:6px;font-size:${fs-1}px;line-height:1.6">`
+        + `<span style="display:inline-block;min-width:22px;color:${T.accent};font-size:12px;font-weight:600">${no}</span>`
+        + `<span style="color:${T.ink}">${label}</span>`
+        + `<span style="color:${T.muted};font-size:12px"> ›</span></p>`;
+    }
+    if(st === 'plain'){
+      return `<p style="margin:0;padding:10px 0;border-bottom:1px solid ${T.line};font-size:${fs-1}px;line-height:1.6">`
+        + `<span style="color:${T.accent};margin-right:8px">●</span>`
+        + `<span style="color:${T.ink}">${label}</span></p>`;
+    }
+    if(st === 'dark'){
+      return `<p style="margin:0 0 7px;padding:10px 13px;background:${T.primaryLight};border-radius:6px;font-size:${fs-1}px;line-height:1.6">`
+        + `<span style="display:inline-block;min-width:22px;color:${T.accent};font-size:12px;font-weight:600">${no}</span>`
+        + `<span style="color:#E7E1D5">${label}</span></p>`;
+    }
+    // dash：虚线框（默认，最接近常见「往期推荐」样式）
+    return `<p style="margin:0;padding:8px 0;border-bottom:1px dashed ${T.line};font-size:${fs-1}px;line-height:1.6">`
+      + `<span style="color:${T.ink}">${label}</span></p>`;
+  }).join('');
+
+  if(st === 'card')
+    return `<section style="margin:${m0}px 0 ${m0}px">${head}${rows}</section>`;
+  if(st === 'plain')
+    return `<section style="margin:${m0}px 0 ${m0}px;padding:14px 0 0;border-top:1px solid ${T.line}">${head}${rows}</section>`;
+  if(st === 'dark')
+    return `<section style="margin:${m0}px 0 ${m0}px;padding:17px 18px;background:${T.primary};border-radius:8px">${head}${rows}</section>`;
+  return `<section style="margin:${m0}px 0 ${m0}px;padding:15px 17px;background:#FFFFFF;border:1px dashed ${T.line};border-radius:8px">${head}${rows}</section>`;
+}
+
+/* ---------------------------------------------------------
+   关注引导 ::: follow
+   3 种样式：card 居中卡片 / quote 左侧金条 / dark 深色块
+   用法：::: follow 号名  换行后每行一句文案
+   --------------------------------------------------------- */
+function renderFollow(n, ctx, isFirst){
+  const T = S(), fs = ctx.fontSize;
+  const m0 = isFirst ? 0 : 26;
+  const st = ctx.followStyle || 'card';
+  const name = n.arg || '听风入画';
+  const lines = n.children.map(c => c.text || '').join('\n').split('\n').map(s => s.trim()).filter(Boolean);
+  const bodyInk  = lines.map(l => `<p style="margin:0 0 5px;font-size:${fs-1}px;line-height:1.75;color:#6E6E6E">${inline(l, ctx)}</p>`).join('');
+  const bodyDark = lines.map(l => `<p style="margin:0 0 5px;font-size:${fs-1}px;line-height:1.75;color:#C9C3B6">${inline(l, ctx)}</p>`).join('');
+
+  if(st === 'quote'){
+    return `<section style="margin:${m0}px 0 ${m0}px;padding:15px 17px;background:${T.soft};border-left:3px solid ${T.accent};border-radius:0 6px 6px 0">`
+      + `<p style="margin:0 0 8px;font-size:${fs+1}px;font-weight:700;color:${T.primary}">${inline(name, ctx)}</p>${bodyInk}</section>`;
+  }
+  if(st === 'dark'){
+    return `<section style="margin:${m0}px 0 ${m0}px;padding:18px 19px;background:${T.primary};border-radius:8px">`
+      + `<p style="margin:0 0 8px;font-size:${fs+2}px;font-weight:700;color:${T.accent};letter-spacing:1px">${inline(name, ctx)}</p>${bodyDark}`
+      + `<p style="margin:12px 0 0;line-height:0"><span style="display:inline-block;width:40px;height:2px;background:${T.accent}">&nbsp;</span></p></section>`;
+  }
+  return `<section style="margin:${m0}px 0 ${m0}px;padding:18px 19px;background:#FFFFFF;border:1px solid ${T.line};border-top:3px solid ${T.accent};border-radius:8px;text-align:center">`
+    + `<p style="margin:0 0 6px;font-size:${fs+2}px;font-weight:700;color:${T.primary};letter-spacing:2px">${inline(name, ctx)}</p>`
+    + `<p style="margin:0 0 13px;line-height:0"><span style="display:inline-block;width:36px;height:2px;background:${T.accent}">&nbsp;</span></p>`
+    + bodyInk + `</section>`;
+}
+
+function buildHtml(src, themeKey, fontSize, showUrl, archiveStyle, followStyle, codeStyleKey, hl){
+  // 参数兜底：缺参时避免输出 "undefinedpx" 之类的坏样式（布尔参数不能用 ||，会吞掉 false）
+  fontSize = Number(fontSize) || 15;
+  showUrl  = showUrl  !== undefined ? showUrl  : true;
+  hl       = hl       !== undefined ? hl       : true;
+  CUR = THEMES[themeKey] || THEMES.moqing;
+  const ctx = {fontSize, showUrl, archiveStyle, followStyle, codeStyle:codeStyleKey, hl:hl !== false};
+  const cs = codeStyle(ctx);
+  CUR.inlineCode = `background:${cs.inlineBg};color:${cs.inlineFg};padding:.2em .4em;border-radius:6px;font-family:${MONO};font-size:${(fontSize-2)}px`;
+  const nodes = parseMarkdown(src);
+  const body = renderNodes(nodes, ctx, false);
+  return `<section style="font-family:${FONT};font-size:${fontSize}px;color:${CUR.ink};line-height:1.8;letter-spacing:.3px;padding:0 1px;word-break:break-word;background:#FFFFFF">${body}</section>`;
+}
+
+/* =========================================================
+   5. 交互
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const editor = $('editor'), preview = $('preview');
+
+const SNIPPETS = [
+  {label:'站点卡片', text:
+`::: card
+### 站点名称
+一句话说清它解决什么问题，不要写宣传语。
+
+- 平台：Web / macOS / Windows
+- 价格：免费 · 部分功能付费
+- 适合：经常写作的人
+
+[访问官网](https://example.com)
+:::`},
+  {label:'推荐分级', text:
+`| 推荐 | 名称 | 一句话评价 |
+| :---: | --- | --- |
+| 🥇 |  | 日常首选 |
+| 🥈 |  | 备选方案 |
+| 🥉 |  | 特定场景更好用 |`},
+  {label:'提示块', text:`::: tip\n这里写小技巧或补充说明\n:::`},
+  {label:'注意块', text:`::: warn\n这里写坑点、限制、需要先知道的事\n:::`},
+  {label:'标签行', text:`::: tags\n免费, 无需注册, 国内可用\n:::`},
+  {label:'引用', text:`> 有些工具之所以好，是因为它不打扰你。`},
+  {label:'分割线', text:`\n---\n`},
+  {label:'往期推荐', text:
+`::: archive 往期推荐
+- [第 1 期 · 文章标题](https://mp.weixin.qq.com/s/换成你的文章链接)
+- [第 2 期 · 文章标题](https://mp.weixin.qq.com/s/换成你的文章链接)
+- [第 3 期 · 文章标题](https://mp.weixin.qq.com/s/换成你的文章链接)
+:::`},
+  {label:'关注引导', text:
+`::: follow 听风入画
+分享好用的软件与网站，安静、克制、不打扰。
+如果这期对你有用，点个「在看」，或者分享给需要的朋友。
+:::`},
+  {label:'文末引导', text:
+`---
+
+::: info
+以上就是本期的分享。
+如果对你有用，欢迎 **点赞** 和 **在看**。
+:::`}
+];
+
+// 主题下拉
+Object.keys(THEMES).forEach(k => {
+  const o = document.createElement('option');
+  o.value = k; o.textContent = THEMES[k].name;
+  $('themeSel').appendChild(o);
+});
+
+// 快捷插入
+SNIPPETS.forEach(s => {
+  const b = document.createElement('button');
+  b.className = 'mini'; b.textContent = s.label;
+  b.onclick = () => { insertText(s.text); };
+  $('snippets').appendChild(b);
+});
+
+function insertText(text){
+  const start = editor.selectionStart, end = editor.selectionEnd;
+  const v = editor.value;
+  const before = v.slice(0, start), after = v.slice(end);
+  const pre = (before && !before.endsWith('\n')) ? '\n\n' : '';
+  editor.value = before + pre + text + '\n\n' + after;
+  editor.focus();
+  const pos = (before + pre + text + '\n\n').length;
+  editor.setSelectionRange(pos, pos);
+  render();
+}
+
+// 设置持久化
+const LS_DRAFT = 'tingfeng_md_draft';
+const LS_CONF  = 'tingfeng_md_conf';
+const conf = Object.assign({theme:'moqing', size:15, showUrl:true, archiveStyle:'dash',
+                            followStyle:'card', codeStyle:'github', hl:true},
+                           JSON.parse(localStorage.getItem(LS_CONF) || '{}'));
+$('themeSel').value = conf.theme;
+$('archiveSel').value = conf.archiveStyle;
+$('followSel').value = conf.followStyle;
+$('codeSel').value = conf.codeStyle;
+$('hlOn').checked = conf.hl;
+$('sizeRange').value = conf.size;
+$('sizeVal').textContent = conf.size + 'px';
+$('showUrl').checked = conf.showUrl;
+
+// 统一出口：按当前面板设置生成公众号 HTML
+function currentHtml(){
+  return buildHtml(editor.value, $('themeSel').value, +$('sizeRange').value, $('showUrl').checked,
+                   $('archiveSel').value, $('followSel').value, $('codeSel').value, $('hlOn').checked);
+}
+
+/* 扫描文中图片，区分本地（data:/相对路径，微信粘不了）与外链 */
+const IMG_RE = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+function scanImages(src){
+  const out = [], re = new RegExp(IMG_RE.source, 'g');
+  let m;
+  while((m = re.exec(src))) out.push({alt:m[1], url:m[2], local:/^(data:|file:|blob:|\.{0,2}\/|[A-Za-z]:)/.test(m[2])});
+  return out;
+}
+
+let timer = null;
+function render(){
+  const html = currentHtml();
+  preview.innerHTML = html || `<p style="color:#C4C4C4;font-size:13px;text-align:center;padding:60px 0">左侧开始写，这里实时预览</p>`;
+  const imgs = scanImages(editor.value);
+  const localN = imgs.filter(i => i.local).length;
+  const len = editor.value.replace(/\s/g,'').length;
+  $('stat').innerHTML = `${len} 字 · ${editor.value.split('\n').length} 行`
+    + (imgs.length ? ` · 图片 ${imgs.length} 张` : '')
+    + (localN ? ` · <b>${localN} 张为本地图，发布前需替换</b>` : '');
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    try{ localStorage.setItem(LS_DRAFT, editor.value); }
+    catch(e){ /* 草稿超出 localStorage 配额（多为 base64 图片），跳过自动保存 */ }
+  }, 400);
+}
+function saveConf(){
+  Object.assign(conf, {theme:$('themeSel').value, size:+$('sizeRange').value, showUrl:$('showUrl').checked,
+                       archiveStyle:$('archiveSel').value, followStyle:$('followSel').value,
+                       codeStyle:$('codeSel').value, hl:$('hlOn').checked});
+  localStorage.setItem(LS_CONF, JSON.stringify(conf));
+  render();
+}
+
+// 输入改防抖：正文含 base64 图片时文档可达数 MB，逐帧渲染会拖垮页面
+let renderTimer = null;
+function scheduleRender(){
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(render, editor.value.length > 100000 ? 320 : 90);
+}
+editor.addEventListener('input', scheduleRender);
+
+/* ---------- 撤销 / 重做（手动历史栈，500ms 停顿自动快照） ----------
+   每次输入停顿后把当前内容入栈。Ctrl+Z 弹栈，Ctrl+Y 恢复。
+   撤销后再修改会丢弃「未来」分支。栈深上限 50 防爆。*/
+const UNDO_MAX = 50, UNDO_DEBOUNCE = 500;
+let undoStack = [''], undoIndex = 0, undoTimer = null, isUndoing = false;
+function pushHistory(){
+  if(isUndoing) return;                                  // 自己设值时跳过
+  // 截断未来分支：撤销后改过内容就回不去了
+  if(undoIndex < undoStack.length - 1) undoStack.length = undoIndex + 1;
+  const v = editor.value;
+  if(v === undoStack[undoStack.length - 1]) return;      // 去重：内容未变不推
+  undoStack.push(v);
+  if(undoStack.length > UNDO_MAX) undoStack.shift();
+  undoIndex = undoStack.length - 1;
+}
+function schedulePush(){
+  clearTimeout(undoTimer);
+  undoTimer = setTimeout(pushHistory, UNDO_DEBOUNCE);
+}
+function undo(){
+  if(undoIndex <= 0) return toast('已是最早');
+  undoIndex--;
+  isUndoing = true;
+  editor.value = undoStack[undoIndex];
+  render();
+  isUndoing = false;
+  toast('已撤销');
+}
+function redo(){
+  if(undoIndex >= undoStack.length - 1) return toast('已是最新');
+  undoIndex++;
+  isUndoing = true;
+  editor.value = undoStack[undoIndex];
+  render();
+  isUndoing = false;
+  toast('已重做');
+}
+function resetHistory(v){
+  clearTimeout(undoTimer);
+  undoStack = [v || ''];
+  undoIndex = 0;
+  isUndoing = false;
+}
+editor.addEventListener('input', schedulePush);
+$('themeSel').addEventListener('change', saveConf);
+$('archiveSel').addEventListener('change', saveConf);
+$('followSel').addEventListener('change', saveConf);
+$('codeSel').addEventListener('change', saveConf);
+$('hlOn').addEventListener('change', saveConf);
+$('sizeRange').addEventListener('input', () => { $('sizeVal').textContent = $('sizeRange').value + 'px'; saveConf(); });
+$('showUrl').addEventListener('change', saveConf);
+
+// 复制到公众号（富文本）
+$('btnCopy').onclick = () => {
+  if(!editor.value.trim()) return toast('先写点内容吧');
+  copyRich(currentHtml());
+  const localN = scanImages(editor.value).filter(i => i.local).length;
+  if(localN) toast(`已复制，但 ${localN} 张本地图片粘贴后会丢失，请先在后台上传替换`);
+  else toast('已复制，去公众号编辑器 Ctrl+V 即可');
+};
+function copyRich(html){
+  // 优先用现代 Clipboard API 直接写 text/html，避免 contenteditable + execCommand('copy')
+  // 把内嵌 <a> 链接的 selection 提权到整个内容块（公众号会把所有文字按"链接色+高亮"渲染）
+  try{
+    if(navigator.clipboard && window.ClipboardItem){
+      const htmlBlob = new Blob([html], {type:'text/html;charset=utf-8'});
+      const textBlob = new Blob([stripTags(html)], {type:'text/plain;charset=utf-8'});
+      navigator.clipboard.write([new ClipboardItem({'text/html':htmlBlob, 'text/plain':textBlob})]);
+      return;
+    }
+  }catch(e){}
+  // 回退：contenteditable + execCommand（兼容性更好，但部分公众号会出现链接提权）
+  fallbackCopyRich(html);
+}
+function fallbackCopyRich(html){
+  const holder = document.createElement('div');
+  holder.contentEditable = 'true';
+  holder.innerHTML = html;
+  holder.style.cssText = 'position:fixed;left:-9999px;top:0;width:420px;opacity:0';
+  document.body.appendChild(holder);
+  // 临时移除所有 <a> 的 href，避免 Chromium execCommand('copy') 跨链接 selection 时
+  // 把整个选区都按"链接色+高亮"渲染（selection 提权）
+  const links = holder.querySelectorAll('a[href]');
+  const saved = [];
+  links.forEach(a => { saved.push([a, a.getAttribute('href')]); a.removeAttribute('href'); });
+  const range = document.createRange();
+  range.selectNodeContents(holder);
+  const sel = window.getSelection();
+  sel.removeAllRanges(); sel.addRange(range);
+  let ok = false;
+  try{ ok = document.execCommand('copy'); }catch(e){}
+  sel.removeAllRanges();
+  // 恢复 href
+  saved.forEach(([a, href]) => a.setAttribute('href', href));
+  document.body.removeChild(holder);
+  if(!ok) fallbackCopy(html);
+}
+function stripTags(html){
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return d.innerText || d.textContent || '';
+}
+
+// 复制 HTML 源码
+$('btnHtml').onclick = () => {
+  fallbackCopy(currentHtml(), 'HTML 源码已复制');
+};
+function fallbackCopy(text, msg){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+  if(msg) toast(msg);
+}
+
+// 导入 / 下载 / 清空
+$('btnImport').onclick = () => $('fileInput').click();
+$('fileInput').onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => { editor.value = r.result; render(); resetHistory(editor.value); toast('已导入 ' + f.name); };
+  r.readAsText(f, 'utf-8');
+  e.target.value = '';
+};
+$('btnDownload').onclick = () => {
+  const blob = new Blob([editor.value], {type:'text/markdown;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '听风入画-' + new Date().toISOString().slice(0,10) + '.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+$('btnClear').onclick = () => {
+  if(editor.value.trim() && !confirm('清空当前内容？')) return;
+  editor.value = ''; render(); resetHistory('');
+};
+
+/* ---------- 遮罩 / 速查 / 弹窗 / 快捷键面板 ---------- */
+function updateOverlay(){
+  const any = $('cheat').classList.contains('open') || $('modal').classList.contains('show') || $('keys').classList.contains('open');
+  $('mask').classList.toggle('show', any);
+}
+function setCheat(open){ $('cheat').classList.toggle('open', open); updateOverlay(); }
+function setModal(open){ $('modal').classList.toggle('show', open); updateOverlay(); }
+function setKeys(open){ $('keys').classList.toggle('open', open); $('keys').setAttribute('aria-hidden', !open); updateOverlay(); }
+
+$('btnCheat').onclick  = e => { e.stopPropagation(); setCheat(!$('cheat').classList.contains('open')); };
+$('cheatClose').onclick = () => setCheat(false);
+$('btnKeys').onclick   = e => { e.stopPropagation(); setKeys(!$('keys').classList.contains('open')); };
+$('keysClose').onclick = () => setKeys(false);
+$('mask').onclick       = () => { setCheat(false); setModal(false); setKeys(false); };
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){ setCheat(false); setModal(false); setKeys(false); }
+});
+
+/* ---------- 粘贴 / 拖拽图片（压缩后转 dataURL，图注占位自动选中） ---------- */
+const MAX_IMG_W = 1080;
+function fileToDataUrl(file){
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+        if(w > MAX_IMG_W){ h = Math.round(h * MAX_IMG_W / w); w = MAX_IMG_W; }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const g = c.getContext('2d');
+        g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, w, h);
+        g.drawImage(img, 0, 0, w, h);
+        let out = c.toDataURL('image/png');
+        if(out.length > 900 * 1024) out = c.toDataURL('image/jpeg', 0.85);
+        resolve(out);
+      };
+      img.onerror = reject;
+      img.src = fr.result;
+    };
+    fr.onerror = reject;
+    fr.readAsDataURL(file);
+  });
+}
+// pos 为 null 时插到当前光标处；返回 alt 的起止位置与下一次插入点
+function insertImageMd(dataUrl, alt, pos){
+  const v = editor.value;
+  const s = (pos == null) ? editor.selectionStart : pos;
+  const e = (pos == null) ? editor.selectionEnd   : pos;
+  const before = v.slice(0, s), after = v.slice(e);
+  const pre  = (before && !before.endsWith('\n')) ? '\n\n' : '';
+  const text = pre + `![${alt}](${dataUrl})` + '\n\n';
+  editor.value = before + text + after;
+  const altStart = (before + pre + '![').length;
+  return {altStart, altEnd: altStart + alt.length, next: (before + text).length};
+}
+async function handleImageFiles(files){
+  const imgs = [...files].filter(f => f.type.startsWith('image/'));
+  if(!imgs.length) return;
+  toast('正在处理图片…');
+  let pos = null, first = null;
+  for(const f of imgs){
+    const url = await fileToDataUrl(f);
+    const r = insertImageMd(url, '图片描述', pos);
+    if(!first) first = r;
+    pos = r.next;
+  }
+  render();
+  editor.focus();
+  editor.setSelectionRange(first.altStart, first.altEnd);
+  toast(imgs.length > 1 ? `已插入 ${imgs.length} 张，第一张的图注已选中，直接打字` : '已插入，图注已选中，直接打字替换');
+}
+
+editor.addEventListener('paste', e => {
+  const items = e.clipboardData && e.clipboardData.items;
+  if(!items) return;
+  const files = [];
+  for(const it of items){ if(it.type.startsWith('image/')){ const f = it.getAsFile(); if(f) files.push(f); } }
+  if(!files.length) return;
+  e.preventDefault();
+  handleImageFiles(files);
+});
+editor.addEventListener('drop', e => {
+  const files = e.dataTransfer && e.dataTransfer.files;
+  if(!files || !files.length) return;
+  const imgs = [...files].filter(f => f.type.startsWith('image/'));
+  if(!imgs.length) return;
+  e.preventDefault();
+  handleImageFiles(imgs);
+});
+
+/* ---------- 图片清单 ---------- */
+$('btnImages').onclick = () => {
+  const imgs = scanImages(editor.value);
+  const rows = imgs.map((im, i) => {
+    let host = '本地图片';
+    if(!im.local){ try{ host = new URL(im.url).hostname; }catch(e){ host = im.url.slice(0, 30); } }
+    return `<div class="img-row">
+      <img src="${im.url}" alt="">
+      <div class="meta">
+        <div class="name">${esc(im.alt) || '<span style="color:#9A9A9A">（未写图注）</span>'}</div>
+        <span class="tagx ${im.local ? 'local' : 'remote'}">${im.local ? '本地 · 微信粘贴会丢失，需替换' : '外链 · ' + esc(host)}</span>
+      </div>
+      ${im.local ? `<button class="mini" data-i="${i}">下载</button>` : ''}
+    </div>`;
+  }).join('');
+  $('modal').innerHTML = `
+    <h3>图片清单</h3>
+    <p class="sub">共 ${imgs.length} 张。标红的 <b>本地图片</b> 粘贴进公众号后会丢失：先下载 → 去公众号后台上传 → 把生成的链接替换回 Markdown。</p>
+    ${imgs.length ? rows : '<p class="sub">文中还没有图片。可以直接 Ctrl+V 把截图粘到左侧编辑器里。</p>'}
+    <div style="margin-top:16px;text-align:right"><button class="primary" id="modalClose">知道了</button></div>`;
+  setModal(true);
+  $('modalClose').onclick = () => setModal(false);
+  $('modal').querySelectorAll('button[data-i]').forEach(b => {
+    b.onclick = () => {
+      const im = imgs[+b.dataset.i];
+      const a = document.createElement('a');
+      a.href = im.url;
+      a.download = ((im.alt || 'image').replace(/[\\/:*?"<>|]/g, '_')) + '.png';
+      a.click();
+    };
+  });
+};
+
+// Toast
+let toastTimer;
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// 快捷键
+editor.addEventListener('keydown', e => {
+  const mod = e.ctrlKey || e.metaKey;                     // 兼容 Mac 的 ⌘
+  // 撤销 / 重做（优先拦截，避免与浏览器原生 undo 冲突）
+  if(mod && e.key.toLowerCase() === 'z' && !e.shiftKey){ e.preventDefault(); undo(); return; }
+  if((mod && e.key.toLowerCase() === 'y') ||
+     (mod && e.shiftKey && e.key.toLowerCase() === 'z')){ e.preventDefault(); redo(); return; }
+  if(mod && e.key.toLowerCase() === 's'){ e.preventDefault(); localStorage.setItem(LS_DRAFT, editor.value); toast('草稿已保存到本地'); }
+  if(mod && e.key.toLowerCase() === 'b'){
+    e.preventDefault();
+    const s = editor.selectionStart, en = editor.selectionEnd, v = editor.value;
+    editor.value = v.slice(0,s) + '**' + (v.slice(s,en) || '加粗') + '**' + v.slice(en);
+    editor.setSelectionRange(s+2, (en||s+2)+2); render(); pushHistory();
+  }
+  if(mod && e.key.toLowerCase() === 'i'){
+    e.preventDefault();
+    const s = editor.selectionStart, en = editor.selectionEnd, v = editor.value;
+    editor.value = v.slice(0,s) + '==' + (v.slice(s,en) || '高亮') + '==' + v.slice(en);
+    editor.setSelectionRange(s+2, (en||s+2)+2); render(); pushHistory();
+  }
+  if(mod && e.shiftKey && e.key.toLowerCase() === 'x'){
+    e.preventDefault();
+    const s = editor.selectionStart, en = editor.selectionEnd, v = editor.value;
+    editor.value = v.slice(0,s) + '~~' + (v.slice(s,en) || '删除线') + '~~' + v.slice(en);
+    editor.setSelectionRange(s+2, (en||s+2)+2); render(); pushHistory();
+  }
+});
+
+/* 示例文稿（替换为你的内容即可；站点信息请按实际情况核对） */
+const SAMPLE = [
+'# 5 个安静好用的小众网站',
+'',
+'> 不弹窗，不追着你注册会员，',
+'> 也不在你每次打开时问「要不要升级 Pro」。',
+'> 它们只是把一件事做完了，然后安静地等你走。',
+'',
+'这期挑了 5 个我用了一年以上的站。共同点很朴素：**免费、无需注册、点开就能用**。',
+'',
+'## 一、先给结论',
+'',
+'| 推荐 | 名称 | 一句话评价 |',
+'| :---: | --- | --- |',
+'| 🥇 | Excalidraw | 画示意图最快，没有之一 |',
+'| 🥈 | Squoosh | 图片压缩，全程在本地跑，不上传 |',
+'| 🥉 | Photopea | 浏览器里的 Photoshop，救急神器 |',
+'| | it-tools | 开发者的瑞士军刀，一百多个小工具 |',
+'| | TinyWow | 什么杂活都能干一点的百宝箱 |',
+'',
+'## 二、逐个说说',
+'',
+'::: card',
+'### Excalidraw',
+'手绘风格的在线白板。画流程图、架构图、给同事解释一个抽象概念，几笔就够了。',
+'',
+'- 平台：Web / 桌面客户端',
+'- 价格：免费开源',
+'- 适合：需要经常「画个图解释一下」的人',
+'',
+'[访问官网](https://excalidraw.com)',
+':::',
+'',
+'它最打动我的地方是——**不要求你画得好看**。线条天生带抖动，反而让人放松。',
+'',
+'::: card',
+'### Squoosh',
+'图片压缩工具。拖进去，左边原图右边结果，拉动滑条实时对比。',
+'',
+'- 平台：Web（支持离线）',
+'- 价格：免费开源',
+'- 适合：对图片体积敏感、又不想装软件的人',
+'',
+'[访问官网](https://squoosh.app)',
+':::',
+'',
+'所有压缩都在浏览器本地完成，图片**不会上传到任何服务器**——这点对处理未公开素材时很重要。',
+'',
+'批量处理可以用它的命令行版本：',
+'',
+'```bash',
+'# 把当前目录所有 png 转成 webp',
+'npx @squoosh/cli --webp auto ./*.png',
+'```',
+'',
+'::: warn',
+'WebP 在部分老版本 Android 和 IE 上兼容性仍然不佳。给用户看的图，建议保留一份 JPG 兜底。',
+':::',
+'',
+'::: card',
+'### Photopea',
+'一个跑在浏览器里的图像编辑器，界面和操作逻辑高度接近 Photoshop，连 PSD 都能直接打开。',
+'',
+'- 平台：Web',
+'- 价格：免费（有去广告的付费档）',
+'- 适合：偶尔要改个 PSD、电脑上没装 PS 的时候',
+'',
+'[访问官网](https://www.photopea.com)',
+':::',
+'',
+'::: card',
+'### it-tools',
+'面向开发者的在线工具集合：JSON 格式化、JWT 解析、Base64、正则测试、哈希、UUID、时间戳转换……一百多个。',
+'',
+'- 平台：Web',
+'- 价格：免费开源',
+'- 适合：不想再往收藏夹里塞一堆单功能小站的人',
+'',
+'[访问官网](https://it-tools.tech)',
+':::',
+'',
+'它也支持自己部署，团队内部用的话，数据不出内网：',
+'',
+'```bash',
+'docker run -d --name it-tools -p 8080:80 corentinth/it-tools:latest',
+'```',
+'',
+'## 三、写在最后',
+'',
+'好的工具应该是**安静**的。它不争夺你的注意力，不制造焦虑，也不试图成为你的生活方式。',
+'你需要它的时候，它在；用完关掉，它就消失。',
+'',
+'::: tags',
+'效率工具, 免费开源, 无需注册, 国内可用, 设计, 开发',
+':::',
+'',
+'---',
+'',
+'::: info',
+'以上就是本期的分享。',
+'你有什么私藏的小众网站？评论区聊聊。',
+':::',
+'',
+'::: follow 听风入画',
+'分享好用的软件与网站，安静、克制、不打扰。',
+'如果这期对你有用，点个「在看」，或者分享给需要的朋友。',
+':::',
+'',
+'::: archive 往期推荐',
+'- [第 12 期 · 一批安静好用的在线工具](https://mp.weixin.qq.com/s/)',
+'- [第 11 期 · 值得收藏的免费图库](https://mp.weixin.qq.com/s/)',
+'- [第 10 期 · 我常用的 6 个写作工具](https://mp.weixin.qq.com/s/)',
+':::'
+].join('\n');
+
+$('btnSample').onclick = () => {
+  if(editor.value.trim() && !confirm('载入示例会覆盖当前内容，继续？')) return;
+  editor.value = SAMPLE; render(); resetHistory(editor.value); toast('已载入示例');
+};
+
+// 初始化（若本地草稿导致异常，用 ?safe=1 打开即可跳过草稿载入）
+if(/[?&]safe=1/.test(location.search)){
+  editor.value = SAMPLE;
+  render();
+  resetHistory(editor.value);
+  toast('安全模式：已跳过本地草稿，原文请从「下载」备份中恢复');
+} else {
+  editor.value = localStorage.getItem(LS_DRAFT) || SAMPLE;
+  render();
+  resetHistory(editor.value);
+}
+</script>
+</body>
+</html>
