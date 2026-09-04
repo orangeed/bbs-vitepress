@@ -183,7 +183,7 @@ async function fetchMovieDetails(id) {
 // ---------- 状态 ----------
 const state = reactive({
   region: REGIONS.some((r) => r.code === props.region) ? props.region : 'CN',
-  theme: localStorage.getItem('cp-theme') || 'dark',
+  theme: (typeof localStorage !== 'undefined' && localStorage.getItem('cp-theme')) || 'dark',
   autoRefresh: true,
   page: 1,
   size: props.pageSizes.includes(props.defaultPageSize) ? props.defaultPageSize : (props.pageSizes[0] || 20),
@@ -207,7 +207,7 @@ const gridEl = ref(null)
 const heroTimer = ref(null)
 const pollTimer = ref(null)
 
-const sysDark = ref(window.matchMedia('(prefers-color-scheme: dark)').matches)
+const sysDark = ref(typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 const resolvedTheme = computed(() => (state.theme === 'system' ? (sysDark.value ? 'dark' : 'light') : state.theme))
 const themeIcon = computed(() => ({ dark: '🌙', light: '☀️', system: '🌗' }[state.theme]))
 const hasDateRange = computed(() => !!(state.dateFrom && state.dateTo))
@@ -414,7 +414,9 @@ watch(() => props.apiKey, () => {
 
 // ---------- 系统主题监听 ----------
 const onSysChange = (e) => { sysDark.value = e.matches }
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onSysChange)
+if (typeof window !== 'undefined') {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onSysChange)
+}
 
 // ---------- 生命周期 ----------
 onMounted(() => {

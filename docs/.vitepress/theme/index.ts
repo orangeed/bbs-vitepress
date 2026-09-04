@@ -24,7 +24,9 @@ import {
 
 import './styles/custom.css'
 import './styles/artalk-custom.css'
+import './styles/loading.css'
 import Layout from './Layout.vue'
+import { installGlobalLoading } from './globalLoading'
 // 自定义样式重载
 import "./style/style.css";
 
@@ -42,7 +44,8 @@ import './style/doc.css'
 export default {
   extends: DefaultTheme,
   Layout,
-  enhanceApp({ app }) {
+  enhanceApp({ app, router }) {
+    installGlobalLoading(router)
     app.component('AButton', Button)
     app.component('ACard', Card)
     app.component('ATitle', Title)

@@ -1,0 +1,22 @@
+/* ============================================================
+   页面打开淡入（只在首屏播放一次，路由切换由 Loading 遮罩负责过渡）
+   只动 opacity，避免 transform 生成包含块影响页面里的 fixed 元素
+   ============================================================ */
+@keyframes ai-page-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#app {
+  animation: ai-page-in 0.4s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app {
+    animation: none;
+  }
+}

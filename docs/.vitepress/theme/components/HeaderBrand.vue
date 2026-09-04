@@ -30,7 +30,7 @@ const drawerOpen = ref(false)
 function openDrawer() { drawerOpen.value = true }
 function closeDrawer() { drawerOpen.value = false }
 const drawerLinks = [
-  { label: '工具箱', href: 'https://doc.orangecj.cn', emoji: '🧰' },
+  // { label: '工具箱', href: 'https://doc.orangecj.cn', emoji: '🧰' },
   { label: '导航', href: '/navhub', emoji: '🧭' },
   { label: '公众号排版', href: '/wxEditor', emoji: '🎬' },
 ]
@@ -64,9 +64,14 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
     </div>
     <!-- 桌面端导航 -->
     <div class="header-nav">
-      <a href="https://doc.orangecj.cn" target="_blank">工具箱</a>
-      <a href="/navhub" target="_blank">导航</a>
-      <a href="/wxEditor" target="_blank">公众号排版</a>
+      <!-- <a href="https://doc.orangecj.cn" target="_blank">工具箱</a> -->
+      <!--
+        target="_blank" 会新开标签页发起 HTTP GET，必须是真实路径 .html，
+        否则 nginx 会回退到 index.html，导致"先显示首页再跳到目标页"。
+        与 docs/.vitepress/config.ts themeConfig.nav 保持一致。
+      -->
+      <a href="/navhub.html" target="_blank">导航</a>
+      <a href="/wxEditor.html" target="_blank">公众号排版</a>
     </div>
     <!-- 桌面端搜索 + Switch -->
     <div class="header-actions desktop-only">

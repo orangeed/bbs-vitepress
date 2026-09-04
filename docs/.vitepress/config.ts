@@ -1,10 +1,17 @@
 import { defineConfig } from "vitepress";
+import {
+  splashHtml,
+  splashScript,
+  splashStyle,
+} from "../.vitepress/theme/splash";
 
 export default defineConfig({
   title: "橘子的分享",
   description: "一个基于 VitePress 与 animal-island-vue 打造的动森风格博客",
   lang: "zh-CN",
   head: [
+    // 首屏兜底 Loading 的样式，必须内联：外链 CSS 是渲染阻塞的，来不及
+    ["style", {}, splashStyle],
     ["meta", { name: "referrer", content: "no-referrer" }],
     // 51la 数据统计（async 避免阻塞首屏渲染）
     [
@@ -22,6 +29,14 @@ export default defineConfig({
       `document.getElementById('LA_COLLECT')?.addEventListener('load',function(){LA.init({id:"3Pza9oQ74JEgxtxN",ck:"3Pza9oQ74JEgxtxN"})})`,
     ],
   ],
+  // 把首屏兜底 Loading 插到 <body> 最前面：HTML 是流式解析的，
+  // 越靠前就能越早画出来，不用等整个文档（navhub 有 280KB+）传完
+  transformHtml(code) {
+    return code.replace(
+      /<body([^>]*)>/,
+      (_, attrs) => `<body${attrs}>${splashHtml}${splashScript}`
+    )
+  },
   vite: {
     ssr: {
       // 该组件库依赖浏览器 API，构建时需避免 SSR 转换出错
@@ -34,7 +49,7 @@ export default defineConfig({
   },
   themeConfig: {
     nav: [
-      { text: "工具箱", link: "https://doc.orangecj.cn" },
+      // { text: "工具箱", link: "https://doc.orangecj.cn" },
       { text: "导航", link: "/navhub" },
       { text: "公众号排版", link: "/wxEditor" },
     ],
