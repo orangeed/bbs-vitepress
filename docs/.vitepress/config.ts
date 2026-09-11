@@ -45,6 +45,10 @@ export default defineConfig({
     build: {
       // 拆分 chunk，避免单文件过大；并开启静态资源压缩提示
       chunkSizeWarningLimit: 600,
+      // highlight.js 资源要以 <script src> 动态注入，必须是真实文件：
+      // lang-json / lang-shell 只有几百字节，默认会被内联成 data: URI。
+      assetsInlineLimit: (filePath) =>
+        filePath.replace(/\\/g, "/").includes("/wx-editor/lib/") ? false : undefined,
     },
   },
   themeConfig: {
