@@ -350,8 +350,8 @@ const LS_IMGBB = 'tingfeng_imgbb_key';
 
 /* 图床：图片经自建后端上传到对象存储（缤纷云 S4），返回 CDN 外链。
    接口 POST /api/upload/file，multipart 字段名 image，可选 source；
-   后端按登录账号自动归档分组（miniapp/{用户名}），所以上传前必须先登录。
-   「我的图片」列表同样依赖后端，因此入口常开。 */
+   后端按 token 里的 platform 决定目录（本编辑器是 mp → wx-editor/{用户名|邮箱}/），
+   所以上传前必须先登录。「我的图片」列表同样依赖后端，因此入口常开。 */
 const BACKEND_GALLERY = true;
 /** 图片外链前缀，仅用于界面文案展示（真实地址由后端返回，换 CDN 域名不用改这里） */
 const IMG_HOST = 'https://img.orangecj.cn';
@@ -434,11 +434,12 @@ const maskShow = computed(
 );
 /* 图床是否可用：后端按登录账号归档图片，所以「已登录」即可用 */
 const hostReady = computed(() => !!authToken.value);
-/* 当前账号在对象存储里的分组名，规则与后端 resolveGroupName 保持一致 */
+/* 当前账号在对象存储里的分组名：wx-editor/{用户名|邮箱}，规则与后端 resolveGroupName 一致 */
 const myGroup = computed(() => {
   const u = authUser.value;
   if (!u) return '';
-  return u.username ? `miniapp/${u.username}` : `u${u.id || 0}`;
+  const name = u.username || u.email || '';
+  return name ? `wx-editor/${name}` : '';
 });
 const displayName = computed(() => (authUser.value && (authUser.value.username || authUser.value.email)) || '已登录');
 const avatarChar = computed(() => displayName.value.slice(0, 1).toUpperCase());
