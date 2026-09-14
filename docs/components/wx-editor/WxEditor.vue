@@ -77,9 +77,9 @@
             <option value="theme">代码 · 跟随主题</option>
           </select>
           <label class="ctrl"><input v-model="conf.hl" type="checkbox"> 语法高亮</label>
-          <label class="ctrl" :title="hostReady ? '粘贴/拖入的图片会从浏览器直传 ImgBB，换取可直接引用的外链（不经过你的服务器）' : '还没配置图床：点右侧「图床设置」填 ImgBB API Key；未配置时图片会内嵌成 base64'"><input v-model="conf.uploadImg" type="checkbox"> 图片上传图床</label>
+          <label class="ctrl" :title="hostReady ? '粘贴/拖入的图片会自动压缩并上传到你的对象存储，正文里写入 CDN 外链' : '还没登录：登录后粘贴的图片才会自动上传；未登录时图片会内嵌成 base64'"><input v-model="conf.uploadImg" type="checkbox"> 图片上传图床</label>
           <button v-if="BACKEND_GALLERY" class="ghost" title="查看 / 管理我上传的图片（按登录账号分组）" @click="openImgs">我的图片</button>
-          <button class="ghost" :class="{ 'need-key': !hostReady }" title="配置 ImgBB API Key：图片直传第三方图床，不占你的服务器" @click="openHost">图床设置</button>
+          <button class="ghost" :class="{ 'need-key': !hostReady }" title="图床状态：图片上传到自己的对象存储（CDN 加速），需先登录" @click="openHost">图床设置</button>
           <label class="ctrl">字号 <input v-model.number="conf.size" type="range" min="14" max="17" step="1"><span>{{ conf.size }}px</span></label>
           <label class="ctrl"><input v-model="conf.showUrl" type="checkbox"> 显示链接地址</label>
           <button class="ghost" @click="cheatOpen = !cheatOpen">语法速查</button>
@@ -148,7 +148,7 @@
       </template>
       <p v-else class="sub">文中还没有图片。可以直接 Ctrl+V 把截图粘到左侧编辑器里。</p>
       <p v-if="images.some((im) => /^data:/.test(im.url)) && !hostReady" class="host-warn">
-        还没配置图床：点右上角「图床设置」填入 ImgBB API Key，就能把本地图片换成外链（图片直传 ImgBB，不占你的服务器）。
+        还没登录：登录后点「全部上传图床」，就能把本地图片换成对象存储外链（按账号归档，CDN 加速）。
       </p>
       <div style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:10px">
         <button
@@ -212,39 +212,39 @@
       <p class="auth-msg" :class="authMsgType">{{ authMsgText }}</p>
     </aside>
 
-    <!-- 图床设置：ImgBB 直传，Key 只存本机浏览器 -->
+    <!-- 图床设置：图片上传到自己的对象存储（缤纷云 S4 + CDN），按登录账号归档 -->
     <aside class="modal host-modal" :class="{ show: hostOpen }" :aria-hidden="String(!hostOpen)">
       <h3>图床设置</h3>
       <p class="sub">
-        粘贴 / 拖入的图片会从浏览器<b>直传 ImgBB</b>，换取可直接引用的外链 ——
-        不经过你自己的服务器，不占服务器磁盘和带宽。
+        粘贴 / 拖入的图片会先压缩，再上传到<b>你自己的对象存储</b>，正文里写入 CDN 外链 ——
+        图片都在自己的桶里，可随时在「我的图片」中查看、插入或删除。
       </p>
 
-      <div class="field">
-        <label>ImgBB API Key</label>
-        <input
-          v-model.trim="imgbbDraft"
-          type="text"
-          placeholder="粘贴你的 API Key"
-          spellcheck="false"
-          autocomplete="off"
-          @keyup.enter="saveImgbbKey"
-        >
+      <div class="host-state-box" :class="hostReady ? 'ok' : 'warn'">
+        <template v-if="hostReady">
+          已就绪 · 当前账号 <b>{{ displayName }}</b>，图片归档到分组 <b>{{ myGroup }}</b>
+        </template>
+        <template v-else>
+          未就绪 · 上传需要登录：后端按登录账号归档图片。未登录时图片会内嵌成 base64，粘贴进公众号会丢失。
+        </template>
       </div>
 
       <p class="host-tip">
-        在 <a href="https://api.imgbb.com/" target="_blank" rel="noreferrer">api.imgbb.com</a> 登录后点
-        「Get API key」即可免费获取（一个账号一个 Key）。Key 只保存在本机浏览器，不会被上传到任何服务器。
-        注意：ImgBB 没有相册 / 分组概念，所有图都会混在同一个 Key 下，且第三方外链有失效风险。
+        外链前缀 <code>{{ IMG_HOST }}</code>（由后端配置，换域名无需改前端）；<br>
+        上传前自动压缩到宽 {{ MAX_IMG_W }}px 以内。
       </p>
 
       <p class="auth-msg" :class="hostMsgType">{{ hostMsgText }}</p>
 
       <div class="host-foot">
-        <button class="mini" @click="saveImgbbKey">保存</button>
-        <button v-if="imgbbKey" class="mini danger" @click="clearImgbbKey">清除 Key</button>
+        <template v-if="hostReady">
+          <button class="mini" @click="openImgs">我的图片</button>
+        </template>
+        <template v-else>
+          <button class="mini" @click="openAuth('login')">登录 / 注册</button>
+        </template>
         <span style="flex:1"></span>
-        <span class="host-state">{{ hostReady ? '图床已就绪' : '未配置 · 图片会内嵌 base64' }}</span>
+        <span class="host-state">{{ hostReady ? '图床已就绪' : '未登录 · 图片会内嵌 base64' }}</span>
         <button class="primary" @click="hostOpen = false">关闭</button>
       </div>
     </aside>
@@ -345,12 +345,16 @@ const LS_DRAFT = 'tingfeng_md_draft';
 const LS_CONF = 'tingfeng_md_conf';
 const LS_TOKEN = 'tingfeng_token';
 const LS_USER = 'tingfeng_user';
+/** 历史遗留：早期「图片直传 ImgBB」时期存在本机的 API Key，启动时清理掉，不再使用 */
 const LS_IMGBB = 'tingfeng_imgbb_key';
 
-/* 方案 A：图片从浏览器直传 ImgBB，不经过自家后端。
-   「我的图片」分组画廊依赖自建后端（部署后把这里改成 true 即可恢复入口）。 */
-const BACKEND_GALLERY = false;
-const IMGBB_UPLOAD = 'https://api.imgbb.com/1/upload';
+/* 图床：图片经自建后端上传到对象存储（缤纷云 S4），返回 CDN 外链。
+   接口 POST /api/upload/file，multipart 字段名 image，可选 source；
+   后端按登录账号自动归档分组（miniapp/{用户名}），所以上传前必须先登录。
+   「我的图片」列表同样依赖后端，因此入口常开。 */
+const BACKEND_GALLERY = true;
+/** 图片外链前缀，仅用于界面文案展示（真实地址由后端返回，换 CDN 域名不用改这里） */
+const IMG_HOST = 'https://img.orangecj.cn';
 
 const MAX_IMG_W = 1080;
 const UNDO_MAX = 50;
@@ -389,10 +393,8 @@ const toastShow = ref(false);
 const toastText = ref('');
 const uploading = ref(false); // 图床上传中
 
-/* 图床设置弹层（ImgBB API Key，只存本机 localStorage） */
+/* 图床设置弹层（展示上传目标与登录状态） */
 const hostOpen = ref(false);
-const imgbbKey = ref('');
-const imgbbDraft = ref('');
 const hostMsgText = ref('');
 const hostMsgType = ref('');
 
@@ -430,10 +432,14 @@ const maskShow = computed(
   () =>
     cheatOpen.value || keysOpen.value || modalOpen.value || authOpen.value || imgsOpen.value || hostOpen.value,
 );
-/* 图床是否可用：配好 ImgBB API Key 即可 —— 浏览器直传 ImgBB，不经过自家服务器 */
-const hostReady = computed(() => !!imgbbKey.value.trim());
-/* 当前账号的分组名，与后端 uploads/u{uid}/ 一一对应 */
-const myGroup = computed(() => (authUser.value && authUser.value.id ? 'u' + authUser.value.id : ''));
+/* 图床是否可用：后端按登录账号归档图片，所以「已登录」即可用 */
+const hostReady = computed(() => !!authToken.value);
+/* 当前账号在对象存储里的分组名，规则与后端 resolveGroupName 保持一致 */
+const myGroup = computed(() => {
+  const u = authUser.value;
+  if (!u) return '';
+  return u.username ? `miniapp/${u.username}` : `u${u.id || 0}`;
+});
 const displayName = computed(() => (authUser.value && (authUser.value.username || authUser.value.email)) || '已登录');
 const avatarChar = computed(() => displayName.value.slice(0, 1).toUpperCase());
 const authTitle = computed(() => (authTab.value === 'login' ? '登录' : '注册'));
@@ -707,9 +713,9 @@ async function handleImageFiles(files) {
   const imgs = [...files].filter((f) => f.type.startsWith('image/'));
   if (!imgs.length) return;
 
-  // 是否走图床：开关打开且配好了 ImgBB Key（浏览器直传第三方），否则退回本地 base64
+  // 是否走图床：开关打开且已登录（后端按账号归档），否则退回本地 base64
   const useHost = conf.uploadImg && hostReady.value;
-  toast(useHost ? '正在压缩并上传图床…' : '正在处理图片…');
+  toast(useHost ? '正在压缩并上传到图床…' : '正在处理图片…');
 
   let pos = null;
   let first = null;
@@ -743,66 +749,98 @@ async function handleImageFiles(files) {
   if (!conf.uploadImg) {
     toast(n === 1 ? '已插入 1 张（未开启图床，内嵌 base64）' : `已插入 ${n} 张（未开启图床，内嵌 base64）`);
   } else if (!hostReady.value) {
-    toast('还没配置图床，图片已内嵌为 base64；点「图床设置」填 ImgBB Key 即可自动换外链');
+    // 未登录：必须明确引导，否则用户粘完图直接发到公众号才发现图片丢失
+    toast('请先登录，图片才能上传到图床；本次已临时内嵌 base64');
+    openAuth('login');
   } else if (!uploaded) {
-    // 配了图床但全部失败：必须显式告知，否则用户只会看到文中出现一大串 base64
+    // 已登录但全部失败：必须显式告知，否则用户只会看到文中出现一大串 base64
     toast(`图床上传失败：${lastErr || '图床不可用'}，已改为本地 base64 插入`);
   } else if (uploaded === n) {
-    toast(n === 1 ? '已上传图床并插入，图注已选中，直接打字替换' : `已上传 ${n} 张到图床并插入，第一张的图注已选中`);
+    toast(n === 1 ? '已上传并插入，图注已选中，直接打字替换' : `已上传 ${n} 张并插入，第一张的图注已选中`);
   } else {
     toast(`已插入 ${n} 张（${uploaded} 张已上传图床，其余失败改为 base64），第一张的图注已选中`);
   }
 }
 
-/* ---------------- 图床：ImgBB 直传（浏览器 → ImgBB，不经过自家服务器） ----------------
-   为什么不走自建后端：图片不落自家服务器，磁盘 / 带宽零占用，2 核 2G 的机器毫无压力。
-   代价：ImgBB 官方 API 只有 key / image / name / expiration 四个参数，没有相册 / 分组概念，
-        图片都混在同一个 Key 下；且外链属第三方，随时可能被清理。
-   接口：POST https://api.imgbb.com/1/upload?key=xxx，form-data 传 image（base64，不含 data: 前缀） */
-async function uploadToImgbb(dataUrl) {
-  const key = imgbbKey.value.trim();
-  if (!key) throw new Error('还没配置图床，点「图床设置」填入 ImgBB API Key');
+/* ---------------- 图床：经后端上传到对象存储（缤纷云 S4 + CDN） ----------------
+   流程：粘贴 / 拖入 → 前端压缩到 MAX_IMG_W 以内 → POST /api/upload/file（multipart，字段名 image）
+        → 后端按登录 token 决定渠道与分组，写入对象存储 → 返回 CDN 外链 → 插入正文。
 
+   为什么不用第三方图床：图片在自己桶里，随时可查可删；且换 CDN 域名只要改后端环境变量，
+   正文里的历史链接也会跟着变（后端按对象键实时拼外链）。
+
+   注意：这里不能复用 apiRequest —— 它固定写死了 Content-Type: application/json，
+   而 FormData 必须让浏览器自己带 multipart boundary，所以单独用 fetch。 */
+
+/** dataURL -> Blob（按二进制上传，避免 base64 再膨胀 1/3） */
+function dataUrlToBlob(dataUrl) {
+  const s = String(dataUrl);
+  const comma = s.indexOf(',');
+  if (comma < 0) throw new Error('图片数据格式不正确');
+  const head = s.slice(5, comma); // 形如 image/png;base64
+  const mime = head.split(';')[0] || 'image/png';
+  const bin = atob(s.slice(comma + 1));
+  const u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return new Blob([u8], { type: mime });
+}
+
+/** 上传单张图片到后端图床，返回可直接引用的外链 */
+async function uploadToBackend(dataUrl) {
+  if (!authToken.value) throw new Error('请先登录后再上传图片');
+
+  const blob = dataUrlToBlob(dataUrl);
+  const ext = (blob.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
   const fd = new FormData();
-  fd.append('image', String(dataUrl).replace(/^data:[^;,]+;base64,/, ''));
-  fd.append('name', `wx-editor-${Date.now().toString(36)}`);
+  fd.append('image', blob, `wx-editor-${Date.now().toString(36)}.${ext}`);
+  fd.append('source', 'wx-editor');
 
   let res;
   try {
-    res = await fetch(`${IMGBB_UPLOAD}?key=${encodeURIComponent(key)}`, { method: 'POST', body: fd });
+    res = await fetch(apiBase() + '/upload/file', {
+      method: 'POST',
+      // 只带鉴权头；Content-Type 交给浏览器自动生成（含 multipart boundary）
+      headers: { Authorization: 'Bearer ' + authToken.value },
+      body: fd,
+    });
   } catch (e) {
-    throw new Error('连不上 ImgBB（网络不通或跨域被拦）');
+    throw new Error(`无法连接服务器（${apiBase()}）`);
   }
 
-  let json = null;
+  let payload = null;
   try {
-    json = await res.json();
+    payload = await res.json();
   } catch (e) {
     /* 无响应体时忽略 */
   }
 
-  if (!json || !json.success || !json.data || !json.data.url) {
-    // 失败时 ImgBB 返回 { error: { message, code } }，例如 code 103 表示 Key 无效
-    const msg = (json && json.error && json.error.message) || `HTTP ${res.status}`;
-    throw new Error(`ImgBB 返回错误：${msg}`);
+  if (!res.ok) {
+    let msg = payload && (payload.message || payload.msg);
+    if (Array.isArray(msg)) msg = msg.join('；');
+    // 登录态失效（过期或被拉黑）：清掉本地，下次操作会重新引导登录
+    if (res.status === 401 || res.status === 403) clearSession();
+    throw new Error(msg || `上传失败（HTTP ${res.status}）`);
   }
-  return json.data.url;
+
+  const url = payload && payload.data && payload.data.url;
+  if (!url) throw new Error('服务器未返回图片地址');
+  return url;
 }
 
-/* 上传入口：当前实现为 ImgBB 直传；将来若改走自建后端，只改这一处 */
+/* 上传入口：统一走自建后端图床 */
 async function uploadToHost(dataUrl) {
-  return uploadToImgbb(dataUrl);
+  return uploadToBackend(dataUrl);
 }
 
-/* 上传前的统一检查：没配 Key 就打开「图床设置」引导 */
+/* 上传前的统一检查：未登录就直接打开登录弹层引导 */
 function ensureHost() {
   if (hostReady.value) return true;
-  openHost();
-  toast('请先填写 ImgBB API Key：图片直传 ImgBB，不经过你的服务器');
+  openAuth('login');
+  toast('请先登录：图片会上传到你自己的对象存储，按账号归档');
   return false;
 }
 
-/* ---------- 图床设置：ImgBB API Key（只存本机 localStorage） ---------- */
+/* ---------- 图床设置：展示上传目标与登录状态 ---------- */
 function hostMsg(text, type) {
   hostMsgText.value = text || '';
   hostMsgType.value = type || '';
@@ -810,39 +848,16 @@ function hostMsg(text, type) {
 
 function openHost() {
   closeAllPanels();
-  imgbbDraft.value = imgbbKey.value;
   hostMsg('', '');
   hostOpen.value = true;
 }
 
-function saveImgbbKey() {
-  const k = imgbbDraft.value.trim();
-  imgbbKey.value = k;
-  try {
-    if (k) localStorage.setItem(LS_IMGBB, k);
-    else localStorage.removeItem(LS_IMGBB);
-  } catch (e) {
-    /* 隐私模式下忽略 */
-  }
-  if (k) {
-    hostMsg('已保存。以后粘贴 / 拖入图片会直传 ImgBB，正文里写的是外链。', 'ok');
-    toast('图床已就绪，粘贴图片会自动上传');
-  } else {
-    hostMsg('已清空，图片会内嵌成 base64（粘贴进公众号会丢失）。', 'err');
-  }
-}
-
-function clearImgbbKey() {
-  imgbbDraft.value = '';
-  saveImgbbKey();
-}
-
-/* 启动时恢复本机保存的 Key */
+/* 启动时清理早期遗留的 ImgBB Key（现已不再使用） */
 function initHost() {
   try {
-    imgbbKey.value = localStorage.getItem(LS_IMGBB) || '';
+    localStorage.removeItem(LS_IMGBB);
   } catch (e) {
-    /* 忽略 */
+    /* 隐私模式下忽略 */
   }
 }
 
@@ -1771,12 +1786,24 @@ button.mini.danger:hover{background:#FBEDE9;border-color:#B4603F;color:#B4603F}
   font-size:12px;color:#B4603F;line-height:1.7;
 }
 
-/* ---------- 图床设置（ImgBB 直传） ---------- */
+/* ---------- 图床设置（上传到自己的对象存储） ---------- */
 .host-modal{width:min(470px,92vw);padding:24px 26px 20px}
 .host-modal h3{margin:0 0 3px;font-size:17px}
 .host-modal .sub b{color:var(--primary)}
+.host-state-box{
+  margin:0 0 12px;padding:10px 12px;border-radius:6px;
+  font-size:12px;line-height:1.7;
+}
+.host-state-box b{color:var(--primary)}
+.host-state-box.ok{background:var(--accent-soft);color:#2F7D5A}
+.host-state-box.warn{background:#FBEDE9;color:#B4603F}
 .host-tip{margin:0 0 12px;font-size:11.5px;color:var(--muted);line-height:1.85}
 .host-tip a{color:var(--primary)}
+.host-tip code{
+  padding:1px 5px;border-radius:4px;background:var(--bg);
+  font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--primary);
+  word-break:break-all;
+}
 .host-foot{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
 .host-foot .primary{padding:7px 18px}
 .host-state{font-size:11.5px;color:var(--muted);white-space:nowrap}
