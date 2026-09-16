@@ -1,0 +1,55 @@
+/* 「听风入画」弹层公共样式：由各弹层子组件以 <style scoped src="./modal-base.css"> 引入。
+   组件拆分后 VitePress 主题的重置不再渗入子组件，这里按需还原基础表现；
+   配色全部引用 .tf-editor 根上定义的 CSS 变量（自定义属性可沿 DOM 继承）。 */
+
+/* ---------- 基础还原 ---------- */
+*{box-sizing:border-box}
+b,strong{font-weight:700}
+input::placeholder{color:#BEBEBE;opacity:1}
+
+/* ---------- 按钮 ---------- */
+button{
+  font-family:inherit;font-size:12px;cursor:pointer;border-radius:6px;
+  border:1px solid var(--line);background:#fff;color:var(--ink);
+  padding:6px 11px;transition:all .15s;
+}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.primary:hover{background:#9E7C48;border-color:#9E7C48;color:#fff}
+button.mini{padding:4px 9px;font-size:11px;border-radius:20px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.ctrl{
+  font-family:inherit;font-size:12px;border:1px solid var(--line);border-radius:6px;
+  padding:5px 8px;background:#fff;color:var(--ink);
+}
+
+/* ---------- 居中弹层 ---------- */
+.modal{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-48%) scale(.98);z-index:50;
+  width:min(560px,92vw);max-height:76vh;overflow:auto;background:#fff;border-radius:12px;
+  border:1px solid var(--line);padding:20px 22px;opacity:0;pointer-events:none;
+  transition:all .2s;
+}
+.modal.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.modal h3{margin:0 0 4px;font-size:15px;color:var(--primary);font-weight:700}
+.modal .sub{margin:0 0 16px;font-size:12px;color:var(--muted);line-height:1.7}
+
+/* ---------- 通用提示 / 图片行 ---------- */
+.auth-msg{min-height:18px;margin:11px 0 0;font-size:12px;line-height:1.6}
+.auth-msg.err{color:#B4603F}
+.auth-msg.ok{color:#2F7D5A}
+.img-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.img-row:last-of-type{border-bottom:0}
+.img-row img{width:88px;height:60px;object-fit:cover;border-radius:6px;background:#F2F2F2;flex:0 0 auto}
+.img-row .meta{flex:1;min-width:0}
+.img-row .name{font-size:13px;color:var(--ink);word-break:break-all;line-height:1.5}
+.tagx{display:inline-block;margin-top:5px;font-size:11px;padding:2px 7px;border-radius:20px}
+.tagx.local{background:#FBEDE9;color:#B4603F}
+.tagx.remote{background:var(--accent-soft);color:var(--primary)}
+
+/* ---------- 弹层右上角关闭按钮 ---------- */
+.cheat-close{
+  position:sticky;top:0;float:right;margin:-6px -6px 0 0;border:0;background:transparent;
+  font-size:20px;line-height:1;color:var(--muted);padding:2px 8px;border-radius:6px;
+}
+.cheat-close:hover{background:var(--accent-soft);color:var(--primary)}

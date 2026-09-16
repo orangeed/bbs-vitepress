@@ -27,13 +27,15 @@
       <!-- 左：编辑 -->
       <section class="pane pane-left">
         <div class="pane-head">
-          <span class="title">MARKDOWN 原稿</span>
-          <button class="ghost" @click="modalOpen = true">图片清单</button>
-          <button class="ghost" @click="pickFile">导入 .md</button>
-          <button class="ghost" @click="loadSample">载入示例</button>
-          <button class="ghost" @click="downloadMd">下载</button>
-          <button class="ghost" @click="clearAll">清空</button>
-          <button class="ghost" title="查看所有快捷键（Ctrl+?）" @click="keysOpen = !keysOpen">⌨ 快捷键</button>
+          <div class="ph-row">
+            <span class="title">MARKDOWN 原稿</span>
+            <button class="tbtn" @click="modalOpen = true">图片清单</button>
+            <button class="tbtn" @click="pickFile">导入 .md</button>
+            <button class="tbtn" @click="loadSample">载入示例</button>
+            <button class="tbtn" @click="downloadMd">下载</button>
+            <button class="tbtn" @click="clearAll">清空</button>
+            <button class="tbtn" title="查看所有快捷键（Ctrl+?）" @click="keysOpen = !keysOpen">快捷键</button>
+          </div>
         </div>
         <textarea
           ref="editorEl"
@@ -47,7 +49,7 @@
           @drop="onDrop"
         ></textarea>
         <div class="snippets">
-          <span class="lbl">快捷插入：</span>
+          <span class="lbl">快捷插入</span>
           <button v-for="s in SNIPPETS" :key="s.label" class="mini" @click="insertText(s.text)">{{ s.label }}</button>
         </div>
         <div class="stat" v-html="statHtml"></div>
@@ -56,52 +58,39 @@
       <!-- 右：预览 -->
       <section class="pane pane-right">
         <div class="pane-head">
-          <span class="title">公众号预览</span>
-          <select v-model="conf.theme" class="ctrl" title="整体配色">
-            <option v-for="(t, k) in THEMES" :key="k" :value="k">{{ t.name }}</option>
-          </select>
-          <select v-model="conf.archiveStyle" class="ctrl" title="往期推荐模块样式">
-            <option value="dash">往期 · 虚线框</option>
-            <option value="card">往期 · 卡片列表</option>
-            <option value="plain">往期 · 简约条目</option>
-            <option value="dark">往期 · 深色块</option>
-          </select>
-          <select v-model="conf.followStyle" class="ctrl" title="关注引导模块样式">
-            <option value="card">引导 · 居中卡片</option>
-            <option value="quote">引导 · 左侧金条</option>
-            <option value="dark">引导 · 深色块</option>
-          </select>
-          <select v-model="conf.headingStyle" class="ctrl" title="标题样式（对二级标题生效）">
-            <option value="default">标题 · 金条引导</option>
-            <option value="number">标题 · 序号衬线</option>
-            <option value="bignum">标题 · 大序号留白</option>
-            <option value="frame">标题 · 居中线框</option>
-            <option value="dual">标题 · 双线夹字</option>
-            <option value="fade">标题 · 渐变底纹</option>
-            <option value="diamond">标题 · 菱形对称</option>
-            <option value="underline">标题 · 短下划线</option>
-          </select>
-          <select v-model="conf.quoteStyle" class="ctrl" title="引用块样式">
-            <option value="default">引用 · 金条浅底</option>
-            <option value="plain">引用 · 极简竖线</option>
-            <option value="card">引用 · 白卡描边</option>
-            <option value="mark">引用 · 引号点缀</option>
-            <option value="dark">引用 · 深色块</option>
-          </select>
-          <select v-model="conf.codeStyle" class="ctrl" title="代码块与行内代码样式">
-            <option value="github">代码 · GitHub 浅色</option>
-            <option value="github-dark">代码 · GitHub 深色</option>
-            <option value="theme">代码 · 跟随主题</option>
-          </select>
-          <label class="ctrl"><input v-model="conf.hl" type="checkbox"> 语法高亮</label>
-          <label class="ctrl" :title="hostReady ? '粘贴/拖入的图片会自动压缩并上传到你的对象存储，正文里写入 CDN 外链' : '还没登录：登录后粘贴的图片才会自动上传；未登录时图片会内嵌成 base64'"><input v-model="conf.uploadImg" type="checkbox"> 图片上传图床</label>
-          <button v-if="BACKEND_GALLERY" class="ghost" title="查看 / 管理我上传的图片（按登录账号分组）" @click="openImgs">我的图片</button>
-          <button class="ghost" :class="{ 'need-key': !hostReady }" title="图床状态：图片上传到自己的对象存储（CDN 加速），需先登录" @click="openHost">图床设置</button>
-          <label class="ctrl">字号 <input v-model.number="conf.size" type="range" min="14" max="17" step="1"><span>{{ conf.size }}px</span></label>
-          <label class="ctrl"><input v-model="conf.showUrl" type="checkbox"> 显示链接地址</label>
-          <button class="ghost" @click="cheatOpen = !cheatOpen">语法速查</button>
-          <button class="ghost" @click="copyHtmlSource">复制 HTML</button>
-          <button class="primary" @click="copyToMp">复制到公众号</button>
+          <div class="ph-row">
+            <span class="title">公众号预览</span>
+            <button v-if="BACKEND_GALLERY" class="tbtn" title="查看 / 管理我上传的图片（按登录账号分组）" @click="openImgs">我的图片</button>
+            <button class="tbtn" :class="{ 'need-key': !hostReady }" title="图床状态：图片上传到自己的对象存储（CDN 加速），需先登录" @click="openHost">图床设置</button>
+            <span class="tsep"></span>
+            <button class="tbtn" @click="cheatOpen = !cheatOpen">语法速查</button>
+            <button class="tbtn" @click="copyHtmlSource">复制 HTML</button>
+            <button class="tbtn primary" @click="copyToMp">复制到公众号</button>
+          </div>
+          <div class="ph-row ph-controls">
+            <Dropdown v-model="conf.theme" :options="THEME_OPTIONS" title="整体配色" />
+            <Dropdown v-model="conf.archiveStyle" :options="ARCHIVE_OPTIONS" title="往期推荐模块样式" />
+            <Dropdown v-model="conf.followStyle" :options="FOLLOW_OPTIONS" title="关注引导模块样式" />
+            <span class="tsep"></span>
+            <Dropdown v-model="conf.headingStyle" :options="HEADING_OPTIONS" title="标题样式（对二级标题生效）" />
+            <Dropdown v-model="conf.quoteStyle" :options="QUOTE_OPTIONS" title="引用块样式" />
+            <Dropdown v-model="conf.codeStyle" :options="CODE_OPTIONS" title="代码块与行内代码样式" />
+            <span class="tsep"></span>
+            <span class="tfield" title="开启后代码块优先使用 highlight.js 高亮">语法高亮
+              <label class="sw"><input v-model="conf.hl" type="checkbox"><i></i></label>
+            </span>
+            <span class="tfield" :title="hostReady ? '粘贴/拖入的图片会自动压缩并上传到你的对象存储，正文里写入 CDN 外链' : '还没登录：登录后粘贴的图片才会自动上传；未登录时图片会内嵌成 base64'">图片上传图床
+              <label class="sw"><input v-model="conf.uploadImg" type="checkbox"><i></i></label>
+            </span>
+            <span class="tfield" title="复制正文时在链接后追加真实地址">链接地址
+              <label class="sw"><input v-model="conf.showUrl" type="checkbox"><i></i></label>
+            </span>
+            <span class="tsep"></span>
+            <label class="tfield" title="正文字号">字号
+              <input v-model.number="conf.size" class="rng" type="range" min="14" max="17" step="1">
+              <span class="rng-v">{{ conf.size }}px</span>
+            </label>
+          </div>
         </div>
         <div class="preview-wrap">
           <div class="phone">
@@ -112,227 +101,35 @@
       </section>
     </main>
 
-    <!-- 快捷键浮层（居中弹层） -->
-    <aside class="keys-modal" :class="{ open: keysOpen }" :aria-hidden="String(!keysOpen)">
-      <header>
-        <span class="keys-title">⌨ 快捷键</span>
-        <button class="cheat-close" title="关闭（Esc）" @click="keysOpen = false">×</button>
-      </header>
-      <section class="keys-body">
-        <h4>撤销 / 重做</h4>
-        <dl>
-          <dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>撤销（Mac 同样为 ⌘+Z）</dd>
-          <dt><kbd>Ctrl</kbd>+<kbd>Y</kbd></dt><dd>重做</dd>
-          <dt><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></dt><dd>重做（Mac 习惯写法）</dd>
-        </dl>
-        <h4>格式</h4>
-        <dl>
-          <dt><kbd>Ctrl</kbd>+<kbd>B</kbd></dt><dd>加粗（无选区时插入「加粗」）</dd>
-          <dt><kbd>Ctrl</kbd>+<kbd>I</kbd></dt><dd>高亮 ==xx==（无选区时插入「高亮」）</dd>
-          <dt><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd></dt><dd>删除线 ~~xx~~（无选区时插入「删除线」）</dd>
-        </dl>
-        <h4>操作</h4>
-        <dl>
-          <dt><kbd>Ctrl</kbd>+<kbd>S</kbd></dt><dd>手动保存草稿到 localStorage</dd>
-          <dt><kbd>Esc</kbd></dt><dd>关闭弹窗 / 速查 / 快捷键面板</dd>
-        </dl>
-        <p class="keys-hint">提示：撤销/重做基于输入停顿 500ms 自动快照，最多保留 50 步历史。</p>
-      </section>
-    </aside>
-
-    <!-- 语法速查抽屉（内容含多行代码示例，必须用 v-html，否则模板会吃掉换行） -->
-    <aside class="cheat" :class="{ open: cheatOpen }">
-      <button class="cheat-close" title="关闭（Esc）" @click="cheatOpen = false">×</button>
-      <div v-html="CHEAT_HTML"></div>
-    </aside>
+    <!-- 快捷键 -->
+    <KeysModal :open="keysOpen" @close="keysOpen = false" />
+    <!-- 语法速查 -->
+    <CheatDrawer :open="cheatOpen" @close="cheatOpen = false" />
+    <!-- 图片清单（上传 / 下载需要改写正文，逻辑在主组件） -->
+    <ImagesModal
+      :open="modalOpen"
+      :images="images"
+      :uploading="uploading"
+      @close="modalOpen = false"
+      @upload-one="uploadOneLocal"
+      @download="downloadImage"
+      @upload-all="uploadAllLocal"
+    />
+    <!-- 登录 / 注册 -->
+    <AuthModal :open="authOpen" :tab="authTab" @close="authOpen = false" />
+    <!-- 图床设置 -->
+    <HostModal :open="hostOpen" @close="hostOpen = false" @login="openAuth('login')" @images="openImgs" />
+    <!-- 我的图片（插入正文交给主组件） -->
+    <ImgsModal
+      v-if="BACKEND_GALLERY"
+      :open="imgsOpen"
+      :is-used="isUrlUsed"
+      @close="imgsOpen = false"
+      @insert="useMyImage"
+      @login="openAuth('login')"
+    />
 
     <div class="mask" :class="{ show: maskShow }" @click="closeAllPanels"></div>
-
-    <!-- 图片清单 -->
-    <div class="modal" :class="{ show: modalOpen }">
-      <h3>图片清单</h3>
-      <p class="sub">共 {{ images.length }} 张。标红的 <b>本地图片</b> 粘贴进公众号后会丢失：可点「上传图床」换成外链，或下载后去公众号后台上传替换。</p>
-      <template v-if="images.length">
-        <div v-for="(im, i) in images" :key="i" class="img-row">
-          <img :src="im.url" alt="">
-          <div class="meta">
-            <div class="name" v-html="altName(im)"></div>
-            <span class="tagx" :class="im.local ? 'local' : 'remote'">{{ im.local ? '本地 · 微信粘贴会丢失，需替换' : '外链 · ' + im.host }}</span>
-          </div>
-          <button v-if="im.local && /^data:/.test(im.url)" class="mini" :disabled="uploading" @click="uploadOneLocal(im)">上传图床</button>
-          <button v-if="im.local" class="mini" @click="downloadImage(im)">下载</button>
-        </div>
-      </template>
-      <p v-else class="sub">文中还没有图片。可以直接 Ctrl+V 把截图粘到左侧编辑器里。</p>
-      <p v-if="images.some((im) => /^data:/.test(im.url)) && !hostReady" class="host-warn">
-        还没登录：登录后点「全部上传图床」，就能把本地图片换成对象存储外链（按账号归档，CDN 加速）。
-      </p>
-      <div style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-        <button
-          v-if="images.some((im) => /^data:/.test(im.url))"
-          class="mini"
-          :disabled="uploading"
-          @click="uploadAllLocal"
-        >{{ uploading ? '上传中…' : '全部上传图床' }}</button>
-        <span v-else></span>
-        <button class="primary" @click="modalOpen = false">知道了</button>
-      </div>
-    </div>
-
-    <!-- 登录 / 注册 弹层 -->
-    <aside class="modal auth-modal" :class="{ show: authOpen }" :aria-hidden="String(!authOpen)">
-      <h3>{{ authTitle }}</h3>
-      <p class="sub">{{ authSub }}</p>
-
-      <div class="auth-tabs">
-        <button type="button" :class="{ active: authTab === 'login' }" @click="switchTab('login')">登录</button>
-        <button type="button" :class="{ active: authTab === 'register' }" @click="switchTab('register')">注册</button>
-      </div>
-
-      <!-- 登录 -->
-      <form v-show="authTab === 'login'" @submit.prevent="doLogin">
-        <div class="field">
-          <label>账号（用户名或邮箱）</label>
-          <input ref="loginAccountEl" v-model="loginForm.account" type="text" placeholder="用户名 / 邮箱" autocomplete="username">
-        </div>
-        <div class="field">
-          <label>密码</label>
-          <input v-model="loginForm.password" type="password" placeholder="请输入密码" autocomplete="current-password">
-        </div>
-        <button type="submit" class="primary auth-submit" :disabled="loginBusy">{{ loginBusy ? '登录中…' : '登录' }}</button>
-      </form>
-
-      <!-- 注册 -->
-      <form v-show="authTab === 'register'" @submit.prevent="doRegister">
-        <div class="field">
-          <label>邮箱</label>
-          <input ref="regEmailEl" v-model="regForm.email" type="email" placeholder="用于接收验证码" autocomplete="email">
-        </div>
-        <div class="field">
-          <label>邮箱验证码</label>
-          <div class="row">
-            <input v-model="regForm.code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位数字" autocomplete="one-time-code">
-            <button type="button" :disabled="codeSending" @click="sendRegCode">{{ codeBtnText }}</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>用户名</label>
-          <input v-model="regForm.username" type="text" placeholder="2-20 个字符" autocomplete="username">
-        </div>
-        <div class="field">
-          <label>密码</label>
-          <input v-model="regForm.password" type="password" placeholder="6-32 个字符" autocomplete="new-password">
-        </div>
-        <button type="submit" class="primary auth-submit" :disabled="registerBusy">{{ registerBusy ? '注册中…' : '注册' }}</button>
-      </form>
-
-      <p class="auth-msg" :class="authMsgType">{{ authMsgText }}</p>
-    </aside>
-
-    <!-- 图床设置：图片上传到自己的对象存储（缤纷云 S4 + CDN），按登录账号归档 -->
-    <aside class="modal host-modal" :class="{ show: hostOpen }" :aria-hidden="String(!hostOpen)">
-      <h3>图床设置</h3>
-      <p class="sub">
-        粘贴 / 拖入的图片会先压缩，再上传到<b>你自己的对象存储</b>，正文里写入 CDN 外链 ——
-        图片都在自己的桶里，可随时在「我的图片」中查看、插入或删除。
-      </p>
-
-      <div class="host-state-box" :class="hostReady ? 'ok' : 'warn'">
-        <template v-if="hostReady">
-          已就绪 · 当前账号 <b>{{ displayName }}</b>，图片归档到分组 <b>{{ myGroup }}</b>
-        </template>
-        <template v-else>
-          未就绪 · 上传需要登录：后端按登录账号归档图片。未登录时图片会内嵌成 base64，粘贴进公众号会丢失。
-        </template>
-      </div>
-
-      <p class="host-tip">
-        外链前缀 <code>{{ IMG_HOST }}</code>（由后端配置，换域名无需改前端）；<br>
-        上传前自动压缩到宽 {{ MAX_IMG_W }}px 以内。
-      </p>
-
-      <p class="auth-msg" :class="hostMsgType">{{ hostMsgText }}</p>
-
-      <div class="host-foot">
-        <template v-if="hostReady">
-          <button class="mini" @click="openImgs">我的图片</button>
-        </template>
-        <template v-else>
-          <button class="mini" @click="openAuth('login')">登录 / 注册</button>
-        </template>
-        <span style="flex:1"></span>
-        <span class="host-state">{{ hostReady ? '图床已就绪' : '未登录 · 图片会内嵌 base64' }}</span>
-        <button class="primary" @click="hostOpen = false">关闭</button>
-      </div>
-    </aside>
-
-    <!-- 我的图片：按登录账号分组（依赖自建后端，方案 A 下不展示入口） -->
-    <aside
-      v-if="BACKEND_GALLERY"
-      class="modal imgs-modal"
-      :class="{ show: imgsOpen }"
-      :aria-hidden="String(!imgsOpen)"
-    >
-      <h3>我的图片</h3>
-      <p class="sub">
-        <template v-if="hostReady">
-          当前账号 <b>{{ displayName }}</b> 上传的图，分组 <b>{{ myGroup }}</b>。点「插入」放到正文光标处，或复制链接自行引用。
-        </template>
-        <template v-else>登录后这里会按账号分组，展示你自己上传的图片。</template>
-      </p>
-
-      <div v-if="!hostReady" class="imgs-login">
-        <button class="primary" @click="openAuth('login')">登录 / 注册</button>
-      </div>
-      <template v-else>
-        <div class="imgs-toolbar">
-          <input
-            v-model.trim="imgsKeyword"
-            class="ctrl"
-            type="text"
-            placeholder="按文件名筛选"
-            @keyup.enter="loadMyImages(true)"
-          >
-          <button class="mini" :disabled="imgsLoading" @click="loadMyImages(true)">{{ imgsLoading ? '加载中…' : '刷新' }}</button>
-          <span style="flex:1"></span>
-          <span class="imgs-count">共 {{ imgsTotal }} 张</span>
-        </div>
-
-        <p v-if="imgsMsgText" class="auth-msg" :class="imgsMsgType">{{ imgsMsgText }}</p>
-
-        <div v-if="!myImgs.length" class="imgs-empty">
-          <template v-if="imgsLoading">正在加载…</template>
-          <template v-else-if="imgsKeyword">没有匹配「{{ imgsKeyword }}」的图片</template>
-          <template v-else>还没有上传过图片。在编辑器里粘贴 / 拖入图片，就会自动传到你的分组。</template>
-        </div>
-        <template v-else>
-          <div v-for="im in myImgs" :key="im.id" class="img-row">
-            <img :src="im.url" alt="">
-            <div class="meta">
-              <div class="name">{{ im.name }}</div>
-              <span class="tagx remote">{{ kbSize(im.size) }} · {{ fmtTime(im.createTime) }}</span>
-            </div>
-            <div class="imgs-acts">
-              <button class="mini" @click="useMyImage(im)">插入</button>
-              <button class="mini" @click="copyMyImage(im)">复制链接</button>
-              <button class="mini danger" :disabled="imgsBusyId === im.id" @click="removeMyImage(im)">
-                {{ imgsBusyId === im.id ? '删除中…' : '删除' }}
-              </button>
-            </div>
-          </div>
-          <div v-if="myImgs.length < imgsTotal" class="imgs-more">
-            <button class="mini" :disabled="imgsLoading" @click="loadMyImages(false)">
-              {{ imgsLoading ? '加载中…' : `加载更多（还有 ${imgsTotal - myImgs.length} 张）` }}
-            </button>
-          </div>
-        </template>
-      </template>
-
-      <div class="imgs-foot">
-        <span style="flex:1"></span>
-        <button class="primary" @click="imgsOpen = false">关闭</button>
-      </div>
-    </aside>
 
     <div class="toast" :class="{ show: toastShow }">{{ toastText }}</div>
     <input ref="fileEl" type="file" accept=".md,.markdown,.txt" style="display:none" @change="onFileChange">
@@ -341,55 +138,56 @@
 
 <script setup>
 /**
- * 「听风入画」公众号 Markdown 排版工具
+ * 「听风入画」公众号 Markdown 排版工具 —— 主组件（界面与编排）
  *
- * 由 public/wx-editor/wxEditor.html 迁移而来：渲染引擎在同目录的 ./renderer.ts，
- * 快捷片段与示例文稿在 ./content.ts，本文件只负责界面与交互。
+ * 渲染引擎在同目录 ./renderer.ts，快捷片段与示例文稿在 ./content.ts。
+ * 目录职责划分：
+ *  - components/  各弹层子组件
+ *      AuthModal / HostModal / ImgsModal / ImagesModal / KeysModal / CheatDrawer
+ *  - utils/       工具与全局状态
+ *      constants.js    全局常量（localStorage 键、图床配置、高亮资源清单）
+ *      toast.js        全局单例 toast 提示
+ *      authStore.js    全局单例登录态（token / 用户信息 / 会话存取）
+ *      api.js          后端接口（统一请求、密码加密、图片上传）
+ *      clipboard.js    富文本 / 纯文本复制
+ *      imageUtils.js   图片压缩（dataURL / Blob 转换）
+ *      useUndo.js      撤销 / 重做历史栈
+ *      modal-base.css  弹层公共样式（子组件 scoped 引入）
+ *
+ * 本组件只负责：编辑区状态与交互、正文改写（插入 / 替换图片链接）、
+ * 预览渲染、排版偏好持久化、各弹层的开合编排。
  *
  * 注意：高亮资源从同目录的 ./lib 动态加载（浏览器版 highlight.js 不能按 ESM 打包），
  * 缺失时自动回退到 renderer.ts 里的内置高亮。组件按 SSR 安全写法实现：
  * 所有 window / document / localStorage 访问都在 onMounted 之后或事件回调里。
  */
 import { ref, reactive, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
-import { THEMES, buildHtml, esc } from './renderer';
-import { SNIPPETS, SAMPLE, CHEAT_HTML } from './content';
+import { THEMES, buildHtml } from './renderer';
+import { SNIPPETS, SAMPLE } from './content';
+import {
+  LS_DRAFT, LS_CONF, LS_IMGBB, IMG_RE, PREVIEW_EMPTY, BACKEND_GALLERY,
+  LIB_URLS, HLJS_CORE, HLJS_LANGS,
+} from './utils/constants';
+import { useToast } from './utils/toast';
+import { useAuth } from './utils/authStore';
+import { useUndo } from './utils/useUndo';
+import { copyRich, fallbackCopy } from './utils/clipboard';
+import { fileToDataUrl } from './utils/imageUtils';
+import { apiRequest, uploadImageToBackend } from './utils/api';
+import Dropdown from './components/Dropdown.vue';
+import KeysModal from './components/KeysModal.vue';
+import CheatDrawer from './components/CheatDrawer.vue';
+import ImagesModal from './components/ImagesModal.vue';
+import AuthModal from './components/AuthModal.vue';
+import HostModal from './components/HostModal.vue';
+import ImgsModal from './components/ImgsModal.vue';
 
 /** ready：初始化完成（草稿/配置已恢复、highlight.js 已加载并重渲染），供外层收起 Loading */
 const emit = defineEmits(['ready']);
 
-/* ---------------- 常量 ---------------- */
-const LS_DRAFT = 'tingfeng_md_draft';
-const LS_CONF = 'tingfeng_md_conf';
-const LS_TOKEN = 'tingfeng_token';
-const LS_USER = 'tingfeng_user';
-/** 历史遗留：早期「图片直传 ImgBB」时期存在本机的 API Key，启动时清理掉，不再使用 */
-const LS_IMGBB = 'tingfeng_imgbb_key';
-
-/* 图床：图片经自建后端上传到对象存储（缤纷云 S4），返回 CDN 外链。
-   接口 POST /api/upload/file，multipart 字段名 image，可选 source；
-   后端按 token 里的 platform 决定目录（本编辑器是 mp → wx-editor/{用户名|邮箱}/），
-   所以上传前必须先登录。「我的图片」列表同样依赖后端，因此入口常开。 */
-const BACKEND_GALLERY = true;
-/** 图片外链前缀，仅用于界面文案展示（真实地址由后端返回，换 CDN 域名不用改这里） */
-const IMG_HOST = 'https://img.orangecj.cn';
-
-const MAX_IMG_W = 1080;
-const UNDO_MAX = 50;
-const UNDO_DEBOUNCE = 500;
-const IMG_RE = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
-const PREVIEW_EMPTY = '<p style="color:#C4C4C4;font-size:13px;text-align:center;padding:60px 0">左侧开始写，这里实时预览</p>';
-
-/* highlight.js 资源（与组件同目录的 ./lib，整站部署 / 打包 App 均离线可用）
-   浏览器版 highlight.js 是 UMD 脚本、不能按 ESM 打包，所以交给 Vite 当静态资源处理：
-   ?url 会带上 base 前缀和内容 hash，换域名或部署到子路径都不用改代码。 */
-const LIB_URLS = import.meta.glob('./lib/*.js', { query: '?url', import: 'default', eager: true });
-const HLJS_CORE = './lib/highlight.min.js';
-const HLJS_LANGS = [
-  './lib/lang-javascript.min.js', './lib/lang-typescript.min.js', './lib/lang-python.min.js', './lib/lang-bash.min.js',
-  './lib/lang-shell.min.js', './lib/lang-sql.min.js', './lib/lang-json.min.js', './lib/lang-yaml.min.js', './lib/lang-xml.min.js',
-  './lib/lang-css.min.js', './lib/lang-c.min.js', './lib/lang-cpp.min.js', './lib/lang-csharp.min.js', './lib/lang-objectivec.min.js',
-  './lib/lang-java.min.js', './lib/lang-go.min.js', './lib/lang-php.min.js',
-];
+/* 全局单例状态：toast 提示 / 登录态 */
+const { toast, toastShow, toastText } = useToast();
+const { authToken, displayName, avatarChar, hostReady, initAuth, clearSession } = useAuth();
 
 /* ---------------- 编辑器状态 ---------------- */
 const editorEl = ref(null);
@@ -403,46 +201,52 @@ const conf = reactive({
   hl: true, uploadImg: true,
 });
 
-/* 浮层 */
+/* ---------------- 下拉选项（自绘 Dropdown 组件） ---------------- */
+const THEME_OPTIONS = Object.keys(THEMES).map((k) => ({ value: k, label: THEMES[k].name }));
+const ARCHIVE_OPTIONS = [
+  { value: 'dash', label: '往期 · 虚线框' },
+  { value: 'card', label: '往期 · 卡片列表' },
+  { value: 'plain', label: '往期 · 简约条目' },
+  { value: 'dark', label: '往期 · 深色块' },
+];
+const FOLLOW_OPTIONS = [
+  { value: 'card', label: '引导 · 居中卡片' },
+  { value: 'quote', label: '引导 · 左侧金条' },
+  { value: 'dark', label: '引导 · 深色块' },
+];
+const HEADING_OPTIONS = [
+  { value: 'default', label: '标题 · 金条引导' },
+  { value: 'number', label: '标题 · 序号衬线' },
+  { value: 'bignum', label: '标题 · 大序号留白' },
+  { value: 'frame', label: '标题 · 居中线框' },
+  { value: 'dual', label: '标题 · 双线夹字' },
+  { value: 'fade', label: '标题 · 渐变底纹' },
+  { value: 'diamond', label: '标题 · 菱形对称' },
+  { value: 'underline', label: '标题 · 短下划线' },
+];
+const QUOTE_OPTIONS = [
+  { value: 'default', label: '引用 · 金条浅底' },
+  { value: 'plain', label: '引用 · 极简竖线' },
+  { value: 'card', label: '引用 · 白卡描边' },
+  { value: 'mark', label: '引用 · 引号点缀' },
+  { value: 'dark', label: '引用 · 深色块' },
+];
+const CODE_OPTIONS = [
+  { value: 'github', label: '代码 · GitHub 浅色' },
+  { value: 'github-dark', label: '代码 · GitHub 深色' },
+  { value: 'theme', label: '代码 · 跟随主题' },
+];
+
+/* 浮层开关（统一由主组件编排，Esc / 遮罩一键全关） */
 const cheatOpen = ref(false);
 const keysOpen = ref(false);
 const modalOpen = ref(false);
-const toastShow = ref(false);
-const toastText = ref('');
-const uploading = ref(false); // 图床上传中
-
-/* 图床设置弹层（展示上传目标与登录状态） */
-const hostOpen = ref(false);
-const hostMsgText = ref('');
-const hostMsgType = ref('');
-
-/* 我的图片弹层（按登录账号分组） */
-const imgsOpen = ref(false);
-const myImgs = ref([]);
-const imgsTotal = ref(0);
-const imgsPage = ref(1);
-const imgsLoading = ref(false);
-const imgsBusyId = ref(0);
-const imgsKeyword = ref('');
-const imgsMsgText = ref('');
-const imgsMsgType = ref('');
-
-/* 账号 */
 const authOpen = ref(false);
+const hostOpen = ref(false);
+const imgsOpen = ref(false);
 const authTab = ref('login');
-const authMsgText = ref('');
-const authMsgType = ref('');
-const authToken = ref('');
-const authUser = ref(null);
-const loginForm = reactive({ account: '', password: '' });
-const regForm = reactive({ email: '', code: '', username: '', password: '' });
-const loginBusy = ref(false);
-const registerBusy = ref(false);
+const uploading = ref(false); // 图床上传中
 const logoutBusy = ref(false);
-const codeSending = ref(false);
-const codeLeft = ref(0);
-const loginAccountEl = ref(null);
-const regEmailEl = ref(null);
 
 /* ---------------- 计算属性 ---------------- */
 const previewDisplay = computed(() => previewHtml.value || PREVIEW_EMPTY);
@@ -450,25 +254,7 @@ const maskShow = computed(
   () =>
     cheatOpen.value || keysOpen.value || modalOpen.value || authOpen.value || imgsOpen.value || hostOpen.value,
 );
-/* 图床是否可用：后端按登录账号归档图片，所以「已登录」即可用 */
-const hostReady = computed(() => !!authToken.value);
-/* 当前账号在对象存储里的分组名：wx-editor/{用户名|邮箱}，规则与后端 resolveGroupName 一致 */
-const myGroup = computed(() => {
-  const u = authUser.value;
-  if (!u) return '';
-  const name = u.username || u.email || '';
-  return name ? `wx-editor/${name}` : '';
-});
-const displayName = computed(() => (authUser.value && (authUser.value.username || authUser.value.email)) || '已登录');
-const avatarChar = computed(() => displayName.value.slice(0, 1).toUpperCase());
-const authTitle = computed(() => (authTab.value === 'login' ? '登录' : '注册'));
-const authSub = computed(() =>
-  authTab.value === 'login' ? '登录后可同步你的排版偏好' : '先获取邮箱验证码，验证通过后完成注册',
-);
-const codeBtnText = computed(() => {
-  if (codeLeft.value > 0) return `${codeLeft.value}s 后重发`;
-  return codeSending.value ? '发送中…' : '获取验证码';
-});
+/* 图片清单数据：扫描文中图片，区分本地（data:/相对路径，微信粘不了）与外链 */
 const images = computed(() =>
   scanImages(text.value).map((im) => {
     let host = '本地图片';
@@ -482,9 +268,12 @@ const images = computed(() =>
     return { ...im, host };
   }),
 );
+/* 供「我的图片」删除前判断链接是否正被正文引用 */
+function isUrlUsed(url) {
+  return !!url && text.value.includes(url);
+}
 
 /* ---------------- 工具 ---------------- */
-/* 扫描文中图片，区分本地（data:/相对路径，微信粘不了）与外链 */
 function scanImages(src) {
   const out = [];
   const re = new RegExp(IMG_RE.source, 'g');
@@ -493,20 +282,6 @@ function scanImages(src) {
     out.push({ alt: m[1], url: m[2], local: /^(data:|file:|blob:|\.{0,2}\/|[A-Za-z]:)/.test(m[2]) });
   }
   return out;
-}
-
-function altName(im) {
-  return im.alt ? esc(im.alt) : '<span style="color:#9A9A9A">（未写图注）</span>';
-}
-
-let toastTimer = null;
-function toast(msg) {
-  toastText.value = msg;
-  toastShow.value = true;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    toastShow.value = false;
-  }, 2000);
 }
 
 /* ---------------- 渲染 ---------------- */
@@ -559,54 +334,8 @@ watch(conf, () => {
   render();
 });
 
-/* ---------------- 撤销 / 重做（手动历史栈，500ms 停顿自动快照） ---------------- */
-let undoStack = [''];
-let undoIndex = 0;
-let undoTimer = null;
-let isUndoing = false;
-
-function pushHistory() {
-  if (isUndoing) return; // 自己设值时跳过
-  // 截断未来分支：撤销后改过内容就回不去了
-  if (undoIndex < undoStack.length - 1) undoStack.length = undoIndex + 1;
-  const v = text.value;
-  if (v === undoStack[undoStack.length - 1]) return; // 去重：内容未变不推
-  undoStack.push(v);
-  if (undoStack.length > UNDO_MAX) undoStack.shift();
-  undoIndex = undoStack.length - 1;
-}
-
-function schedulePush() {
-  clearTimeout(undoTimer);
-  undoTimer = setTimeout(pushHistory, UNDO_DEBOUNCE);
-}
-
-function undo() {
-  if (undoIndex <= 0) return toast('已是最早');
-  undoIndex--;
-  isUndoing = true;
-  text.value = undoStack[undoIndex];
-  render();
-  isUndoing = false;
-  toast('已撤销');
-}
-
-function redo() {
-  if (undoIndex >= undoStack.length - 1) return toast('已是最新');
-  undoIndex++;
-  isUndoing = true;
-  text.value = undoStack[undoIndex];
-  render();
-  isUndoing = false;
-  toast('已重做');
-}
-
-function resetHistory(v) {
-  clearTimeout(undoTimer);
-  undoStack = [v || ''];
-  undoIndex = 0;
-  isUndoing = false;
-}
+/* ---------------- 撤销 / 重做（useUndo：500ms 停顿自动快照） ---------------- */
+const { pushHistory, schedulePush, undo, redo, resetHistory } = useUndo(text, { render, toast });
 
 /* ---------------- 编辑区交互 ---------------- */
 function onInput() {
@@ -681,40 +410,9 @@ function onKeydown(e) {
   if (mod && e.shiftKey && e.key.toLowerCase() === 'x') return wrap('~~', '删除线');
 }
 
-/* ---------------- 粘贴 / 拖拽图片（压缩后转 dataURL，图注占位自动选中） ---------------- */
-function fileToDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        let w = img.naturalWidth || img.width;
-        let h = img.naturalHeight || img.height;
-        if (w > MAX_IMG_W) {
-          h = Math.round((h * MAX_IMG_W) / w);
-          w = MAX_IMG_W;
-        }
-        const c = document.createElement('canvas');
-        c.width = w;
-        c.height = h;
-        const g = c.getContext('2d');
-        g.fillStyle = '#FFFFFF';
-        g.fillRect(0, 0, w, h);
-        g.drawImage(img, 0, 0, w, h);
-        let out = c.toDataURL('image/png');
-        if (out.length > 900 * 1024) out = c.toDataURL('image/jpeg', 0.85);
-        resolve(out);
-      };
-      img.onerror = reject;
-      img.src = fr.result;
-    };
-    fr.onerror = reject;
-    fr.readAsDataURL(file);
-  });
-}
-
+/* ---------------- 粘贴 / 拖拽图片（压缩后插入正文，图注占位自动选中） ---------------- */
 /* pos 为 null 时插到当前光标处；返回 alt 的起止位置与下一次插入点 */
-function insertImageMd(dataUrl, alt, pos) {
+function insertImageMd(url, alt, pos) {
   const el = editorEl.value;
   const v = text.value;
   const s = pos == null ? (el ? el.selectionStart : v.length) : pos;
@@ -722,7 +420,7 @@ function insertImageMd(dataUrl, alt, pos) {
   const before = v.slice(0, s);
   const after = v.slice(e);
   const pre = before && !before.endsWith('\n') ? '\n\n' : '';
-  const ins = `${pre}![${alt}](${dataUrl})\n\n`;
+  const ins = `${pre}![${alt}](${url})\n\n`;
 
   text.value = before + ins + after;
   const altStart = (before + pre + '![').length;
@@ -746,7 +444,7 @@ async function handleImageFiles(files) {
     let url = dataUrl;
     if (useHost) {
       try {
-        url = await uploadToHost(dataUrl);
+        url = await uploadImageToBackend(dataUrl);
         uploaded++;
       } catch (e) {
         lastErr = e.message || String(e);
@@ -782,193 +480,37 @@ async function handleImageFiles(files) {
   }
 }
 
-/* ---------------- 图床：经后端上传到对象存储（缤纷云 S4 + CDN） ----------------
-   流程：粘贴 / 拖入 → 前端压缩到 MAX_IMG_W 以内 → POST /api/upload/file（multipart，字段名 image）
-        → 后端按登录 token 决定渠道与分组，写入对象存储 → 返回 CDN 外链 → 插入正文。
-
-   为什么不用第三方图床：图片在自己桶里，随时可查可删；且换 CDN 域名只要改后端环境变量，
-   正文里的历史链接也会跟着变（后端按对象键实时拼外链）。
-
-   注意：这里不能复用 apiRequest —— 它固定写死了 Content-Type: application/json，
-   而 FormData 必须让浏览器自己带 multipart boundary，所以单独用 fetch。 */
-
-/** dataURL -> Blob（按二进制上传，避免 base64 再膨胀 1/3） */
-function dataUrlToBlob(dataUrl) {
-  const s = String(dataUrl);
-  const comma = s.indexOf(',');
-  if (comma < 0) throw new Error('图片数据格式不正确');
-  const head = s.slice(5, comma); // 形如 image/png;base64
-  const mime = head.split(';')[0] || 'image/png';
-  const bin = atob(s.slice(comma + 1));
-  const u8 = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-  return new Blob([u8], { type: mime });
+function onPaste(e) {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  const files = [];
+  for (const it of items) {
+    if (it.type.startsWith('image/')) {
+      const f = it.getAsFile();
+      if (f) files.push(f);
+    }
+  }
+  if (!files.length) return;
+  e.preventDefault();
+  handleImageFiles(files);
 }
 
-/** 上传单张图片到后端图床，返回可直接引用的外链 */
-async function uploadToBackend(dataUrl) {
-  if (!authToken.value) throw new Error('请先登录后再上传图片');
-
-  const blob = dataUrlToBlob(dataUrl);
-  const ext = (blob.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
-  const fd = new FormData();
-  fd.append('image', blob, `wx-editor-${Date.now().toString(36)}.${ext}`);
-  fd.append('source', 'wx-editor');
-
-  let res;
-  try {
-    res = await fetch(apiBase() + '/upload/file', {
-      method: 'POST',
-      // 只带鉴权头；Content-Type 交给浏览器自动生成（含 multipart boundary）
-      headers: { Authorization: 'Bearer ' + authToken.value },
-      body: fd,
-    });
-  } catch (e) {
-    throw new Error(`无法连接服务器（${apiBase()}）`);
-  }
-
-  let payload = null;
-  try {
-    payload = await res.json();
-  } catch (e) {
-    /* 无响应体时忽略 */
-  }
-
-  if (!res.ok) {
-    let msg = payload && (payload.message || payload.msg);
-    if (Array.isArray(msg)) msg = msg.join('；');
-    // 登录态失效（过期或被拉黑）：清掉本地，下次操作会重新引导登录
-    if (res.status === 401 || res.status === 403) clearSession();
-    throw new Error(msg || `上传失败（HTTP ${res.status}）`);
-  }
-
-  const url = payload && payload.data && payload.data.url;
-  if (!url) throw new Error('服务器未返回图片地址');
-  return url;
+function onDrop(e) {
+  const files = e.dataTransfer && e.dataTransfer.files;
+  if (!files || !files.length) return;
+  const imgs = [...files].filter((f) => f.type.startsWith('image/'));
+  if (!imgs.length) return;
+  e.preventDefault();
+  handleImageFiles(imgs);
 }
 
-/* 上传入口：统一走自建后端图床 */
-async function uploadToHost(dataUrl) {
-  return uploadToBackend(dataUrl);
-}
-
+/* ---------------- 图床上传（正文内本地图 → 外链） ---------------- */
 /* 上传前的统一检查：未登录就直接打开登录弹层引导 */
 function ensureHost() {
   if (hostReady.value) return true;
   openAuth('login');
   toast('请先登录：图片会上传到你自己的对象存储，按账号归档');
   return false;
-}
-
-/* ---------- 图床设置：展示上传目标与登录状态 ---------- */
-function hostMsg(text, type) {
-  hostMsgText.value = text || '';
-  hostMsgType.value = type || '';
-}
-
-function openHost() {
-  closeAllPanels();
-  hostMsg('', '');
-  hostOpen.value = true;
-}
-
-/* 启动时清理早期遗留的 ImgBB Key（现已不再使用） */
-function initHost() {
-  try {
-    localStorage.removeItem(LS_IMGBB);
-  } catch (e) {
-    /* 隐私模式下忽略 */
-  }
-}
-
-/* ---------- 我的图片：只列当前登录账号自己的图 ---------- */
-function imgsMsg(text, type) {
-  imgsMsgText.value = text || '';
-  imgsMsgType.value = type || '';
-}
-
-function openImgs() {
-  closeAllPanels();
-  imgsOpen.value = true;
-  imgsMsg('');
-  if (hostReady.value) loadMyImages(true);
-}
-
-/** reset=true 回到第一页（替换列表）；false 追加下一页 */
-async function loadMyImages(reset) {
-  if (!authToken.value || imgsLoading.value) return;
-  if (reset) {
-    imgsPage.value = 1;
-    imgsMsg('');
-  }
-  imgsLoading.value = true;
-  try {
-    const qs = new URLSearchParams({ page: String(imgsPage.value), size: '20' });
-    if (imgsKeyword.value) qs.set('keyword', imgsKeyword.value);
-    const data = await apiRequest('/upload/images?' + qs.toString(), { auth: true });
-    const list = (data && data.list) || [];
-    myImgs.value = reset ? list : myImgs.value.concat(list);
-    imgsTotal.value = (data && data.total) || 0;
-    imgsPage.value += 1;
-  } catch (e) {
-    imgsMsg(e.message || '加载失败', 'err');
-  } finally {
-    imgsLoading.value = false;
-  }
-}
-
-function kbSize(n) {
-  const v = Number(n) || 0;
-  if (v >= 1024 * 1024) return (v / 1024 / 1024).toFixed(1) + ' MB';
-  return Math.max(1, Math.round(v / 1024)) + ' KB';
-}
-
-function fmtTime(t) {
-  const d = new Date(t);
-  if (!t || Number.isNaN(d.getTime())) return '';
-  const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
-}
-
-/* 插入到正文当前光标处，图注占位自动选中 */
-async function useMyImage(im) {
-  const r = insertImageMd(im.url, '图片描述', null);
-  closeAllPanels();
-  render();
-  await nextTick();
-  const el = editorEl.value;
-  if (el) {
-    el.focus();
-    el.setSelectionRange(r.altStart, r.altEnd);
-  }
-  pushHistory();
-  toast('已插入正文，图注已选中，直接打字替换');
-}
-
-function copyMyImage(im) {
-  fallbackCopy(im.url, '图片链接已复制');
-}
-
-/* 删除自己的图：后端按 uid 校验归属，删别人的会被挡掉 */
-async function removeMyImage(im) {
-  if (imgsBusyId.value) return;
-  const used = text.value.includes(im.url);
-  const tip = used
-    ? '这张图正在正文里引用，删除后正文里的链接会失效。确定删除？'
-    : '确定删除这张图片？删除后外链立即失效。';
-  if (!confirm(tip)) return;
-
-  imgsBusyId.value = im.id;
-  try {
-    await apiRequest('/upload/images/' + im.id, { method: 'DELETE', auth: true });
-    myImgs.value = myImgs.value.filter((x) => x.id !== im.id);
-    imgsTotal.value = Math.max(0, imgsTotal.value - 1);
-    toast('已删除');
-  } catch (e) {
-    imgsMsg(e.message || '删除失败', 'err');
-  } finally {
-    imgsBusyId.value = 0;
-  }
 }
 
 /* 把文中所有该地址替换为新地址（图片语法为 ![alt](url)，故匹配 "](url)" 精确替换） */
@@ -983,7 +525,7 @@ async function uploadOneLocal(im) {
   if (!ensureHost()) return;
   uploading.value = true;
   try {
-    const url = await uploadToHost(im.url);
+    const url = await uploadImageToBackend(im.url);
     replaceImageUrl(im.url, url);
     render();
     pushHistory();
@@ -1011,7 +553,7 @@ async function uploadAllLocal() {
   try {
     for (const im of list) {
       try {
-        const url = await uploadToHost(im.url);
+        const url = await uploadImageToBackend(im.url);
         replaceImageUrl(im.url, url);
         ok++;
       } catch (e) {
@@ -1026,28 +568,19 @@ async function uploadAllLocal() {
   toast(ok === list.length ? `已上传 ${ok} 张到图床` : `已上传 ${ok}/${list.length} 张，其余失败`);
 }
 
-function onPaste(e) {
-  const items = e.clipboardData && e.clipboardData.items;
-  if (!items) return;
-  const files = [];
-  for (const it of items) {
-    if (it.type.startsWith('image/')) {
-      const f = it.getAsFile();
-      if (f) files.push(f);
-    }
+/* 「我的图片」插入到正文当前光标处，图注占位自动选中 */
+async function useMyImage(url) {
+  const r = insertImageMd(url, '图片描述', null);
+  closeAllPanels();
+  render();
+  await nextTick();
+  const el = editorEl.value;
+  if (el) {
+    el.focus();
+    el.setSelectionRange(r.altStart, r.altEnd);
   }
-  if (!files.length) return;
-  e.preventDefault();
-  handleImageFiles(files);
-}
-
-function onDrop(e) {
-  const files = e.dataTransfer && e.dataTransfer.files;
-  if (!files || !files.length) return;
-  const imgs = [...files].filter((f) => f.type.startsWith('image/'));
-  if (!imgs.length) return;
-  e.preventDefault();
-  handleImageFiles(imgs);
+  pushHistory();
+  toast('已插入正文，图注已选中，直接打字替换');
 }
 
 /* ---------------- 导入 / 下载 / 清空 / 示例 ---------------- */
@@ -1103,89 +636,33 @@ function downloadImage(im) {
 /* ---------------- 复制（富文本 / HTML 源码） ---------------- */
 function copyToMp() {
   if (!text.value.trim()) return toast('先写点内容吧');
-  copyRich(currentHtml());
+  copyRich(currentHtml(), toast);
   const localN = scanImages(text.value).filter((i) => i.local).length;
   if (localN) toast(`已复制，但 ${localN} 张本地图片粘贴后会丢失，建议先在「图片清单」里上传图床`);
   else toast('已复制，去公众号编辑器 Ctrl+V 即可');
 }
 
-function copyRich(html) {
-  // 优先用现代 Clipboard API 直接写 text/html，避免 contenteditable + execCommand('copy')
-  // 把内嵌 <a> 链接的 selection 提权到整个内容块（公众号会把所有文字按"链接色+高亮"渲染）
-  try {
-    if (navigator.clipboard && window.ClipboardItem) {
-      const htmlBlob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      const textBlob = new Blob([stripTags(html)], { type: 'text/plain;charset=utf-8' });
-      navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })]);
-      return;
-    }
-  } catch (e) {
-    /* 降级到 execCommand */
-  }
-  fallbackCopyRich(html);
-}
-
-function fallbackCopyRich(html) {
-  const holder = document.createElement('div');
-  holder.contentEditable = 'true';
-  holder.innerHTML = html;
-  holder.style.cssText = 'position:fixed;left:-9999px;top:0;width:420px;opacity:0';
-  document.body.appendChild(holder);
-
-  // 临时移除所有 <a> 的 href，避免 Chromium execCommand('copy') 跨链接 selection 时
-  // 把整个选区都按"链接色+高亮"渲染（selection 提权）
-  const links = holder.querySelectorAll('a[href]');
-  const saved = [];
-  links.forEach((a) => {
-    saved.push([a, a.getAttribute('href')]);
-    a.removeAttribute('href');
-  });
-
-  const range = document.createRange();
-  range.selectNodeContents(holder);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-
-  let ok = false;
-  try {
-    ok = document.execCommand('copy');
-  } catch (e) {
-    /* 部分浏览器禁用 execCommand */
-  }
-  sel.removeAllRanges();
-
-  saved.forEach(([a, href]) => a.setAttribute('href', href));
-  document.body.removeChild(holder);
-  if (!ok) fallbackCopy(html);
-}
-
-function stripTags(html) {
-  const d = document.createElement('div');
-  d.innerHTML = html;
-  return d.innerText || d.textContent || '';
-}
-
-function fallbackCopy(text_, msg) {
-  const ta = document.createElement('textarea');
-  ta.value = text_;
-  ta.style.cssText = 'position:fixed;left:-9999px';
-  document.body.appendChild(ta);
-  ta.select();
-  try {
-    document.execCommand('copy');
-  } catch (e) {
-    /* 忽略 */
-  }
-  document.body.removeChild(ta);
-  if (msg) toast(msg);
-}
-
 function copyHtmlSource() {
-  fallbackCopy(currentHtml(), 'HTML 源码已复制');
+  fallbackCopy(currentHtml(), 'HTML 源码已复制', toast);
 }
 
 /* ---------------- 浮层开关 ---------------- */
+function openAuth(tab) {
+  closeAllPanels(); // 先关掉其它面板，避免新弹层被遮挡
+  authTab.value = tab === 'register' ? 'register' : 'login';
+  authOpen.value = true;
+}
+
+function openHost() {
+  closeAllPanels();
+  hostOpen.value = true;
+}
+
+function openImgs() {
+  closeAllPanels();
+  imgsOpen.value = true;
+}
+
 function closeAllPanels() {
   cheatOpen.value = false;
   modalOpen.value = false;
@@ -1199,265 +676,7 @@ function onDocKeydown(e) {
   if (e.key === 'Escape') closeAllPanels();
 }
 
-/* ---------------- 账号体系（对接 NestJS 后端 /api/login/*）
-   接口约定（后端统一响应）：
-     成功 { code:200, data, msg }
-     失败 { code:4xx/5xx, message, data:null }
-   鉴权：请求头 Authorization: Bearer <token>，token 有效期 7 天
-   ---------------- */
-/* 接口基地址：优先取 window.TINGFENG_API_BASE，方便整站部署/换域名时覆盖 */
-function apiBase() {
-  const custom = (typeof window !== 'undefined' && window.TINGFENG_API_BASE) || '';
-  return (custom || 'https://api.orangecj.cn/api').replace(/\/+$/, '');
-}
-
-/* 解析 JWT 载荷（仅用于本地判断是否过期，不校验签名） */
-function decodeJwt(token) {
-  try {
-    const part = String(token).split('.')[1];
-    if (!part) return null;
-    const b64 = part.replace(/-/g, '+').replace(/_/g, '/');
-    const json = decodeURIComponent(
-      atob(b64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join(''),
-    );
-    return JSON.parse(json);
-  } catch (e) {
-    return null;
-  }
-}
-
-function tokenExpired(token) {
-  const p = decodeJwt(token);
-  return !p || !p.exp || p.exp * 1000 <= Date.now();
-}
-
-/* 统一请求：自动带 token、统一解包 data 与错误文案 */
-async function apiRequest(path, { method = 'GET', body, auth = false } = {}) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (auth && authToken.value) headers.Authorization = 'Bearer ' + authToken.value;
-
-  let res;
-  try {
-    res = await fetch(apiBase() + path, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  } catch (e) {
-    throw new Error(`无法连接服务器，请确认后端已启动（${apiBase()}）`);
-  }
-
-  let payload = null;
-  try {
-    payload = await res.json();
-  } catch (e) {
-    /* 无响应体时忽略 */
-  }
-
-  if (!res.ok) {
-    let msg = payload && (payload.message || payload.msg);
-    if (Array.isArray(msg)) msg = msg.join('；');
-    // 401/403：登录态已失效（过期或被拉黑），清理本地
-    if (res.status === 401 || res.status === 403) clearSession();
-    throw new Error(msg || `请求失败（HTTP ${res.status}）`);
-  }
-  return payload ? payload.data : null;
-}
-
-/* ---------- 密码传输加密：RSA-OAEP(SHA-256)，公钥由后端 /login/public-key 下发 ---------- */
-function pemToBuffer(pem) {
-  const b64 = String(pem)
-    .replace(/-----[^-]+-----/g, '')
-    .replace(/\s+/g, '');
-  const bin = atob(b64);
-  const buf = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
-  return buf.buffer;
-}
-
-function bufferToBase64(buf) {
-  const bytes = new Uint8Array(buf);
-  let bin = '';
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  return btoa(bin);
-}
-
-/* 每次实时拉取公钥（不缓存）：后端重启会重新生成密钥，缓存会导致解密失败 */
-async function encryptPassword(plain) {
-  if (!(window.crypto && crypto.subtle && crypto.subtle.importKey)) {
-    throw new Error('当前环境不支持加密（浏览器要求 HTTPS 或 localhost），请更换访问方式');
-  }
-  const data = await apiRequest('/login/public-key');
-  const pem = data && data.publicKey;
-  if (!pem) throw new Error('获取加密公钥失败，请稍后重试');
-
-  const key = await crypto.subtle.importKey('spki', pemToBuffer(pem), { name: 'RSA-OAEP', hash: 'SHA-256' }, false, [
-    'encrypt',
-  ]);
-  const cipher = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, key, new TextEncoder().encode(plain));
-  return bufferToBase64(cipher);
-}
-
-function saveSession(token, userInfo) {
-  authToken.value = token;
-  authUser.value = userInfo || null;
-  try {
-    localStorage.setItem(LS_TOKEN, token);
-    if (userInfo) localStorage.setItem(LS_USER, JSON.stringify(userInfo));
-  } catch (e) {
-    /* 隐私模式下忽略 */
-  }
-}
-
-function clearSession() {
-  authToken.value = '';
-  authUser.value = null;
-  try {
-    localStorage.removeItem(LS_TOKEN);
-    localStorage.removeItem(LS_USER);
-  } catch (e) {
-    /* 忽略 */
-  }
-}
-
-/* 读取本地登录态；token 已过期则静默清理 */
-function initAuth() {
-  try {
-    const t = localStorage.getItem(LS_TOKEN) || '';
-    if (t && tokenExpired(t)) {
-      clearSession();
-      return;
-    }
-    authToken.value = t;
-    try {
-      authUser.value = JSON.parse(localStorage.getItem(LS_USER) || 'null');
-    } catch (e) {
-      authUser.value = null;
-    }
-  } catch (e) {
-    /* 忽略 */
-  }
-}
-
-/* ---------- 弹层开关 / Tab ---------- */
-function openAuth(tab) {
-  closeAllPanels(); // 先关掉其它面板（如「我的图片」），避免新弹层被遮挡
-  authTab.value = tab === 'register' ? 'register' : 'login';
-  authMsg('');
-  authOpen.value = true;
-  setTimeout(() => {
-    const el = authTab.value === 'register' ? regEmailEl.value : loginAccountEl.value;
-    if (el) el.focus();
-  }, 60);
-}
-
-function switchTab(tab) {
-  authTab.value = tab === 'register' ? 'register' : 'login';
-  authMsg('');
-}
-
-function authMsg(text_, type) {
-  authMsgText.value = text_ || '';
-  authMsgType.value = type || '';
-}
-
-let codeTimer = null;
-function startCountdown(sec) {
-  clearInterval(codeTimer);
-  codeLeft.value = sec;
-  codeSending.value = true;
-  codeTimer = setInterval(() => {
-    codeLeft.value--;
-    if (codeLeft.value <= 0) {
-      clearInterval(codeTimer);
-      codeSending.value = false;
-    }
-  }, 1000);
-}
-
-/* ---------- 发送邮箱验证码（注册前，防恶意注册） ---------- */
-async function sendRegCode() {
-  const email = regForm.email.trim();
-  if (!email) return authMsg('请先填写邮箱', 'err');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return authMsg('邮箱格式不正确', 'err');
-
-  codeSending.value = true;
-  try {
-    await apiRequest('/login/send-code', { method: 'POST', body: { email } });
-    authMsg('验证码已发送，请查收邮箱（5 分钟内有效）', 'ok');
-    startCountdown(60);
-  } catch (err) {
-    authMsg(err.message, 'err');
-    codeSending.value = false;
-  }
-}
-
-/* ---------- 登录 ---------- */
-async function doLogin() {
-  const account = loginForm.account.trim();
-  const password = loginForm.password;
-  if (!account) return authMsg('请填写账号', 'err');
-  if (!password) return authMsg('请填写密码', 'err');
-
-  loginBusy.value = true;
-  try {
-    const encrypted = await encryptPassword(password);
-    const data = await apiRequest('/login/login', { method: 'POST', body: { account, password: encrypted } });
-    saveSession(data.token, data.userInfo);
-    authOpen.value = false;
-    loginForm.password = '';
-    toast('欢迎回来，' + ((data.userInfo && data.userInfo.username) || account));
-  } catch (err) {
-    authMsg(err.message, 'err');
-  } finally {
-    loginBusy.value = false;
-  }
-}
-
-/* ---------- 注册（校验邮箱验证码后落库，成功即自动登录） ---------- */
-async function doRegister() {
-  const email = regForm.email.trim();
-  const code = regForm.code.trim();
-  const username = regForm.username.trim();
-  const password = regForm.password;
-
-  if (!email) return authMsg('请填写邮箱', 'err');
-  if (!/^\d{6}$/.test(code)) return authMsg('请填写 6 位邮箱验证码', 'err');
-  if (username.length < 2 || username.length > 20) return authMsg('用户名长度为 2-20 个字符', 'err');
-  if (password.length < 6 || password.length > 32) return authMsg('密码长度为 6-32 个字符', 'err');
-
-  registerBusy.value = true;
-  try {
-    const encrypted = await encryptPassword(password);
-    await apiRequest('/login/register', {
-      method: 'POST',
-      body: { email, code, username, password: encrypted },
-    });
-  } catch (err) {
-    authMsg(err.message, 'err');
-    return;
-  } finally {
-    registerBusy.value = false;
-  }
-
-  // 注册成功即自动登录；万一失败则切回登录页并回填账号
-  try {
-    const encrypted = await encryptPassword(password);
-    const data = await apiRequest('/login/login', { method: 'POST', body: { account: username, password: encrypted } });
-    saveSession(data.token, data.userInfo);
-    authOpen.value = false;
-    toast('注册成功，已登录：' + username);
-  } catch (err) {
-    switchTab('login');
-    loginForm.account = username;
-    authMsg('注册成功，请使用刚设置的密码登录', 'ok');
-  }
-}
-
-/* ---------- 退出登录（后端拉黑 token + 清本地） ---------- */
+/* ---------------- 退出登录（后端拉黑 token + 清本地） ---------------- */
 async function doLogout() {
   logoutBusy.value = true;
   try {
@@ -1524,7 +743,12 @@ onMounted(async () => {
   render();
   ready = true;
   initAuth();
-  initHost();
+  // 启动时清理早期遗留的 ImgBB Key（现已不再使用）
+  try {
+    localStorage.removeItem(LS_IMGBB);
+  } catch (e) {
+    /* 隐私模式下忽略 */
+  }
   document.addEventListener('keydown', onDocKeydown);
 
   // 高亮资源就绪后重渲染一次，让代码块用上 highlight.js
@@ -1537,9 +761,6 @@ onUnmounted(() => {
   document.removeEventListener('keydown', onDocKeydown);
   clearTimeout(renderTimer);
   clearTimeout(draftTimer);
-  clearTimeout(undoTimer);
-  clearTimeout(toastTimer);
-  clearInterval(codeTimer);
 });
 </script>
 
@@ -1555,7 +776,7 @@ onUnmounted(() => {
   --muted:#7C7C7C;
   --line:#E4E0D8;
   --radius:10px;
-  /* 快捷键弹层头部引用了 --soft（原独立页里也没定义，实际就是透明）；
+  /* 弹层子组件引用了 --soft（实际就是透明）；
      这里显式声明，避免站点主题将来定义同名变量时被悄悄改色 */
   --soft:transparent;
 }
@@ -1576,13 +797,11 @@ onUnmounted(() => {
   /* 站点切深色时 color-scheme 会跟着变，原生控件（下拉 / 滚动条）会渲染成深色 */
   color-scheme:light;
 }
-/* 主题把 h1~h6 的字重统一重置成了 400（弹层标题因此不再加粗） */
-.tf-editor h1,.tf-editor h2,.tf-editor h3,.tf-editor h4,.tf-editor h5,.tf-editor h6{font-weight:700}
-.tf-editor b,.tf-editor strong{font-weight:700}
-/* 主题给 select 加了 appearance:none，下拉箭头会消失 */
-.tf-editor select{-webkit-appearance:auto;appearance:auto}
 /* 主题把 placeholder 换成了它自己的灰，深色模式下白底输入框会看不清 */
 .tf-editor input::placeholder,.tf-editor textarea::placeholder{color:#BEBEBE;opacity:1}
+/* 主题给 select 加了 appearance:none，下拉箭头会消失 */
+.tf-editor select{-webkit-appearance:auto;appearance:auto}
+.tf-editor b,.tf-editor strong{font-weight:700}
 /* ---------- 顶栏 ---------- */
 header{
   height:56px;background:var(--primary);display:flex;align-items:center;
@@ -1603,35 +822,50 @@ main{
 .pane{display:flex;flex-direction:column;min-width:0}
 .pane-left{flex:0 0 46%;border-right:1px solid var(--line);background:#FCFBF9}
 .pane-right{flex:1;background:var(--bg);overflow:auto;position:relative}
+/* ---------- 工具条（双行：动作行 + 配置行，国际简约风） ---------- */
 .pane-head{
-  display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:9px 14px;
+  display:flex;flex-direction:column;gap:4px;padding:8px 14px;
   border-bottom:1px solid var(--line);background:var(--panel);
   position:sticky;top:0;z-index:20;
-  box-shadow:0 2px 10px rgba(31,61,58,.05);
 }
-.pane-head .title{
-  font-size:12px;color:var(--muted);letter-spacing:1px;margin-right:auto;
+.ph-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}
+.ph-row .title{
+  font-size:11px;color:var(--muted);letter-spacing:1.5px;margin-right:auto;
   align-self:center;white-space:nowrap;padding:2px 0;
 }
-.pane-head .ctrl,.pane-head button{flex:0 0 auto}
-/* ---------- 按钮 ---------- */
-button{
-  font-family:inherit;font-size:12px;cursor:pointer;border-radius:6px;
-  border:1px solid var(--line);background:#fff;color:var(--ink);
-  padding:6px 11px;transition:all .15s;
+/* 幽灵按钮：无边框、悬停浮出浅底，视觉噪音最低 */
+.tbtn{
+  font-family:inherit;font-size:12px;color:#5A5A5A;background:transparent;
+  border:0;border-radius:6px;padding:5px 10px;cursor:pointer;line-height:1.4;
+  transition:background .15s,color .15s;white-space:nowrap;
 }
-button:hover{border-color:var(--accent);color:var(--accent)}
-button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-button.primary:hover{background:#9E7C48;border-color:#9E7C48;color:#fff}
-button.ghost{border-color:transparent;background:transparent}
-button.ghost:hover{background:var(--accent-soft)}
-button.mini{padding:4px 9px;font-size:11px;border-radius:20px}
-.ctrl{
-  font-family:inherit;font-size:12px;border:1px solid var(--line);border-radius:6px;
-  padding:5px 8px;background:#fff;color:var(--ink);
+.tbtn:hover{background:#EFECE4;color:var(--primary)}
+.tbtn.primary{background:var(--primary);color:#fff;padding:5px 14px;font-weight:600}
+.tbtn.primary:hover{background:var(--primary-soft);color:#fff}
+.tbtn.need-key{color:#B4603F}
+.tbtn.need-key:hover{background:#FBEDE9;color:#B4603F}
+.tbtn:disabled{opacity:.55;cursor:not-allowed}
+/* 工具条竖分隔线 */
+.tsep{width:1px;height:16px;background:var(--line);margin:0 4px;flex:0 0 auto}
+/* 下拉框：由 components/Dropdown.vue 自绘（原生 select 展开列表无法自定义样式） */
+/* 胶囊开关（替代勾选框） */
+.sw{position:relative;display:inline-block;width:30px;height:16px;flex:0 0 auto;vertical-align:middle}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw i{
+  position:absolute;inset:0;background:#D9D5CC;border-radius:999px;transition:background .2s;
 }
-input[type=range]{width:96px;accent-color:var(--accent)}
-label.ctrl{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.sw i::after{
+  content:'';position:absolute;left:2px;top:2px;width:12px;height:12px;background:#fff;
+  border-radius:50%;transition:transform .2s;
+}
+.sw input:checked + i{background:var(--accent)}
+.sw input:checked + i::after{transform:translateX(14px)}
+.sw input:focus-visible + i{outline:2px solid var(--accent);outline-offset:2px}
+/* 开关 / 滑杆字段的文字标签 */
+.tfield{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#6B6B6B;white-space:nowrap;cursor:default}
+.tfield .sw{cursor:pointer}
+.rng{width:88px;accent-color:var(--accent);cursor:pointer}
+.rng-v{font-size:11px;color:var(--muted);min-width:34px}
 /* ---------- 编辑区 ---------- */
 .editor{
   flex:1;width:100%;border:0;outline:none;resize:none;padding:20px 22px;
@@ -1644,12 +878,19 @@ label.ctrl{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
   display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--line);
   background:#fff;flex:0 0 auto;
 }
-.snippets .lbl{font-size:11px;color:var(--muted);margin-right:2px;align-self:center}
+.snippets .lbl{font-size:11px;color:var(--muted);margin-right:6px;align-self:center;letter-spacing:.5px}
+.snippets .mini{
+  font-family:inherit;font-size:11px;color:#5A5A5A;background:#fff;
+  border:1px solid var(--line);border-radius:999px;padding:3px 11px;cursor:pointer;
+  transition:border-color .15s,color .15s;line-height:1.5;
+}
+.snippets .mini:hover{border-color:var(--accent);color:var(--accent)}
 .stat{padding:6px 14px;border-top:1px solid var(--line);background:#fff;font-size:11px;color:var(--muted);flex:0 0 auto}
+.stat b{color:#B4603F;font-weight:600}
 /* ---------- 预览 ---------- */
 .preview-wrap{padding:26px 20px 60px;display:flex;justify-content:center}
 .phone{
-  width:420px;background:#fff;border-radius:14px;box-shadow:0 6px 26px rgba(31,61,58,.10);
+  width:420px;background:#fff;border:1px solid var(--line);border-radius:14px;
   overflow:hidden;flex:0 0 auto;
 }
 .phone-bar{
@@ -1658,91 +899,18 @@ label.ctrl{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
 }
 .phone-bar i{width:5px;height:5px;border-radius:50%;background:#DDD8CE;display:block}
 .phone-body{padding:22px 20px 40px;min-height:520px;min-width:0;overflow-x:hidden}
-/* ---------- 速查 ---------- */
-.cheat{
-  position:fixed;right:0;top:56px;bottom:0;width:340px;background:#fff;
-  border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.06);
-  transform:translateX(105%);transition:transform .25s ease;z-index:45;overflow:auto;padding:18px 20px;
-}
-.cheat.open{transform:translateX(0)}
-.cheat :deep(h4){margin:16px 0 8px;font-size:13px;color:var(--primary)}
-.cheat :deep(h4:first-child){margin-top:0}
-/* GitHub 风格代码块（速查 & 正文统一语言） */
-.cheat :deep(code){
-  display:block;background:#F6F8FA;border:1px solid #D0D7DE;border-radius:6px;
-  padding:12px 14px;font-size:12.5px;line-height:1.7;color:#24292F;white-space:pre-wrap;
-  font-family:ui-monospace,"SFMono-Regular",Consolas,"Courier New",monospace;
-  overflow-x:auto;
-}
-.cheat :deep(p code){
-  display:inline;background:rgba(175,184,193,.2);border:0;border-radius:6px;
-  padding:.2em .4em;color:#24292F;font-size:12px;white-space:normal;
-}
-.cheat :deep(p){margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.7}
-.cheat-close{
-  position:sticky;top:0;float:right;margin:-6px -6px 0 0;border:0;background:transparent;
-  font-size:20px;line-height:1;color:var(--muted);padding:2px 8px;border-radius:6px;
-}
-.cheat-close:hover{background:var(--accent-soft);color:var(--primary)}
-
-/* ---------- 快捷键浮层（居中弹层） ---------- */
-.keys-modal{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);
-  width:min(440px,92vw);max-height:80vh;background:#fff;border:1px solid var(--line);
-  border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.18);
-  z-index:50;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.keys-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-.keys-modal header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;border-bottom:1px solid var(--line);background:var(--soft);
-}
-.keys-modal .keys-title{font-size:14px;font-weight:600;color:var(--primary);letter-spacing:.5px}
-.keys-modal .keys-body{padding:14px 18px 18px;overflow:auto}
-.keys-modal h4{margin:14px 0 8px;font-size:12px;color:var(--muted);letter-spacing:1px;font-weight:600}
-.keys-modal h4:first-child{margin-top:0}
-.keys-modal dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center;margin:0}
-.keys-modal dt{display:flex;align-items:center;gap:3px;white-space:nowrap}
-.keys-modal dd{margin:0;font-size:12.5px;color:var(--ink);line-height:1.6}
-.keys-modal kbd{
-  display:inline-block;min-width:22px;padding:2px 7px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
-  font-size:11.5px;line-height:1.4;color:var(--primary);background:#fff;
-  border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;
-  text-align:center;font-weight:500;
-}
-.keys-modal .keys-hint{margin:14px 0 0;padding:10px 12px;background:var(--accent-soft);border-radius:6px;font-size:12px;color:var(--primary);line-height:1.7}
-/* 遮罩 + 图片清单 */
+/* ---------- 遮罩 + toast ---------- */
 .mask{
   position:fixed;inset:0;background:rgba(31,61,58,.28);z-index:40;opacity:0;
   pointer-events:none;transition:opacity .2s;
 }
 .mask.show{opacity:1;pointer-events:auto}
-.modal{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-48%) scale(.98);z-index:50;
-  width:min(560px,92vw);max-height:76vh;overflow:auto;background:#fff;border-radius:12px;
-  box-shadow:0 18px 50px rgba(0,0,0,.22);padding:20px 22px;opacity:0;pointer-events:none;
-  transition:all .2s;
-}
-.modal.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
-.modal h3{margin:0 0 4px;font-size:15px;color:var(--primary)}
-.modal .sub{margin:0 0 16px;font-size:12px;color:var(--muted);line-height:1.7}
-.img-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
-.img-row:last-of-type{border-bottom:0}
-.img-row img{width:88px;height:60px;object-fit:cover;border-radius:6px;background:#F2F2F2;flex:0 0 auto}
-.img-row .meta{flex:1;min-width:0}
-.img-row .name{font-size:13px;color:var(--ink);word-break:break-all;line-height:1.5}
-.img-row .tagx{display:inline-block;margin-top:5px;font-size:11px;padding:2px 7px;border-radius:20px}
-.tagx.local{background:#FBEDE9;color:#B4603F}
-.tagx.remote{background:var(--accent-soft);color:var(--primary)}
-.stat b{color:#B4603F;font-weight:600}
 .toast{
   position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);
-  background:var(--primary);color:#fff;padding:10px 20px;border-radius:22px;font-size:13px;
-  opacity:0;pointer-events:none;transition:all .25s;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.18);
+  background:var(--primary);color:#fff;padding:10px 20px;border-radius:6px;font-size:13px;
+  opacity:0;pointer-events:none;transition:all .25s;z-index:60;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
 /* ---------- 账号：顶栏状态区 ---------- */
 .auth-area{display:flex;align-items:center;gap:9px;margin-left:4px;flex:0 0 auto}
 .auth-area .user{display:flex;align-items:center;gap:8px;max-width:170px}
@@ -1754,80 +922,16 @@ label.ctrl{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
   font-size:12px;color:#F3EDE2;font-weight:600;max-width:120px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-header button.hd{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06);color:#E7E1D5}
-header button.hd:hover{border-color:var(--accent);background:rgba(176,141,87,.2);color:#fff}
-header button.hd.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-header button.hd.primary:hover{background:#9E7C48;border-color:#9E7C48;color:#fff}
-button:disabled{opacity:.55;cursor:not-allowed}
-
-/* ---------- 账号：登录 / 注册 弹层 ---------- */
-.auth-modal{width:min(400px,92vw);padding:24px 26px 22px}
-.auth-modal h3{margin:0 0 3px;font-size:17px;color:var(--primary)}
-.auth-modal .sub{margin:0 0 16px}
-.auth-tabs{display:flex;gap:5px;padding:4px;margin-bottom:18px;background:var(--accent-soft);border-radius:8px}
-.auth-tabs button{flex:1;padding:7px 0;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:13px}
-.auth-tabs button.active{background:#fff;color:var(--primary);font-weight:600;box-shadow:0 1px 3px rgba(31,61,58,.12)}
-.field{margin-bottom:13px}
-.field label{display:block;margin-bottom:6px;font-size:12px;color:var(--muted)}
-.field input{
-  width:100%;padding:10px 12px;font-family:inherit;font-size:13px;color:var(--ink);
-  background:#fff;border:1px solid var(--line);border-radius:8px;outline:none;transition:border-color .15s;
+/* 顶栏深色背景上的原生按钮（自包含样式，不依赖全局 button 基础） */
+header .hd{
+  font-family:inherit;font-size:12px;cursor:pointer;border-radius:6px;
+  border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06);color:#E7E1D5;
+  padding:5px 12px;transition:all .15s;line-height:1.4;
 }
-.field input:focus{border-color:var(--accent)}
-.field .row{display:flex;gap:8px}
-.field .row input{flex:1;min-width:0}
-.field .row button{flex:0 0 auto;padding:0 12px;border-radius:8px;white-space:nowrap}
-.auth-submit{width:100%;margin-top:8px;padding:11px 0;border-radius:8px;font-size:14px}
-.auth-msg{min-height:18px;margin:11px 0 0;font-size:12px;line-height:1.6}
-.auth-msg.err{color:#B4603F}
-.auth-msg.ok{color:#2F7D5A}
-
-/* ---------- 图床：我的图片（按登录账号分组） ---------- */
-button.need-key{color:#B4603F;border-color:rgba(180,96,63,.4)}
-button.need-key:hover{color:#B4603F;background:#FBEDE9;border-color:#B4603F}
-.imgs-modal{width:min(620px,94vw);padding:24px 26px 18px}
-.imgs-modal h3{margin:0 0 3px;font-size:17px}
-.imgs-modal .sub b{color:var(--primary)}
-.imgs-login{display:flex;justify-content:center;padding:20px 0 8px}
-.imgs-login .primary{padding:10px 24px;border-radius:8px;font-size:13px}
-.imgs-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.imgs-toolbar .ctrl{flex:0 0 190px}
-.imgs-count{font-size:11.5px;color:var(--muted);white-space:nowrap}
-.imgs-empty{padding:26px 10px;text-align:center;font-size:12.5px;color:var(--muted);line-height:1.8}
-.imgs-acts{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
-.imgs-acts .mini{white-space:nowrap}
-button.mini.danger{color:#B4603F;border-color:rgba(180,96,63,.4)}
-button.mini.danger:hover{background:#FBEDE9;border-color:#B4603F;color:#B4603F}
-.imgs-more{display:flex;justify-content:center;padding:12px 0 2px}
-.imgs-foot{display:flex;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
-.imgs-foot .primary{padding:7px 18px}
-.host-warn{
-  margin:-6px 0 14px;padding:9px 11px;background:#FBEDE9;border-radius:6px;
-  font-size:12px;color:#B4603F;line-height:1.7;
-}
-
-/* ---------- 图床设置（上传到自己的对象存储） ---------- */
-.host-modal{width:min(470px,92vw);padding:24px 26px 20px}
-.host-modal h3{margin:0 0 3px;font-size:17px}
-.host-modal .sub b{color:var(--primary)}
-.host-state-box{
-  margin:0 0 12px;padding:10px 12px;border-radius:6px;
-  font-size:12px;line-height:1.7;
-}
-.host-state-box b{color:var(--primary)}
-.host-state-box.ok{background:var(--accent-soft);color:#2F7D5A}
-.host-state-box.warn{background:#FBEDE9;color:#B4603F}
-.host-tip{margin:0 0 12px;font-size:11.5px;color:var(--muted);line-height:1.85}
-.host-tip a{color:var(--primary)}
-.host-tip code{
-  padding:1px 5px;border-radius:4px;background:var(--bg);
-  font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--primary);
-  word-break:break-all;
-}
-.host-foot{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
-.host-foot .primary{padding:7px 18px}
-.host-state{font-size:11.5px;color:var(--muted);white-space:nowrap}
-
+header .hd:hover{border-color:var(--accent);background:rgba(176,141,87,.2);color:#fff}
+header .hd.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+header .hd.primary:hover{background:#9E7C48;border-color:#9E7C48;color:#fff}
+header .hd:disabled{opacity:.55;cursor:not-allowed}
 @media (max-width:980px){
   main{flex:none;flex-direction:column;height:auto}
   .tf-editor{overflow-y:auto}
