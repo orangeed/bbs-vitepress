@@ -71,6 +71,23 @@
             <option value="quote">引导 · 左侧金条</option>
             <option value="dark">引导 · 深色块</option>
           </select>
+          <select v-model="conf.headingStyle" class="ctrl" title="标题样式（对二级标题生效）">
+            <option value="default">标题 · 金条引导</option>
+            <option value="number">标题 · 序号衬线</option>
+            <option value="bignum">标题 · 大序号留白</option>
+            <option value="frame">标题 · 居中线框</option>
+            <option value="dual">标题 · 双线夹字</option>
+            <option value="fade">标题 · 渐变底纹</option>
+            <option value="diamond">标题 · 菱形对称</option>
+            <option value="underline">标题 · 短下划线</option>
+          </select>
+          <select v-model="conf.quoteStyle" class="ctrl" title="引用块样式">
+            <option value="default">引用 · 金条浅底</option>
+            <option value="plain">引用 · 极简竖线</option>
+            <option value="card">引用 · 白卡描边</option>
+            <option value="mark">引用 · 引号点缀</option>
+            <option value="dark">引用 · 深色块</option>
+          </select>
           <select v-model="conf.codeStyle" class="ctrl" title="代码块与行内代码样式">
             <option value="github">代码 · GitHub 浅色</option>
             <option value="github-dark">代码 · GitHub 深色</option>
@@ -382,7 +399,8 @@ const previewHtml = ref('');
 const statHtml = ref('0 字');
 const conf = reactive({
   theme: 'moqing', size: 15, showUrl: true, archiveStyle: 'dash',
-  followStyle: 'card', codeStyle: 'github', hl: true, uploadImg: true,
+  followStyle: 'card', codeStyle: 'github', headingStyle: 'default', quoteStyle: 'default',
+  hl: true, uploadImg: true,
 });
 
 /* 浮层 */
@@ -499,6 +517,7 @@ function currentHtml() {
   return buildHtml(
     text.value, conf.theme, Number(conf.size), conf.showUrl,
     conf.archiveStyle, conf.followStyle, conf.codeStyle, conf.hl,
+    conf.headingStyle, conf.quoteStyle,
   );
 }
 

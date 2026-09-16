@@ -437,6 +437,8 @@ function inline(str, ctx){
    ========================================================= */
 let CUR = THEMES.moqing;
 const S = () => CUR;
+/* h2 序号计数器：「number」「bignum」样式使用，buildHtml 每次渲染前清零 */
+let H2N = 0;
 
 /* ⚠️ 字体名必须用单引号：这两个常量会被插入 style="..." 属性，
    内部若用双引号会提前闭合 style 属性，导致其后所有样式（含 overflow、background）全部失效。
@@ -475,15 +477,75 @@ function renderNode(n, ctx, isFirst){
   switch(n.t){
     case 'h': {
       const txt = inline(n.text, ctx);
+      const hs = ctx.headingStyle || 'default';
       if(n.level === 1){
         return `<h1 style="margin:${mt===0?0:30}px 0 6px;font-size:${fs+8}px;line-height:1.45;font-weight:700;color:${T.primary};text-align:center;letter-spacing:1px;background:transparent">${txt}</h1>`
              + `<p style="text-align:center;margin:0 0 26px;line-height:0;background:transparent"><span style="display:inline-block;width:44px;height:2px;background:${T.accent}">&nbsp;</span></p>`;
       }
       if(n.level === 2){
-        return `<h2 style="margin:${mt===0?0:30}px 0 14px;font-size:${fs+3}px;line-height:1.5;font-weight:700;color:${T.primary};border-left:4px solid ${T.accent};padding-left:11px;letter-spacing:.5px;background:transparent">${txt}</h2>`;
+        const fs2 = fs + 3;
+        const m2 = `${mt===0?0:30}px 0 14px`;
+
+        if(hs === 'bignum'){
+          // 大序号留白：60px 淡色衬线序号 + 斜杠分隔 + 标题文本，序号与标题底部对齐
+          H2N++;
+          const no = String(H2N).padStart(2, '0');
+          return `<section style="margin:${m2};line-height:0;background:transparent">`
+               + `<span style="display:inline-block;vertical-align:baseline;font-family:'Jetbrains Mono',Georgia,'Times New Roman',serif;font-style:italic;font-size:80px;font-weight:700;color:${T.accent};opacity:.32;line-height:1;letter-spacing:1px">${no}</span>`
+               + `<span style="display:inline-block;vertical-align:baseline;font-family:'Jetbrains Mono'，Georgia,'Times New Roman',serif;font-style:italic;font-size:36px;font-weight:400;color:${T.accent};opacity:.5;line-height:1;margin:0 15px 0 12px">/</span>`
+               + `<span style="display:inline-block;vertical-align:baseline;font-size:${fs2}px;line-height:1.5;font-weight:700;color:${T.primary};letter-spacing:.5px">${txt}</span></section>`;
+        }
+        if(hs === 'number'){
+          // 序号衬线：大号衬线斜体序号 + 半透明竖条 + 标题 + 通栏发丝线，杂志目录感
+          H2N++;
+          const no = String(H2N).padStart(2, '0');
+          return `<h2 style="margin:${m2};border-bottom:1px solid ${T.line};padding-bottom:10px;line-height:1.5;background:transparent">`
+               + `<span style="display:inline-block;vertical-align:middle;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:${fs+11}px;font-weight:700;color:${T.accent};line-height:1;margin-right:10px">${no}</span>`
+               + `<span style="display:inline-block;vertical-align:middle;width:3px;height:${fs+3}px;background:${T.accent};opacity:.35;border-radius:2px;margin-right:12px">&nbsp;</span>`
+               + `<span style="display:inline-block;vertical-align:middle;font-size:${fs2}px;font-weight:700;color:${T.primary};letter-spacing:.5px">${txt}</span></h2>`;
+        }
+        if(hs === 'frame'){
+          // 居中线框：细线圆角框内嵌菱形点缀，印章式排版
+          return `<section style="margin:${m2};text-align:center;line-height:0;background:transparent">`
+               + `<section style="display:inline-block;border:1px solid ${T.accent};border-radius:8px;padding:9px 26px;line-height:1.5">`
+               + `<span style="color:${T.accent};font-size:11px;vertical-align:middle;margin-right:11px">◆</span>`
+               + `<span style="display:inline-block;vertical-align:middle;font-size:${fs2}px;font-weight:700;color:${T.primary};letter-spacing:2px">${txt}</span>`
+               + `<span style="color:${T.accent};font-size:11px;vertical-align:middle;margin-left:11px">◆</span>`
+               + `</section></section>`;
+        }
+        if(hs === 'dual'){
+          // 双线夹字：两侧「粗+细」双线，居中，仪式感强
+          const side = `display:inline-block;vertical-align:middle;width:36px;height:9px;border-top:3px solid ${T.accent};border-bottom:1px solid ${T.accent};box-sizing:border-box`;
+          return `<section style="margin:${m2};text-align:center;line-height:0;background:transparent">`
+               + `<span style="${side}">&nbsp;</span>`
+               + `<span style="display:inline-block;vertical-align:middle;margin:0 14px;font-size:${fs2}px;font-weight:700;color:${T.primary};letter-spacing:1.5px">${txt}</span>`
+               + `<span style="${side}">&nbsp;</span></section>`;
+        }
+        if(hs === 'fade'){
+          // 渐变底纹：主题色由深到浅横向渐隐 + 左侧实条，比纯色块更透气
+          return `<h2 style="margin:${m2};font-size:${fs2}px;line-height:1.5;font-weight:700;color:${T.primary};background:linear-gradient(90deg, ${T.accentSoft}, rgba(255,255,255,0));border-left:4px solid ${T.accent};padding:9px 14px;border-radius:0 8px 8px 0;letter-spacing:.5px">${txt}</h2>`;
+        }
+        if(hs === 'diamond'){
+          // 菱形对称：居中 + 宽字距 + 两端菱形与细横线，东方美学
+          return `<section style="margin:${m2};text-align:center;line-height:0;background:transparent">`
+               + `<span style="display:inline-block;vertical-align:middle;width:22px;height:1px;background:${T.line}">&nbsp;</span>`
+               + `<span style="color:${T.accent};font-size:10px;vertical-align:middle;margin:0 9px">◆</span>`
+               + `<span style="display:inline-block;vertical-align:middle;margin:0 5px;font-size:${fs2}px;font-weight:700;color:${T.primary};letter-spacing:4px">${txt}</span>`
+               + `<span style="color:${T.accent};font-size:10px;vertical-align:middle;margin:0 9px">◆</span>`
+               + `<span style="display:inline-block;vertical-align:middle;width:22px;height:1px;background:${T.line}">&nbsp;</span></section>`;
+        }
+        if(hs === 'underline'){
+          // 短下划线：仅文字底部一段主题色短线，最克制
+          return `<h2 style="margin:${m2};line-height:1.5;background:transparent">`
+               + `<span style="display:inline-block;font-size:${fs2}px;font-weight:700;color:${T.primary};letter-spacing:.5px;border-bottom:3px solid ${T.accent};padding-bottom:4px">${txt}</span></h2>`;
+        }
+        // default：左侧金条（原有样式）
+        return `<h2 style="margin:${m2};font-size:${fs2}px;line-height:1.5;font-weight:700;color:${T.primary};border-left:4px solid ${T.accent};padding-left:11px;letter-spacing:.5px;background:transparent">${txt}</h2>`;
       }
       if(n.level === 3){
-        return `<h3 style="margin:${mt===0?0:24}px 0 12px;font-size:${fs+1}px;line-height:1.5;font-weight:600;color:${T.primary};background:transparent">`
+        // 三级标题不参与样式切换，固定使用原有样式（■ 前缀）
+        const fs3 = fs + 1;
+        return `<h3 style="margin:${mt===0?0:24}px 0 12px;font-size:${fs3}px;line-height:1.5;font-weight:600;color:${T.primary};background:transparent">`
              + `<span style="color:${T.accent};margin-right:6px">■</span>${txt}</h3>`;
       }
       return `<h${n.level} style="margin:${mt===0?0:20}px 0 10px;font-size:${fs}px;font-weight:600;color:${T.accent};line-height:1.6;background:transparent">${txt}</h${n.level}>`;
@@ -500,8 +562,30 @@ function renderNode(n, ctx, isFirst){
 
     case 'quote': {
       const inner = renderNodes(n.children, ctx, true);
-      return `<section style="margin:${mt===0?0:20}px 0 ${mt===0?0:20}px;padding:13px 15px;background:${T.soft};border-left:3px solid ${T.accent};border-radius:0 6px 6px 0">`
-           + `<div style="font-size:${fs-1}px;line-height:1.8;color:#6E6E6E;letter-spacing:.3px">${inner}</div></section>`;
+      const qs = ctx.quoteStyle || 'default';
+      const m0 = `${mt===0?0:20}px`;
+      const body = color => `<div style="font-size:${fs-1}px;line-height:1.8;color:${color};letter-spacing:.3px">${inner}</div>`;
+      if(qs === 'plain'){
+        // 极简竖线：无底色，仅一条灰竖线 + 弱化文字，正文引用短句时最干净
+        return `<section style="margin:${m0} 0 ${m0};padding:2px 0 2px 14px;border-left:2px solid ${T.line};background:transparent">${body(T.muted)}</section>`;
+      }
+      if(qs === 'card'){
+        // 白卡描边：白底卡片 + 左侧主题色粗条，与 ::: card 容器视觉统一
+        return `<section style="margin:${m0} 0 ${m0};padding:14px 16px;background:#FFFFFF;border:1px solid ${T.line};border-left:4px solid ${T.accent};border-radius:8px">${body('#6E6E6E')}</section>`;
+      }
+      if(qs === 'dark'){
+        // 深色块：主题色整块铺底 + 浅色文字，视觉最重，适合金句
+        return `<section style="margin:${m0} 0 ${m0};padding:15px 17px;background:${T.primary};border-radius:8px">${body('#D5D0C5')}</section>`;
+      }
+      if(qs === 'mark'){
+        // 引号点缀：浅底圆角块 + 顶部大引号，文艺风格
+        return `<section style="margin:${m0} 0 ${m0};padding:12px 16px 14px;background:${T.soft};border-radius:8px">`
+             + `<p style="margin:0 0 2px;font-size:30px;line-height:1;color:${T.accent};font-family:Georgia,'Times New Roman',serif">&ldquo;</p>`
+             + body('#6E6E6E') + `</section>`;
+      }
+      // default：金条浅底（原有样式）
+      return `<section style="margin:${m0} 0 ${m0};padding:13px 15px;background:${T.soft};border-left:3px solid ${T.accent};border-radius:0 6px 6px 0">`
+           + body('#6E6E6E') + `</section>`;
     }
 
     case 'list': {
@@ -737,13 +821,15 @@ function renderFollow(n, ctx, isFirst){
     + bodyInk + `</section>`;
 }
 
-function buildHtml(src, themeKey, fontSize, showUrl, archiveStyle, followStyle, codeStyleKey, hl){
+function buildHtml(src, themeKey, fontSize, showUrl, archiveStyle, followStyle, codeStyleKey, hl, headingStyle, quoteStyle){
   // 参数兜底：缺参时避免输出 "undefinedpx" 之类的坏样式（布尔参数不能用 ||，会吞掉 false）
   fontSize = Number(fontSize) || 15;
   showUrl  = showUrl  !== undefined ? showUrl  : true;
   hl       = hl       !== undefined ? hl       : true;
   CUR = THEMES[themeKey] || THEMES.moqing;
-  const ctx = {fontSize, showUrl, archiveStyle, followStyle, codeStyle:codeStyleKey, hl:hl !== false};
+  H2N = 0;
+  const ctx = {fontSize, showUrl, archiveStyle, followStyle, codeStyle:codeStyleKey, hl:hl !== false,
+               headingStyle:headingStyle || 'default', quoteStyle:quoteStyle || 'default'};
   const cs = codeStyle(ctx);
   CUR.inlineCode = `background:${cs.inlineBg};color:${cs.inlineFg};padding:.2em .4em;border-radius:6px;font-family:${MONO};font-size:${(fontSize-2)}px`;
   const nodes = parseMarkdown(src);
