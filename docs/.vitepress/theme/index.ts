@@ -22,6 +22,9 @@ import {
   Image
 } from 'animal-island-vue'
 
+// 全站主题层必须最先引入：它定义唯一的颜色真源（--bg-* / --text-* / --accent* …），
+// 后面的样式文件只消费这些 token
+import './styles/themes.scss'
 import './styles/custom.css'
 import './styles/artalk-custom.css'
 import './styles/loading.css'
@@ -30,8 +33,7 @@ import { installGlobalLoading } from './globalLoading'
 // 自定义样式重载
 import "./style/style.css";
 
-// 自定义主题色
-import "./style/user-theme.css";
+// 品牌色与文档卡片底色已由 styles/themes.scss 的桥接层统一提供
 
 import './style/dark.css'
 

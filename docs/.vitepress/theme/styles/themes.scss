@@ -1,0 +1,553 @@
+@use "sass:map";
+
+/* ============================================================================
+   全站主题层（Theme Layer）
+   ----------------------------------------------------------------------------
+   这里定义唯一的颜色真源，供整站（VitePress 外壳、文档正文、评论、
+   自定义组件、animal-island-vue 组件库）共同消费。
+
+   1. 每套风格含 dark / light 两组语义 token，生成在 <html> 上：
+        html.theme-ink / html.theme-ink:not(.dark)（浅色）/ html.dark.theme-ink（深色）
+      默认（无主题类）为「黑白画廊」，首屏脚本会在绘制前把类名写上去。
+   2. 语义 token（--bg-* / --text-* / --line* / --accent* …）是全站唯一的颜色来源，
+      其余样式文件一律引用它们，不再出现硬编码色。
+   3. 桥接层把旧变量（--ai-*、--vp-c-*、--doc-bg…）与组件库变量（--animal-*）
+      指向语义 token，这样历史样式与第三方组件也会跟着主题走。
+   ============================================================================ */
+
+/* ============================================
+   主题配置
+   ============================================ */
+$themes: (
+  mono: (
+    dark: (
+      "bg-base": #0b0b0c,
+      "bg-surface": #101012,
+      "bg-card": #131315,
+      "bg-card-hover": #191919,
+      "bg-inset": #0e0e10,
+      "line": rgba(255, 255, 255, 0.1),
+      "line-strong": rgba(255, 255, 255, 0.22),
+      "text-1": #f6f6f6,
+      "text-2": #bcbcbc,
+      "text-3": #9c9c9c,
+      "accent": #ffffff,
+      "accent-strong": #e6e6e6,
+      "accent-soft": rgba(255, 255, 255, 0.08),
+      "accent-line": rgba(255, 255, 255, 0.35),
+      "accent-ink": #0b0b0c,
+      "panel-bg": rgba(10, 10, 12, 0.82),
+      "glow": rgba(255, 255, 255, 0.035),
+      "noise-opacity": 0.03,
+      "ring": rgba(255, 255, 255, 0.55),
+      "shadow-card": (0 0 0 rgba(0, 0, 0, 0)),
+      "shadow-pop": (0 26px 52px -34px rgba(0, 0, 0, 0.9)),
+      "bg-img": none,
+    ),
+    light: (
+      "bg-base": #f5f5f5,
+      "bg-surface": #fbfbfb,
+      "bg-card": #ffffff,
+      "bg-card-hover": #fafafa,
+      "bg-inset": #eeeeee,
+      "line": rgba(0, 0, 0, 0.1),
+      "line-strong": rgba(0, 0, 0, 0.24),
+      "text-1": #111111,
+      "text-2": #4f4f4f,
+      "text-3": #666666,
+      "accent": #111111,
+      "accent-strong": #000000,
+      "accent-soft": rgba(0, 0, 0, 0.06),
+      "accent-line": rgba(0, 0, 0, 0.4),
+      "accent-ink": #ffffff,
+      "panel-bg": rgba(251, 251, 251, 0.82),
+      "glow": rgba(0, 0, 0, 0.03),
+      "noise-opacity": 0.03,
+      "ring": rgba(0, 0, 0, 0.4),
+      "shadow-card": (0 0 0 rgba(0, 0, 0, 0)),
+      "shadow-pop": (0 22px 44px -34px rgba(0, 0, 0, 0.35)),
+      "bg-img": none,
+    ),
+  ),
+  ink: (
+    dark: (
+      "bg-base": #262d49,
+      "bg-surface": #2a3150,
+      "bg-card": #2b3252,
+      "bg-card-hover": #323a5c,
+      "bg-inset": #20263d,
+      "line": rgba(255, 255, 255, 0.07),
+      "line-strong": rgba(255, 255, 255, 0.14),
+      "text-1": #f2eee7,
+      "text-2": #bdbccb,
+      "text-3": #a6a6b9,
+      "accent": #c9a86a,
+      "accent-strong": #dcbd83,
+      "accent-soft": rgba(201, 168, 106, 0.12),
+      "accent-line": rgba(201, 168, 106, 0.38),
+      "accent-ink": #1c1a17,
+      "panel-bg": rgba(32, 38, 60, 0.7),
+      "glow": rgba(201, 168, 106, 0.05),
+      "noise-opacity": 0.028,
+      "ring": rgba(201, 168, 106, 0.5),
+      "shadow-card": (0 1px 0 rgba(0, 0, 0, 0.14)),
+      "shadow-pop": (0 28px 56px -36px rgba(0, 0, 0, 0.75)),
+      "bg-img": none,
+    ),
+    light: (
+      "bg-base": #f2ede1,
+      "bg-surface": #f8f4ec,
+      "bg-card": #ffffff,
+      "bg-card-hover": #fffdfa,
+      "bg-inset": #eae3d4,
+      "line": rgba(25, 24, 23, 0.1),
+      "line-strong": rgba(25, 24, 23, 0.2),
+      "text-1": #1c1a17,
+      "text-2": #544c40,
+      "text-3": #6b6154,
+      "accent": #8a6c33,
+      "accent-strong": #745a28,
+      "accent-soft": rgba(138, 108, 51, 0.1),
+      "accent-line": rgba(138, 108, 51, 0.4),
+      "accent-ink": #fffaf2,
+      "panel-bg": rgba(248, 244, 236, 0.78),
+      "glow": rgba(138, 108, 51, 0.05),
+      "noise-opacity": 0.035,
+      "ring": rgba(138, 108, 51, 0.45),
+      "shadow-card": (0 1px 0 rgba(60, 48, 30, 0.04)),
+      "shadow-pop": (0 22px 44px -32px rgba(60, 48, 30, 0.4)),
+      "bg-img": none,
+    ),
+  ),
+  warm: (
+    dark: (
+      "bg-base": #2d3554,
+      "bg-surface": #343c5c,
+      "bg-card": #333b5a,
+      "bg-card-hover": #3d4568,
+      "bg-inset": #262c46,
+      "line": rgba(255, 255, 255, 0.09),
+      "line-strong": rgba(255, 255, 255, 0.16),
+      "text-1": #f4efe6,
+      "text-2": #c6c3d4,
+      "text-3": #b3b3c9,
+      "accent": #ff9a4d,
+      "accent-strong": #ff7a1a,
+      "accent-soft": rgba(255, 154, 77, 0.14),
+      "accent-line": rgba(255, 154, 77, 0.4),
+      "accent-ink": #241a11,
+      "panel-bg": rgba(32, 38, 60, 0.72),
+      "glow": rgba(255, 154, 77, 0.07),
+      "noise-opacity": 0.05,
+      "ring": rgba(255, 154, 77, 0.4),
+      "shadow-card": (0 1px 2px rgba(0, 0, 0, 0.18)),
+      "shadow-pop": (0 14px 34px rgba(0, 0, 0, 0.4)),
+      "bg-img": url("../../../public/night.webp"),
+    ),
+    light: (
+      "bg-base": #eee6d6,
+      "bg-surface": #f7f1e5,
+      "bg-card": #fffdf8,
+      "bg-card-hover": #fffaf0,
+      "bg-inset": #e4dac7,
+      "line": #ddd2be,
+      "line-strong": #c8bca3,
+      "text-1": #3a3026,
+      "text-2": #635643,
+      "text-3": #665741,
+      "accent": #d9631a,
+      "accent-strong": #bf5412,
+      "accent-soft": rgba(217, 99, 26, 0.12),
+      "accent-line": rgba(217, 99, 26, 0.4),
+      "accent-ink": #fff8f2,
+      "panel-bg": rgba(247, 241, 229, 0.78),
+      "glow": rgba(217, 99, 26, 0.07),
+      "noise-opacity": 0.06,
+      "ring": rgba(217, 99, 26, 0.35),
+      "shadow-card": (0 1px 2px rgba(107, 79, 58, 0.07)),
+      "shadow-pop": (0 14px 30px rgba(107, 79, 58, 0.16)),
+      "bg-img": url("../../../public/light.webp"),
+    ),
+  ),
+  forest: (
+    dark: (
+      "bg-base": #0f1f1a,
+      "bg-surface": #13261f,
+      "bg-card": #152820,
+      "bg-card-hover": #1b3128,
+      "bg-inset": #0c1a15,
+      "line": rgba(255, 255, 255, 0.08),
+      "line-strong": rgba(255, 255, 255, 0.16),
+      "text-1": #eef2ec,
+      "text-2": #bcc7be,
+      "text-3": #a4afa6,
+      "accent": #d9c08a,
+      "accent-strong": #e8d3a3,
+      "accent-soft": rgba(217, 192, 138, 0.12),
+      "accent-line": rgba(217, 192, 138, 0.36),
+      "accent-ink": #16241d,
+      "panel-bg": rgba(13, 29, 24, 0.74),
+      "glow": rgba(217, 192, 138, 0.055),
+      "noise-opacity": 0.035,
+      "ring": rgba(217, 192, 138, 0.45),
+      "shadow-card": (0 1px 0 rgba(0, 0, 0, 0.2)),
+      "shadow-pop": (0 26px 52px -36px rgba(0, 0, 0, 0.8)),
+      "bg-img": none,
+    ),
+    light: (
+      "bg-base": #eef0e8,
+      "bg-surface": #f6f7f1,
+      "bg-card": #ffffff,
+      "bg-card-hover": #fdfefb,
+      "bg-inset": #e3e6db,
+      "line": rgba(20, 40, 30, 0.12),
+      "line-strong": rgba(20, 40, 30, 0.24),
+      "text-1": #16241d,
+      "text-2": #4a564c,
+      "text-3": #5d6a5f,
+      "accent": #6b5a2e,
+      "accent-strong": #574a25,
+      "accent-soft": rgba(107, 90, 46, 0.1),
+      "accent-line": rgba(107, 90, 46, 0.4),
+      "accent-ink": #fdfcf7,
+      "panel-bg": rgba(246, 247, 241, 0.8),
+      "glow": rgba(107, 90, 46, 0.05),
+      "noise-opacity": 0.035,
+      "ring": rgba(107, 90, 46, 0.4),
+      "shadow-card": (0 1px 0 rgba(30, 50, 38, 0.05)),
+      "shadow-pop": (0 22px 44px -32px rgba(30, 50, 38, 0.35)),
+      "bg-img": none,
+    ),
+  ),
+  magazine: (
+    dark: (
+      "bg-base": #16151a,
+      "bg-surface": #1b1a20,
+      "bg-card": #1d1c23,
+      "bg-card-hover": #24232b,
+      "bg-inset": #121116,
+      "line": rgba(255, 255, 255, 0.08),
+      "line-strong": rgba(255, 255, 255, 0.16),
+      "text-1": #f3f1f4,
+      "text-2": #c0bcc6,
+      "text-3": #a8a4b0,
+      "accent": #c04a3f,
+      "accent-strong": #d15b4e,
+      "accent-soft": rgba(192, 74, 63, 0.14),
+      "accent-line": rgba(192, 74, 63, 0.4),
+      "accent-ink": #fdf4f2,
+      "panel-bg": rgba(20, 19, 25, 0.76),
+      "glow": rgba(192, 74, 63, 0.06),
+      "noise-opacity": 0.03,
+      "ring": rgba(192, 74, 63, 0.5),
+      "shadow-card": (0 1px 0 rgba(0, 0, 0, 0.22)),
+      "shadow-pop": (0 26px 52px -36px rgba(0, 0, 0, 0.8)),
+      "bg-img": none,
+    ),
+    light: (
+      "bg-base": #f5f1ec,
+      "bg-surface": #fbf8f4,
+      "bg-card": #ffffff,
+      "bg-card-hover": #fffdfb,
+      "bg-inset": #ece6de,
+      "line": rgba(40, 30, 28, 0.1),
+      "line-strong": rgba(40, 30, 28, 0.22),
+      "text-1": #1b1817,
+      "text-2": #544a45,
+      "text-3": #665c56,
+      "accent": #9c3b33,
+      "accent-strong": #85302a,
+      "accent-soft": rgba(156, 59, 51, 0.1),
+      "accent-line": rgba(156, 59, 51, 0.38),
+      "accent-ink": #fff6f4,
+      "panel-bg": rgba(251, 248, 244, 0.8),
+      "glow": rgba(156, 59, 51, 0.05),
+      "noise-opacity": 0.04,
+      "ring": rgba(156, 59, 51, 0.45),
+      "shadow-card": (0 1px 0 rgba(60, 40, 36, 0.04)),
+      "shadow-pop": (0 22px 44px -32px rgba(60, 40, 36, 0.35)),
+      "bg-img": none,
+    ),
+  ),
+);
+
+/* 主题个性项：强调字体（数字 / 拉丁字）与圆角尺寸 */
+$theme-meta: (
+  mono: (
+    "font-display": (Georgia, "Times New Roman", "Songti SC", serif),
+    "radius-lg": 2px,
+    "radius-xl": 3px,
+  ),
+  ink: (
+    "font-display": (Georgia, "Times New Roman", "Songti SC", "Noto Serif SC", serif),
+    "radius-lg": 8px,
+    "radius-xl": 12px,
+  ),
+  warm: (
+    "font-display": ("Nunito", "Noto Sans SC", sans-serif),
+    "radius-lg": 14px,
+    "radius-xl": 18px,
+  ),
+  forest: (
+    "font-display": (Georgia, "Times New Roman", "Songti SC", serif),
+    "radius-lg": 6px,
+    "radius-xl": 9px,
+  ),
+  magazine: (
+    "font-display": (Georgia, "Times New Roman", "Songti SC", serif),
+    "radius-lg": 4px,
+    "radius-xl": 6px,
+  ),
+);
+
+/* 默认风格（无主题类时使用，也是首屏脚本的兜底值） */
+$default-theme: mono;
+
+/* ============================================
+   结构 token（与主题无关）
+   ============================================ */
+:root {
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-full: 999px;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 180ms var(--ease);
+  --t-base: 260ms var(--ease);
+  --t-slow: 620ms var(--ease);
+
+  --font-sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+/* ============================================
+   生成主题类（挂在 <html> 上）
+   ============================================ */
+@mixin theme-tokens($name, $mode) {
+  @each $key, $val in map.get(map.get($themes, $name), $mode) {
+    --#{$key}: #{$val};
+  }
+  @each $key, $val in map.get($theme-meta, $name) {
+    --#{$key}: #{$val};
+  }
+}
+
+/* 兜底：默认主题（黑白画廊），保证首帧/SSR 直出即为正确配色 */
+:root {
+  @include theme-tokens($default-theme, light);
+}
+
+html.dark {
+  @include theme-tokens($default-theme, dark);
+}
+
+/* 其余风格：浅色 = html.theme-x:not(.dark)，深色 = html.dark.theme-x */
+@each $name, $modes in $themes {
+  @if $name != $default-theme {
+    html.theme-#{$name}:not(.dark) {
+      @include theme-tokens($name, light);
+    }
+
+    html.dark.theme-#{$name} {
+      @include theme-tokens($name, dark);
+    }
+  }
+}
+
+/* ============================================
+   桥接层：把历史变量与组件库变量指向语义 token
+   ------------------------------------------------------------
+   这样「老样式文件里已经写了 var(--ai-*) 的地方」以及
+   animal-island-vue 内部（--animal-*）都会跟随主题切换，
+   无需逐个改写。
+   ============================================================ */
+:root {
+  /* --- 站点自建变量（animal-island 风格别名） --- */
+  --ai-bg: var(--bg-base);
+  --ai-bg-soft: var(--bg-surface);
+  --ai-brown: var(--accent);
+  --ai-brown-soft: var(--accent-strong);
+  --ai-btn: var(--accent);
+  --ai-text: var(--text-1);
+  --ai-text-soft: var(--text-3);
+  --ai-shadow: var(--line);
+  --ai-pink: var(--accent);
+  --ai-teal: var(--accent-strong);
+  --ai-yellow: var(--accent-soft);
+  --ai-tag-checked: var(--accent-ink);
+  --ai-bg-t: var(--panel-bg);
+  --ai-bg-img: var(--bg-img);
+
+  /* --- VitePress --- */
+  --vp-c-text-1: var(--text-1);
+  --vp-c-text-2: var(--text-2);
+  --vp-c-text-3: var(--text-3);
+  --vp-c-text-4: var(--text-3);
+  --vp-c-default-1: var(--text-1);
+  --vp-c-default-2: var(--text-2);
+  --vp-c-default-3: var(--text-3);
+  --vp-c-default-soft: var(--bg-inset);
+  --vp-c-bg: var(--bg-base);
+  --vp-c-bg-alt: var(--bg-surface);
+  --vp-c-bg-soft: var(--bg-surface);
+  --vp-c-bg-elv: var(--bg-card);
+  --vp-c-divider: var(--line);
+  --vp-c-border: var(--line);
+  --vp-c-gutter: var(--line);
+  --vp-c-brand-1: var(--accent);
+  --vp-c-brand-2: var(--accent-strong);
+  --vp-c-brand-3: var(--accent);
+  --vp-c-brand-soft: var(--accent-soft);
+  --vp-c-user-1: var(--accent);
+  --vp-c-user-2: var(--accent-strong);
+  --vp-c-user-3: var(--accent);
+  --vp-c-user-soft: var(--accent-soft);
+  --vp-font-family-base: var(--font-sans);
+  --vp-font-family-mono: var(--font-mono);
+  /* 自定义文档卡片 */
+  --doc-bg: var(--bg-card);
+  --box-shadow: var(--shadow-pop);
+
+  /* --- animal-island-vue --- */
+  --animal-bg-color: var(--bg-card);
+  --animal-bg-color-secondary: var(--bg-surface);
+  --animal-bg-color-input: var(--bg-card);
+  --animal-bg-color-disabled: var(--bg-inset);
+  --animal-border-color: var(--line);
+  --animal-border-color-light: var(--line);
+  --animal-border-color-hover: var(--line-strong);
+  --animal-primary-color: var(--accent);
+  --animal-primary-color-hover: var(--accent-strong);
+  --animal-primary-color-active: var(--accent-strong);
+  --animal-primary-color-bg: var(--accent-soft);
+  --animal-shadow-color-light: var(--line);
+  --animal-shadow-soft: var(--shadow-card);
+  --animal-shadow-soft-hover: var(--shadow-pop);
+  --animal-shadow-base: var(--shadow-card);
+  --animal-border-radius-base: var(--radius-md);
+  --animal-border-radius-sm: var(--radius-sm);
+  --animal-border-radius-lg: var(--radius-lg);
+  --animal-font-family: var(--font-sans);
+  --animal-text-color: var(--text-1);
+  --animal-text-color-secondary: var(--text-2);
+  --animal-text-color-placeholder: var(--text-3);
+}
+
+/* ============================================
+   animal-island-vue 下拉（Select）主题化
+   ------------------------------------------------------------
+   库自带米黄配色（#ffeea0 底 / 28px 圆角 / 2px 米色描边），
+   这里统一换成主题 token。样式选择器前加 html 提高特异性，
+   确保压过库内的 [data-v-xxx] 规则而不依赖引入顺序。
+   ============================================================ */
+html .animal-select {
+  font-family: var(--font-sans);
+  min-width: 140px;
+}
+
+html .animal-select .animal-select__trigger {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 7px 12px;
+  transition: border-color var(--t-fast), background-color var(--t-fast);
+}
+
+html .animal-select .animal-select__trigger:hover {
+  background: var(--bg-surface);
+  border-color: var(--line-strong);
+}
+
+html .animal-select .animal-select__value {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-2);
+  transition: color var(--t-fast);
+}
+
+html .animal-select .animal-select__trigger:hover .animal-select__value {
+  color: var(--text-1);
+}
+
+html .animal-select .animal-select__arrow {
+  color: var(--text-3);
+}
+
+html .animal-select .animal-select__dropdown {
+  padding: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+}
+
+html .animal-select .animal-select__option {
+  font-size: 13px;
+  color: var(--text-2);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--t-fast), color var(--t-fast);
+}
+
+html .animal-select .animal-select__option--hovered {
+  background: var(--bg-inset);
+  color: var(--text-1);
+}
+
+html .animal-select .animal-select__option--active {
+  color: var(--accent);
+}
+
+/* ============================================
+   全局基础表现
+   ============================================ */
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  transition: background-color var(--t-base), color var(--t-base);
+}
+
+/* 全站统一选中色与焦点环 */
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-1);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* 全站细滚动条 */
+* {
+  scrollbar-color: var(--line-strong) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}

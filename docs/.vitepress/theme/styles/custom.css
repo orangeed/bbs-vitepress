@@ -1,31 +1,4 @@
-:root {
-  /* 动森风格暖色基调 */
-  --ai-bg: #ece6d4;
-  --ai-bg-soft: #fffaf2;
-  --ai-brown: #6b4f3a;
-  --ai-btn: #6b4f3a;
-  --ai-brown-soft: #9c7b5d;
-  --ai-pink: #f6a8b6;
-  --ai-teal: #5bbfb0;
-  --ai-yellow: #ffd66b;
-  --ai-text: #4a3b2f;
-  --ai-text-soft: #8a7563;
-  --ai-shadow: rgba(107, 79, 58, 0.15);
-  --ai-tag-checked: #fff;
-  --ai-bg-img: url('../../../public/light.webp');
-  --ai-bg-t: rgba(236, 230, 212, .75);
-}
-
 /* 整体背景 */
-.dark {
-  --ai-bg: #2d3554;
-  --ai-bg-soft: #2a231d;
-  --ai-text: #f3e9dd;
-  --ai-text-soft: #c7b6a4;
-  --ai-bg-img: url('../../../public/night.webp');
-  --ai-bg-t: rgba(45, 53, 84, .75);
-}
-
 html,
 body {
   background: var(--ai-bg);
@@ -152,8 +125,8 @@ input[type='radio'] {
   height: 38px;
   padding: 0 12px;
   border: 2px solid var(--ai-shadow);
-  background: var(--ai-bg-soft, #fffaf2);
-  color: var(--ai-brown, #6b4f3a);
+  background: var(--ai-bg-soft, var(--bg-surface));
+  color: var(--ai-brown, var(--accent));
   border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
@@ -167,9 +140,9 @@ input[type='radio'] {
 }
 
 .pager__btn.is-active {
-  background: var(--ai-btn, #6b4f3a);
+  background: var(--ai-btn, var(--accent));
   color: #fff;
-  border-color: var(--ai-btn, #6b4f3a);
+  border-color: var(--ai-btn, var(--accent));
 }
 
 .pager__btn:disabled {
@@ -178,7 +151,7 @@ input[type='radio'] {
 }
 
 .pager__ellipsis {
-  color: var(--ai-text-soft, #8a7563);
+  color: var(--ai-text-soft, var(--text-3));
   padding: 0 4px;
 }
 
@@ -232,7 +205,7 @@ input[type='radio'] {
 }
 
 .featured-item:hover {
-  background: rgba(251, 146, 60, 0.12);
+  background: var(--accent-soft);
   transform: translateX(4px);
 }
 
@@ -268,7 +241,7 @@ input[type='radio'] {
   gap: 4px;
   padding: 3px 12px;
   border-radius: 999px;
-  background: rgba(251, 146, 60, 0.18);
+  background: var(--accent-soft);
   color: var(--ai-brown);
   font-size: 13px;
   font-weight: 600;
@@ -321,7 +294,7 @@ input[type='radio'] {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--line-strong);
   cursor: pointer;
 }
 
@@ -338,7 +311,7 @@ input[type='radio'] {
   min-height: 44px;
   padding: 10px 16px;
   border-radius: 14px;
-  background: rgba(91, 191, 176, 0.55);
+  background: var(--accent-line);
   color: var(--ai-brown);
   font-weight: 600;
   margin-bottom: 18px;
@@ -355,7 +328,7 @@ input[type='radio'] {
 .ai-muted {
   /* color: var(--ai-text-soft); */
   /* color: var(--ai-bg-soft); */
-  color: #877358
+  color: var(--text-3)
 }
 
 .ai-meta {
@@ -375,17 +348,6 @@ input[type='radio'] {
    ============================================================ */
 
 /* 正文文本颜色（VitePress 默认主题文本变量） */
-:root {
-  --vp-c-text-1: var(--ai-text);
-  --vp-c-text-2: var(--ai-text);
-  --vp-c-text-3: var(--ai-text-soft);
-  --vp-c-text-4: var(--ai-text-soft);
-  --vp-c-default-1: var(--ai-text);
-  --vp-c-default-2: var(--ai-text);
-  --vp-c-default-3: var(--ai-text-soft);
-  --vp-c-default-soft: var(--ai-text-soft);
-}
-
 /* 文档区背景、代码块、引用、表格等表面色跟随主题 */
 .VPDoc .content-container,
 .VPDoc .vp-doc,
@@ -456,25 +418,14 @@ input[type='radio'] {
    ============================================================ */
 
 /* 深色模式主色提亮（供仍引用 --ai-brown 等的地方使用） */
-.dark {
-  --ai-brown: #f3e9dd;
-  --ai-brown-soft: #c7b6a4;
-  --ai-pink: #f6a8b6;
-  --ai-teal: #7fd8cb;
-  --ai-yellow: #ffd66b;
-  --ai-shadow: rgba(0, 0, 0, 0.4);
-  --ai-tag-checked: #f09b2d;
-  --ai-btn: #374063;
-}
-
-/* 卡片背景：白天 #f7f3e7，黑夜 #374063 */
+/* 卡片背景：白天 var(--bg-card)，黑夜 var(--bg-card) */
 .post-card {
-  background: #f7f3e7 !important;
+  background: var(--bg-card) !important;
   border: none !important;
 }
 
 .dark .post-card {
-  background: #374063 !important;
+  background: var(--bg-card) !important;
 }
 
 /* 标题：白天黑色，黑夜白色 */
@@ -583,17 +534,17 @@ input[type='radio'] {
 
 .VPNavBarMenu .VPMenuLink:hover {
   color: var(--ai-brown);
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-inset);
 }
 
 .dark .VPNavBarMenu .VPMenuLink:hover {
   color: var(--ai-yellow);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-inset);
 }
 
 /* 激活态药丸（紫色） */
 .VPNavBarMenu .VPMenuLink.active {
-  background: #8b7ad1 !important;
+  background: var(--accent) !important;
   color: #fff !important;
   font-weight: 600;
 }
@@ -861,7 +812,7 @@ input[type='radio'] {
 }
 
 .dark .VPDocAsideOutline .content {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-inset);
 }
 
 /* 标记线位置 */
@@ -889,23 +840,23 @@ input[type='radio'] {
 
 .VPDocAsideOutline .outline-link:hover {
   color: var(--ai-brown);
-  background: rgba(107, 79, 58, 0.08);
+  background: var(--bg-inset);
 }
 
 .dark .VPDocAsideOutline .outline-link:hover {
   color: var(--ai-yellow);
-  background: rgba(255, 215, 107, 0.1);
+  background: var(--accent-soft);
 }
 
 .VPDocAsideOutline .outline-link.active {
   color: var(--ai-brown);
   font-weight: 600;
-  background: rgba(107, 79, 58, 0.1);
+  background: var(--line);
 }
 
 .dark .VPDocAsideOutline .outline-link.active {
   color: var(--ai-yellow);
-  background: rgba(255, 215, 107, 0.15);
+  background: var(--accent-soft);
 }
 
 /* 嵌套缩进 */
@@ -923,9 +874,9 @@ input[type='radio'] {
 }
 
 .animal-input {
-  background: #f7f3df !important;
+  background: var(--bg-surface) !important;
   /* box-shadow: 0 4px var(--search-bg-shadow) !important; */
-  border: 2px solid #6b4f3a !important;
+  border: 2px solid var(--accent) !important;
 }
 
 .dark .animal-input {

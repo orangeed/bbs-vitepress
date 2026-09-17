@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useData } from 'vitepress'
-import { categories } from './data'
+import { Select } from 'animal-island-vue'
+import { categories } from './data/index'
+import { STYLE_OPTIONS, activeStyle, initStyleTheme } from '../../.vitepress/theme/useStyleTheme'
 
 const { isDark: vpIsDark } = useData()
 
@@ -51,6 +53,12 @@ const quickTags = [
   { label: '🎨 Figma', keyword: 'figma' },
   { label: '📺 YouTube', keyword: 'youtube' },
 ]
+
+// --- 视觉风格：全站共用（与明暗模式正交）---
+// 状态与持久化都在 theme/useStyleTheme.ts 里，顶栏切换器与本页共用同一份，
+// 保证在任意页面切换都能同步；主题类名写在 <html> 上（见 styles/themes.scss）。
+// 组件库 Select 需要 { key, label } 结构
+const STYLE_SELECT_OPTIONS = STYLE_OPTIONS.map(s => ({ key: s.id, label: `${s.name} · ${s.hint}` }))
 
 // --- State ---
 const activeCat = ref('all')
@@ -151,6 +159,8 @@ function checkMobile() {
 
 onMounted(() => {
   checkMobile()
+  // 本页 layout:false，没有顶栏切换器，需自行应用全站风格并接管持久化
+  initStyleTheme()
   // Apply default/saved theme class on mount to match the original dark-by-default design.
   if (typeof document !== 'undefined') {
     const html = document.documentElement
@@ -178,7 +188,7 @@ onUnmounted(() => {
 
 <template>
   <ACursor>
-    <div class="navhub-app" :class="{ 'is-dark': isDark, 'is-light': !isDark }">
+    <div class="navhub-app" :class="isDark ? 'is-dark' : 'is-light'">
       <!-- Mobile Top Bar -->
       <header class="mobile-topbar" v-if="isMobile">
         <div class="mobile-topbar-left">
@@ -234,17 +244,27 @@ onUnmounted(() => {
           <div class="logo-text">橘子的<span>导航</span></div>
         </div>
 
-        <div class="sidebar-label">全部分类</div>
-        <ul class="nav-list">
-          <li v-for="item in navItems" :key="item.id" class="nav-item" :class="{ active: activeCat === item.id }"
-            @click="setCategory(item.id)">
-            <span class="nav-icon">{{ item.icon }}</span>
-            <span>{{ item.name }}</span>
-            <span class="nav-count">{{ item.count }}</span>
-          </li>
-        </ul>
+        <!-- 只有分类列表滚动，页脚固定（避免整栏跟着页面往下拉） -->
+        <div class="sidebar-scroll">
+          <div class="sidebar-label">全部分类</div>
+          <ul class="nav-list">
+            <li v-for="item in navItems" :key="item.id" class="nav-item" :class="{ active: activeCat === item.id }"
+              role="button" tabindex="0" :aria-current="activeCat === item.id ? 'true' : undefined"
+              @click="setCategory(item.id)" @keydown.enter.prevent="setCategory(item.id)"
+              @keydown.space.prevent="setCategory(item.id)">
+              <span class="nav-icon">{{ item.icon }}</span>
+              <span>{{ item.name }}</span>
+              <span class="nav-count">{{ item.count }}</span>
+            </li>
+          </ul>
+        </div>
         <div class="sidebar-footer">
-          <ADivider type="dashed-brown" />
+          <!-- 视觉风格切换：用 animal-island-vue 的 Select；与明暗模式正交，选择记在本地 -->
+          <div class="style-picker">
+            <span class="style-label">视觉风格</span>
+            <Select v-model="activeStyle" :options="STYLE_SELECT_OPTIONS" aria-label="选择视觉风格" />
+          </div>
+          <div class="sidebar-rule" aria-hidden="true"></div>
           <div class="theme-toggle" @click="toggleTheme" role="button" tabindex="0" aria-label="切换明暗主题">
             <div class="theme-toggle-knob"></div>
             <div class="theme-toggle-option theme-toggle-option--light">
@@ -289,20 +309,47 @@ onUnmounted(() => {
       <main class="main">
         <!-- Hero / Search -->
         <section class="hero">
-          <h1 class="hero-title">探索 <span>优质网站</span></h1>
-          <p class="hero-subtitle">精选 {{ totalSiteCount }}+ 常用网站，让你的上网效率翻倍</p>
-          <div class="search-wrapper">
-            <AInput allowClear shadow placeholder="搜索网站名称或关键词" size="large" v-model="searchQuery" @input="onSearchInput"
-              ref="searchInputRef">
-              <template #prefix> <span style="padding:0px 10px">🔍</span> </template>
-            </AInput>
+          <div>
+            <p class="hero-eyebrow">Orange Navigation</p>
+            <h1 class="hero-title">探索 <span>优质网站</span></h1>
+            <p class="hero-subtitle">精选 {{ totalSiteCount }}+ 常用网站，让你的上网效率翻倍</p>
           </div>
-
+          <div class="hero-side">
+            <div class="hero-stat">
+              <b>{{ totalSiteCount }}</b>
+              <span>收录站点</span>
+            </div>
+            <div class="hero-stat">
+              <b>{{ categories.length }}</b>
+              <span>个分类</span>
+            </div>
+          </div>
         </section>
 
+        <div class="search-wrapper">
+          <AInput allowClear placeholder="搜索网站名称或关键词" size="large" v-model="searchQuery" @input="onSearchInput"
+            aria-label="搜索网站名称或关键词" ref="searchInputRef">
+            <template #prefix>
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
+            </template>
+          </AInput>
+          <span class="search-hint" aria-hidden="true"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+        </div>
+
+        <div class="quick-tags">
+          <span class="quick-tags-label">快速查</span>
+          <button v-for="t in quickTags" :key="t.keyword" type="button" class="quick-tag"
+            @click="handleQuickTag(t.keyword)">{{ t.label }}</button>
+        </div>
+
         <!-- Category Sections -->
-        <section v-for="cat in visibleCategories" :key="cat.id" class="category-section" :id="`cat-${cat.id}`">
+        <section v-for="(cat, ci) in visibleCategories" :key="cat.id" class="category-section" :id="`cat-${cat.id}`">
           <div class="category-header">
+            <span class="cat-index">{{ String(ci + 1).padStart(2, '0') }}</span>
             <div class="category-icon-wrapper" :style="{ background: cat.iconBg }">
               <span>{{ cat.icon }}</span>
             </div>
@@ -314,8 +361,8 @@ onUnmounted(() => {
           </div>
           <div class="sites-grid">
             <a v-for="(site, idx) in cat.sites" :key="site.name" class="site-card"
-              :style="{ '--card-accent': site.accent }" :href="site.url" target="_blank"
-              :animation-delay="`${idx * 50}ms`">
+              :style="{ '--card-accent': site.accent }" :href="site.url" target="_blank" rel="noopener noreferrer"
+              :animation-delay="`${idx * 40}ms`">
               <div class="site-card-header">
                 <div class="site-favicon" :style="{ background: site.faviconBg }"
                   :class="{ 'has-border': site.name === 'X (Twitter)' || site.name === 'MDN Web Docs' }">{{ site.favicon
@@ -324,6 +371,7 @@ onUnmounted(() => {
                   <div class="site-name">{{ site.name }}</div>
                   <div class="site-url">{{ site.displayUrl }}</div>
                 </div>
+                <span class="site-arrow" aria-hidden="true">↗</span>
               </div>
               <p class="site-desc">{{ site.desc }}</p>
               <span class="site-tag" :style="{ background: site.tagBg, color: site.tagColor }">{{ site.tag }}</span>

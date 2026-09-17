@@ -26,7 +26,7 @@ head:
 ---
 
 <script setup lang="ts">
-import NavHub from './.vitepress/theme/components/NavHub.vue'
+import NavHub from './components/NavHub/NavHub.vue'
 </script>
 
 <NavHub />

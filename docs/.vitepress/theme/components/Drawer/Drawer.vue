@@ -313,7 +313,7 @@ const titleId = `${idBase}-title`;
     z-index: 1001;
     display: flex;
     flex-direction: column;
-    // background: rgb(247, 243, 223);
+    // background: var(--bg-surface);
     background: var(--ai-bg);
     color: var(--ai-text);
     font-family: Nunito, 'Noto Sans SC', sans-serif;
@@ -326,7 +326,7 @@ const titleId = `${idBase}-title`;
         height: 100vh;
         max-width: calc(100vw - 32px);
         border-radius: 20px 0 0 20px;
-        box-shadow: -12px 0 32px rgba(61, 52, 40, 0.18);
+        box-shadow: -12px 0 32px var(--line-strong);
         transform: translateX(100%);
     }
 
@@ -336,7 +336,7 @@ const titleId = `${idBase}-title`;
         height: 100vh;
         max-width: calc(100vw - 32px);
         border-radius: 0 20px 20px 0;
-        box-shadow: 12px 0 32px rgba(61, 52, 40, 0.18);
+        box-shadow: 12px 0 32px var(--line-strong);
         transform: translateX(-100%);
     }
 
@@ -346,7 +346,7 @@ const titleId = `${idBase}-title`;
         right: 0;
         max-height: calc(100vh - 32px);
         border-radius: 0 0 20px 20px;
-        box-shadow: 0 12px 32px rgba(61, 52, 40, 0.18);
+        box-shadow: 0 12px 32px var(--line-strong);
         transform: translateY(-100%);
     }
 
@@ -356,7 +356,7 @@ const titleId = `${idBase}-title`;
         right: 0;
         max-height: calc(100vh - 32px);
         border-radius: 20px 20px 0 0;
-        box-shadow: 0 -12px 32px rgba(61, 52, 40, 0.18);
+        box-shadow: 0 -12px 32px var(--line-strong);
         transform: translateY(100%);
     }
 
@@ -390,14 +390,14 @@ const titleId = `${idBase}-title`;
     background: transparent;
     font-size: 22px;
     line-height: 1;
-    color: rgba(114, 93, 66, 0.6);
+    color: var(--line-strong);
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.2s;
 
     &:hover {
-        background: rgba(114, 93, 66, 0.1);
-        color: rgba(114, 93, 66, 1);
+        background: var(--line);
+        color: var(--text-3);
     }
 }
 
@@ -408,7 +408,7 @@ const titleId = `${idBase}-title`;
     font-size: 20px;
     font-weight: 600;
     line-height: 1.6;
-    color: #8a7b66;
+    color: var(--text-3);
 }
 
 .animal-drawer__footer {

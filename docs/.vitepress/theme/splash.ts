@@ -9,8 +9,8 @@
  */
 
 export const splashStyle = `
-.ai-splash{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:#ece6d4;transition:opacity .4s ease,visibility .4s}
-html.dark .ai-splash{background:#2d3554}
+.ai-splash{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:var(--bg-base,#f5f5f5);transition:opacity .4s ease,visibility .4s}
+html.dark .ai-splash{background:var(--bg-base,#0b0b0c)}
 .ai-splash.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 .ai-splash__art{width:160px;height:120px;animation:ai-splash-float 1.8s ease-in-out infinite}
 .ai-splash__w1{animation:ai-splash-wave 2.6s linear infinite}

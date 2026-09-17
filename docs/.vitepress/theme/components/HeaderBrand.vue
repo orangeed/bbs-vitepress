@@ -2,6 +2,7 @@
 import { watch, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useData } from 'vitepress'
 import { Drawer } from './Drawer'
+import StyleSwitch from './StyleSwitch.vue'
 
 const router = useRouter()
 const { isDark } = useData()
@@ -84,6 +85,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
         <span class="search-input-text">搜索文章</span>
         <kbd class="search-input-kbd">Ctrl K</kbd>
       </span>
+      <!-- 全站视觉风格（与明暗模式正交） -->
+      <StyleSwitch />
       <ASwitch v-model="darkValue">
         <template #checked>☀️</template>
         <template #unchecked>🌙</template>
@@ -121,6 +124,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
           <template #checked>☀️</template>
           <template #unchecked>🌙</template>
         </ASwitch>
+      </div>
+      <div class="drawer-style-row">
+        <span>风格</span>
+        <StyleSwitch block />
       </div>
     </div>
   </Drawer>
@@ -214,12 +221,12 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 .header-nav a:hover {
   color: var(--ai-brown);
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-inset);
 }
 
 :global(html.dark) .header-nav a:hover {
   color: var(--ai-yellow);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-inset);
 }
 
 .header-actions {
@@ -314,7 +321,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 :global(html.dark) .drawer-search-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-inset);
 }
 
 .drawer-link {
@@ -335,12 +342,12 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 :global(html.dark) .drawer-link:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-inset);
 }
 
 .drawer-divider {
   height: 1px;
-  background: #8a7563;
+  background: var(--text-3);
   opacity: 0.3;
   margin: 4px 0;
 }
@@ -349,6 +356,15 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: inherit;
+}
+
+.drawer-style-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding: 12px 16px;
   font-size: 15px;
   color: inherit;

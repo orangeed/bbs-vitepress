@@ -55,7 +55,7 @@
   margin-top: 2.2em;
   margin-bottom: 0.75em;
   padding: 0.3em 0 0.45em 0.85em;
-  border-bottom: 1px solid rgba(138, 117, 99, 0.2);
+  border-bottom: 1px solid var(--line);
   position: relative;
 }
 .vp-doc h2::before {
@@ -70,7 +70,7 @@
 }
 .dark .vp-doc h2 {
   color: var(--ai-yellow) !important;
-  border-bottom-color: rgba(255, 214, 107, 0.15);
+  border-bottom-color: var(--accent-soft);
 }
 .dark .vp-doc h2::before {
   background: linear-gradient(180deg, var(--ai-yellow), var(--ai-pink));
@@ -136,20 +136,20 @@
 
 /* 加粗 — 暖棕/金黄 */
 .vp-doc strong {
-  color: #b45309 !important;
+  color: var(--accent-strong) !important;
   font-weight: 700;
 }
 .dark .vp-doc strong {
-  color: #fbbf24 !important;
+  color: var(--accent-strong) !important;
 }
 
 /* 斜体 — 玫粉色调 */
 .vp-doc em {
-  color: #c2416b !important;
+  color: var(--accent-strong) !important;
   font-style: italic;
 }
 .dark .vp-doc em {
-  color: #f472b6 !important;
+  color: var(--accent) !important;
 }
 
 /* 删除线 */
@@ -161,7 +161,7 @@
 
 /* mark 高亮 — 荧光黄渐变 */
 .vp-doc mark {
-  background: linear-gradient(120deg, rgba(255, 214, 107, 0.55), rgba(246, 168, 182, 0.35));
+  background: linear-gradient(120deg, var(--accent-line), var(--accent-soft));
   color: inherit;
   padding: 0.1em 0.3em;
   border-radius: 3px;
@@ -176,50 +176,50 @@
   font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
   font-size: 0.875em;
   font-weight: 500;
-  background: rgba(107, 79, 58, 0.08) !important;
+  background: var(--bg-inset) !important;
   color: var(--ai-brown) !important;
-  border: 1px solid rgba(107, 79, 58, 0.12);
+  border: 1px solid var(--line);
   transition: background 0.2s ease;
 }
 .vp-doc :not(pre) > code:hover {
-  background: rgba(107, 79, 58, 0.15) !important;
+  background: var(--line) !important;
 }
 .dark .vp-doc :not(pre) > code {
-  background: rgba(255, 214, 107, 0.1) !important;
+  background: var(--accent-soft) !important;
   color: var(--ai-yellow) !important;
-  border-color: rgba(255, 214, 107, 0.18);
+  border-color: var(--accent-soft);
 }
 .dark .vp-doc :not(pre) > code:hover {
-  background: rgba(255, 214, 107, 0.18) !important;
+  background: var(--accent-soft) !important;
 }
 
 /* ============================================================
    链接（含网址、外部链接等）
    ============================================================ */
 .vp-doc a {
-  color: #6b4f3a !important;
+  color: var(--accent) !important;
   text-decoration: none;
   font-weight: 500;
-  border-bottom: 1.5px dashed rgba(107, 79, 58, 0.35);
+  border-bottom: 1.5px dashed var(--line-strong);
   transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
   padding: 0 1px;
 }
 .vp-doc a:hover {
-  color: #3e2a1a !important;
-  border-bottom-color: #6b4f3a;
+  color: var(--text-1) !important;
+  border-bottom-color: var(--accent);
   border-bottom-style: solid;
-  background: rgba(107, 79, 58, 0.07);
+  background: var(--line);
   border-radius: 2px;
 }
 .dark .vp-doc a {
   color: var(--ai-yellow) !important;
-  border-bottom-color: rgba(255, 214, 107, 0.35);
+  border-bottom-color: var(--accent-line);
 }
 .dark .vp-doc a:hover {
-  color: #ffe89a !important;
+  color: var(--accent) !important;
   border-bottom-color: var(--ai-yellow);
   border-bottom-style: solid;
-  background: rgba(255, 214, 107, 0.1);
+  background: var(--accent-soft);
 }
 
 .vp-doc a > code {
@@ -233,7 +233,7 @@
   margin: 1.8em 0;
   padding: 1.2rem 1.4rem 1.2rem 1.6rem;
   border-left: 4px solid var(--ai-brown) !important;
-  background: linear-gradient(135deg, rgba(107, 79, 58, 0.05) 0%, rgba(246, 168, 182, 0.04) 100%) !important;
+  background: linear-gradient(135deg, var(--bg-inset) 0%, var(--accent-soft) 100%) !important;
   border-radius: 0 12px 12px 0;
   color: var(--ai-text) !important;
   position: relative;
@@ -268,7 +268,7 @@
 
 .dark .vp-doc blockquote {
   border-left-color: var(--ai-yellow) !important;
-  background: linear-gradient(135deg, rgba(255, 214, 107, 0.07) 0%, rgba(246, 168, 182, 0.04) 100%) !important;
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-soft) 100%) !important;
 }
 
 /* ============================================================
@@ -290,7 +290,7 @@
 
 /* tip — 青绿色 */
 .vp-doc .custom-block.tip {
-  background: rgba(91, 191, 176, 0.1);
+  background: var(--accent-soft);
   border-left: 4px solid var(--ai-teal) !important;
 }
 .vp-doc .custom-block.tip .custom-block-title {
@@ -302,7 +302,7 @@
 
 /* info — 暖棕色 */
 .vp-doc .custom-block.info {
-  background: rgba(107, 79, 58, 0.07);
+  background: var(--line);
   border-left: 4px solid var(--ai-brown) !important;
 }
 .vp-doc .custom-block.info .custom-block-title {
@@ -318,10 +318,10 @@
   border-left: 4px solid #f59e0b !important;
 }
 .vp-doc .custom-block.warning .custom-block-title {
-  color: #b45309;
+  color: var(--accent-strong);
 }
 .dark .vp-doc .custom-block.warning .custom-block-title {
-  color: #fbbf24;
+  color: var(--accent-strong);
 }
 
 /* danger — 红色 */
@@ -338,8 +338,8 @@
 
 /* details — 折叠块 */
 .vp-doc .custom-block.details {
-  background: rgba(107, 79, 58, 0.04);
-  border: 1px solid rgba(107, 79, 58, 0.12) !important;
+  background: var(--bg-inset);
+  border: 1px solid var(--line) !important;
   border-radius: 10px;
 }
 
@@ -347,7 +347,7 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 .dark .vp-doc .custom-block.tip {
-  background: rgba(91, 191, 176, 0.08);
+  background: var(--accent-soft);
 }
 .dark .vp-doc .custom-block.info {
   background: rgba(255, 214, 107, 0.06);
@@ -359,8 +359,8 @@
   background: rgba(239, 68, 68, 0.12);
 }
 .dark .vp-doc .custom-block.details {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: var(--bg-inset);
+  border-color: var(--line) !important;
 }
 
 /* ============================================================
@@ -405,7 +405,7 @@
   font-size: 0.875rem;
   letter-spacing: 0.03em;
   color: var(--ai-brown) !important;
-  border-bottom: 2px solid rgba(107, 79, 58, 0.15);
+  border-bottom: 2px solid var(--line);
 }
 .dark .vp-doc th {
   color: var(--ai-yellow) !important;
@@ -416,7 +416,7 @@
   border-top: 1px solid rgba(138, 117, 99, 0.12);
 }
 .vp-doc tr:hover td {
-  background: rgba(107, 79, 58, 0.04);
+  background: var(--bg-inset);
 }
 .dark .vp-doc tr:hover td {
   background: rgba(255, 214, 107, 0.04);
@@ -482,9 +482,9 @@
   background: linear-gradient(
     to right,
     transparent,
-    rgba(107, 79, 58, 0.15) 15%,
+    var(--line) 15%,
     var(--ai-brown) 50%,
-    rgba(107, 79, 58, 0.15) 85%,
+    var(--line) 85%,
     transparent
   );
   border-radius: 1px;
@@ -493,9 +493,9 @@
   background: linear-gradient(
     to right,
     transparent,
-    rgba(255, 214, 107, 0.1) 15%,
+    var(--accent-soft) 15%,
     var(--ai-yellow) 50%,
-    rgba(255, 214, 107, 0.1) 85%,
+    var(--accent-soft) 85%,
     transparent
   );
 }

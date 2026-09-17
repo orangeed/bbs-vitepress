@@ -12,6 +12,13 @@ export default defineConfig({
   head: [
     // 首屏兜底 Loading 的样式，必须内联：外链 CSS 是渲染阻塞的，来不及
     ["style", {}, splashStyle],
+    // 全站视觉风格（theme-*）必须在样式表生效前写到 <html> 上，否则会先闪一下默认风格。
+    // 与 theme/styles/themes.scss 的 $default-theme 保持一致（默认「黑白画廊」）。
+    [
+      "script",
+      {},
+      `(function(){try{var K='site-style',D='mono',V=['mono','ink','warm','forest','magazine'];var s=localStorage.getItem(K);if(!s||V.indexOf(s)<0)s=D;var c=document.documentElement.classList;V.forEach(function(v){c.remove('theme-'+v)});c.add('theme-'+s)}catch(e){}})()`,
+    ],
     ["meta", { name: "referrer", content: "no-referrer" }],
     // 51la 数据统计（async 避免阻塞首屏渲染）
     [
