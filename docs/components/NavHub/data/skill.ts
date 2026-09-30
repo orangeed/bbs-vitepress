@@ -80,5 +80,17 @@ export const skill: Category = {
       tagColor: "rgb(7, 193, 96)",
       accent: "rgb(7, 193, 96)",
     },
+    {
+      name: "travel-ticket-stub",
+      url: "https://pan.quark.cn/s/806c4f0181a1",
+      displayUrl: "pan.quark.cn/s/806c4f0181a1",
+      desc: "旅行票根 Skill：把旅游照片转化为一张可收藏的纪念票根",
+      favicon: "票",
+      faviconBg: "rgb(219, 39, 119)",
+      tag: "票根 Skill",
+      tagBg: "rgba(219, 39, 119,.12)",
+      tagColor: "rgb(219, 39, 119)",
+      accent: "rgb(219, 39, 119)",
+    },
   ],
 }
