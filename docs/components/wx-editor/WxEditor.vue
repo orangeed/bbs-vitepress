@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-editor">
+  <div ref="rootEl" class="tf-editor">
     <header>
       <div class="brand"><b>听风入画</b><span>Markdown 排版工具</span></div>
       <div class="hint-bar">
@@ -47,16 +47,44 @@
           @keydown="onKeydown"
           @paste="onPaste"
           @drop="onDrop"
+          @mouseup="syncPickers"
+          @keyup="syncPickers"
         ></textarea>
         <div class="snippets">
           <span class="lbl">快捷插入</span>
           <button v-for="s in SNIPPETS" :key="s.label" class="mini" @click="insertText(s.text)">{{ s.label }}</button>
         </div>
+        <!-- 自定义颜色：取色即生效（作用于当前选中的文字），不需要点按钮 -->
+        <div class="snippets colorbar">
+          <span class="lbl">自定义颜色</span>
+          <span class="cw-lbl">文字色</span>
+          <label class="cw" title="选中文字后取色即变；再次取色直接换色">
+            <input
+              v-model="fgColor"
+              type="color"
+              @input="applyPick('color', $event, true)"
+              @change="applyPick('color', $event, false)"
+            >
+            <span class="cw-v">{{ fgColor.toUpperCase() }}</span>
+          </label>
+          <span class="cw-lbl">底色</span>
+          <label class="cw" title="给选中的文字加背景色；与文字色可叠加">
+            <input
+              v-model="bgColor"
+              type="color"
+              @input="applyPick('bg', $event, true)"
+              @change="applyPick('bg', $event, false)"
+            >
+            <span class="cw-v">{{ bgColor.toUpperCase() }}</span>
+          </label>
+          <button class="mini" title="去掉选中文字上的颜色与底色" @click="clearColorTag">清除颜色</button>
+          <span class="lbl end">选中文字 → 取色即生效；再取色可直接换色</span>
+        </div>
         <div class="stat" v-html="statHtml"></div>
       </section>
 
       <!-- 右：预览 -->
-      <section class="pane pane-right">
+      <section ref="previewPaneEl" class="pane pane-right">
         <div class="pane-head">
           <div class="ph-row">
             <span class="title">公众号预览</span>
@@ -73,6 +101,17 @@
             <Dropdown v-model="conf.followStyle" :options="FOLLOW_OPTIONS" title="关注引导模块样式" />
             <span class="tsep"></span>
             <Dropdown v-model="conf.headingStyle" :options="HEADING_OPTIONS" title="标题样式（对二级标题生效）" />
+            <!-- 标题图标：仅「左图标徽标」样式显示。留空时渲染纯 CSS 序号徽标，零依赖、公众号必留 -->
+            <span
+              v-if="conf.headingStyle === 'icon'"
+              class="tfield"
+              title="该样式左侧的图标：填图片公网地址（建议先「上传」到图床）。本地路径 / 内嵌图片粘贴到公众号后会丢失；留空则用纯 CSS 序号徽标"
+            >
+              标题图标
+              <input v-model.trim="conf.brandIcon" class="tinput" type="text" placeholder="留空 = 序号徽标" spellcheck="false">
+              <button class="tbtn" :disabled="brandBusy" @click="pickBrandIcon">{{ brandBusy ? '上传中…' : '上传' }}</button>
+              <button v-if="conf.brandIcon" class="tbtn" @click="conf.brandIcon = ''">清除</button>
+            </span>
             <Dropdown v-model="conf.quoteStyle" :options="QUOTE_OPTIONS" title="引用块样式" />
             <Dropdown v-model="conf.codeStyle" :options="CODE_OPTIONS" title="代码块与行内代码样式" />
             <span class="tsep"></span>
@@ -133,6 +172,7 @@
 
     <div class="toast" :class="{ show: toastShow }">{{ toastText }}</div>
     <input ref="fileEl" type="file" accept=".md,.markdown,.txt" style="display:none" @change="onFileChange">
+    <input ref="brandFileEl" type="file" accept="image/*" style="display:none" @change="onBrandFileChange">
   </div>
 </template>
 
@@ -192,13 +232,21 @@ const { authToken, displayName, avatarChar, hostReady, initAuth, clearSession } 
 /* ---------------- 编辑器状态 ---------------- */
 const editorEl = ref(null);
 const fileEl = ref(null);
+const brandFileEl = ref(null);
+const rootEl = ref(null);        // 整个编辑器（窄屏下面板整体滚动，改动正文时需保持位置）
+const previewPaneEl = ref(null); // 右侧预览面板（v-html 重渲染也可能带动滚动）
 const text = ref(SAMPLE);
+/* 自定义颜色：取色器当前值（左栏「自定义颜色」用），只在本地记忆，不影响排版配置 */
+const fgColor = ref('#E03131');
+const bgColor = ref('#FFF3BF');
 const previewHtml = ref('');
 const statHtml = ref('0 字');
 const conf = reactive({
   theme: 'moqing', size: 15, showUrl: true, archiveStyle: 'dash',
   followStyle: 'card', codeStyle: 'github', headingStyle: 'default', quoteStyle: 'default',
   hl: true, uploadImg: true,
+  // 品牌图标：仅「标题 · 左图标徽标」样式使用；留空时渲染纯 CSS 序号徽标
+  brandIcon: '',
 });
 
 /* ---------------- 下拉选项（自绘 Dropdown 组件） ---------------- */
@@ -216,6 +264,7 @@ const FOLLOW_OPTIONS = [
 ];
 const HEADING_OPTIONS = [
   { value: 'default', label: '标题 · 金条引导' },
+  { value: 'icon', label: '标题 · 左图标徽标' },
   { value: 'number', label: '标题 · 序号衬线' },
   { value: 'bignum', label: '标题 · 大序号留白' },
   { value: 'frame', label: '标题 · 居中线框' },
@@ -247,6 +296,7 @@ const imgsOpen = ref(false);
 const authTab = ref('login');
 const uploading = ref(false); // 图床上传中
 const logoutBusy = ref(false);
+const brandBusy = ref(false); // 标题图标上传中
 
 /* ---------------- 计算属性 ---------------- */
 const previewDisplay = computed(() => previewHtml.value || PREVIEW_EMPTY);
@@ -292,7 +342,7 @@ function currentHtml() {
   return buildHtml(
     text.value, conf.theme, Number(conf.size), conf.showUrl,
     conf.archiveStyle, conf.followStyle, conf.codeStyle, conf.hl,
-    conf.headingStyle, conf.quoteStyle,
+    conf.headingStyle, conf.quoteStyle, conf.brandIcon,
   );
 }
 
@@ -335,7 +385,7 @@ watch(conf, () => {
 });
 
 /* ---------------- 撤销 / 重做（useUndo：500ms 停顿自动快照） ---------------- */
-const { pushHistory, schedulePush, undo, redo, resetHistory } = useUndo(text, { render, toast });
+const { pushHistory, schedulePush, undo: rawUndo, redo: rawRedo, resetHistory } = useUndo(text, { render, toast });
 
 /* ---------------- 编辑区交互 ---------------- */
 function onInput() {
@@ -343,9 +393,48 @@ function onInput() {
   schedulePush();
 }
 
+/* ---------------- 光标与滚动位置保持 ----------------
+   坑①：给 textarea 赋新值会把光标重置到文末，紧接着的 focus() 会让编辑区一路滚到最底部
+        ——「插入功能模块后跳到文章末尾」正是这个原因。正确顺序是：
+        先 setSelectionRange 把光标放回去，再 focus({preventScroll:true})，最后还原滚动位置。
+   坑②：右侧预览是 v-html 直接替换 DOM，重渲染也可能带偏它的滚动位置，一并还原。 */
+function captureView() {
+  const el = editorEl.value;
+  const pane = previewPaneEl.value;
+  const root = rootEl.value;
+  return {
+    editor: el ? el.scrollTop : 0,
+    preview: pane ? pane.scrollTop : 0,
+    root: root ? root.scrollTop : 0,
+  };
+}
+
+/* focus 传 false 用于「取色器正在拖动」的连续触发：此时抢焦点会打断原生取色窗口。
+   selStart 传 null 表示只还原滚动、不碰光标（撤销/重做场景）。 */
+async function restoreView(saved, selStart, selEnd, focus = true) {
+  await nextTick();
+  const el = editorEl.value;
+  if (!el) return;
+  if (selStart != null) el.setSelectionRange(selStart, selEnd == null ? selStart : selEnd);
+  if (focus) el.focus({ preventScroll: true });
+  el.scrollTop = saved.editor;
+  if (previewPaneEl.value) previewPaneEl.value.scrollTop = saved.preview;
+  if (rootEl.value) rootEl.value.scrollTop = saved.root;
+}
+
+/* 撤销 / 重做同样是整体换文，光标会被推到文末并带动滚动，这里只保住滚动位置 */
+function keepView(run) {
+  const saved = captureView();
+  run();
+  restoreView(saved, null, null, false);
+}
+const undo = () => keepView(rawUndo);
+const redo = () => keepView(rawRedo);
+
 async function insertText(t) {
   const el = editorEl.value;
   if (!el) return;
+  const saved = captureView();
   const start = el.selectionStart;
   const end = el.selectionEnd;
   const v = text.value;
@@ -354,12 +443,118 @@ async function insertText(t) {
   const pre = before && !before.endsWith('\n') ? '\n\n' : '';
 
   text.value = before + pre + t + '\n\n' + after;
-  await nextTick();
   const pos = (before + pre + t + '\n\n').length;
-  el.focus();
-  el.setSelectionRange(pos, pos);
   render();
   pushHistory();
+  await restoreView(saved, pos, pos);
+}
+
+/* ---------------- 自定义文字颜色 / 底色 ----------------
+   语法：{color:#E03131}文字{/} · {bg:#FFF3BF}文字{/} · {color:#FFF bg:#0080FF}文字{/}
+   交互：选中文字后取色即生效，不用点按钮；对同一段文字再取一次色就是「换色」
+   —— 选区已被颜色标签包住时，直接改标签里的色值，文字本身不动。 */
+
+/* {color:A bg:B} → {color:'A', bg:'B'}；只认这两个属性，其它一律不认（避免误判别的行内语法） */
+function parseColorTag(open) {
+  const out = { color: '', bg: '' };
+  const parts = String(open).trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return null;
+  for (const p of parts) {
+    const m = /^(color|bg):(\S+)$/.exec(p);
+    if (!m) return null;
+    out[m[1]] = m[2];
+  }
+  return out.color || out.bg ? out : null;
+}
+
+function colorTagText(c) {
+  const parts = [];
+  if (c.color) parts.push('color:' + c.color);
+  if (c.bg) parts.push('bg:' + c.bg);
+  return '{' + parts.join(' ') + '}';
+}
+
+/* 选区是否正好被颜色标签包住？是则返回标签位置与属性，供原地改色 / 清除使用 */
+function tagAround(v, s, en) {
+  if (v.slice(en, en + 3) !== '{/}') return null;
+  const m = /\{([^{}]*)\}$/.exec(v.slice(0, s));
+  if (!m) return null;
+  const props = parseColorTag(m[1]);
+  if (!props) return null;
+  return { start: s - m[0].length, close: en, props };
+}
+
+const HEX6 = /^#[0-9a-f]{6}$/i;
+
+/* live=true 表示拖动取色器过程中的连续触发：撤销快照走防抖，且不抢焦点（会打断原生取色窗口） */
+function applyPick(key, e, live) {
+  const el = editorEl.value;
+  if (!el) return;
+  const val = e.target.value;
+  const s = el.selectionStart;
+  const en = el.selectionEnd;
+  if (en <= s) {
+    if (!live) toast('先在左侧选中要上色的文字');
+    return;
+  }
+  if (!HEX6.test(val)) return;
+
+  const v = text.value;
+  const saved = captureView();
+  const hit = tagAround(v, s, en);
+  const open = hit ? colorTagText({ ...hit.props, [key]: val }) : `{${key}:${val}}`;
+  const tagStart = hit ? hit.start : s;
+  const tagEnd = hit ? hit.close + 3 : en;
+
+  text.value = v.slice(0, tagStart) + open + v.slice(s, en) + '{/}' + v.slice(tagEnd);
+  const selStart = tagStart + open.length;
+  // 拖动取色时 input 触发很密集：预览与撤销快照都走防抖，避免整篇重排把拖拽拖卡
+  if (live) {
+    scheduleRender();
+    schedulePush();
+  } else {
+    render();
+    pushHistory();
+  }
+  // 选区仍留在文字上，方便继续换色（或接着加底色）
+  restoreView(saved, selStart, selStart + (en - s), !live);
+}
+
+/* 选中已上色的文字时，把取色器同步成它当前的颜色，避免「取了同色却看不出变化」 */
+function syncPickers() {
+  const el = editorEl.value;
+  if (!el) return;
+  const hit = tagAround(text.value, el.selectionStart, el.selectionEnd);
+  if (!hit) return;
+  if (HEX6.test(hit.props.color)) fgColor.value = hit.props.color;
+  if (HEX6.test(hit.props.bg)) bgColor.value = hit.props.bg;
+}
+
+/* 清除颜色：去掉选区上的颜色 / 底色标签（选区正好在标签内时，连标签一起去掉） */
+function clearColorTag() {
+  const el = editorEl.value;
+  if (!el) return;
+  const v = text.value;
+  let s = el.selectionStart;
+  let en = el.selectionEnd;
+  if (en <= s) return toast('先选中要取消颜色的文字');
+
+  const hit = tagAround(v, s, en);
+  if (hit) {
+    s = hit.start;
+    en = hit.close + 3;
+  }
+  const slice = v.slice(s, en);
+  const stripped = slice
+    .replace(/\{(?:color|bg):[^}\s]+(?:\s+(?:color|bg):[^}\s]+)?\}/g, '')
+    .replace(/\{\/\}/g, '');
+  if (stripped === slice) return toast('选中的文字没有自定义颜色');
+
+  const saved = captureView();
+  text.value = v.slice(0, s) + stripped + v.slice(en);
+  render();
+  pushHistory();
+  restoreView(saved, s, s + stripped.length, true);
 }
 
 function onKeydown(e) {
@@ -392,18 +587,16 @@ function onKeydown(e) {
   // 包裹类语法：**加粗** ==高亮== ~~删除线~~
   const wrap = (marker, placeholder) => {
     e.preventDefault();
+    const saved = captureView();
     const s = el.selectionStart;
     const en = el.selectionEnd;
     const v = text.value;
     const inner = v.slice(s, en) || placeholder;
     text.value = v.slice(0, s) + marker + inner + marker + v.slice(en);
     const endPos = en + marker.length;
-    nextTick(() => {
-      el.focus();
-      el.setSelectionRange(endPos, endPos);
-    });
     render();
     pushHistory();
+    restoreView(saved, endPos, endPos);
   };
   if (mod && e.key.toLowerCase() === 'b') return wrap('**', '加粗');
   if (mod && e.key.toLowerCase() === 'i') return wrap('==', '高亮');
@@ -439,6 +632,7 @@ async function handleImageFiles(files) {
   let first = null;
   let uploaded = 0;
   let lastErr = '';
+  const saved = captureView();   // 上传耗时较久，先记下编辑区滚动位置，插完原样还原
   for (const f of imgs) {
     const dataUrl = await fileToDataUrl(f);
     let url = dataUrl;
@@ -456,12 +650,7 @@ async function handleImageFiles(files) {
   }
 
   render();
-  await nextTick();
-  const el = editorEl.value;
-  if (el) {
-    el.focus();
-    el.setSelectionRange(first.altStart, first.altEnd);
-  }
+  await restoreView(saved, first.altStart, first.altEnd);
 
   const n = imgs.length;
   if (!conf.uploadImg) {
@@ -570,16 +759,12 @@ async function uploadAllLocal() {
 
 /* 「我的图片」插入到正文当前光标处，图注占位自动选中 */
 async function useMyImage(url) {
+  const saved = captureView();
   const r = insertImageMd(url, '图片描述', null);
   closeAllPanels();
   render();
-  await nextTick();
-  const el = editorEl.value;
-  if (el) {
-    el.focus();
-    el.setSelectionRange(r.altStart, r.altEnd);
-  }
   pushHistory();
+  await restoreView(saved, r.altStart, r.altEnd);
   toast('已插入正文，图注已选中，直接打字替换');
 }
 
@@ -600,6 +785,37 @@ function onFileChange(e) {
   };
   r.readAsText(f, 'utf-8');
   e.target.value = '';
+}
+
+/* ---------------- 标题图标（品牌 logo）：走图床拿公网地址 ---------------- */
+function pickBrandIcon() {
+  if (brandFileEl.value) brandFileEl.value.click();
+}
+
+async function onBrandFileChange(e) {
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f || brandBusy.value) return;
+  if (!f.type.startsWith('image/')) return toast('请选择图片文件');
+
+  brandBusy.value = true;
+  try {
+    // 图标最终只显示 40px，压到 240px 足够 2 倍屏清晰，也能让上传/内嵌体积更小
+    const dataUrl = await fileToDataUrl(f, 240);
+    if (hostReady.value) {
+      conf.brandIcon = await uploadImageToBackend(dataUrl);
+      toast('图标已上传图床，标题使用的是公网地址');
+    } else {
+      // 未登录：只能内嵌 base64。本地预览没问题，但粘进公众号会丢图，必须显式引导登录
+      conf.brandIcon = dataUrl;
+      toast('未登录图床：图标已内嵌，粘进公众号会丢失，建议登录后重新上传');
+      openAuth('login');
+    }
+  } catch (err) {
+    toast('图标上传失败：' + (err.message || err));
+  } finally {
+    brandBusy.value = false;
+  }
 }
 
 function downloadMd() {
@@ -864,6 +1080,13 @@ main{
 /* 开关 / 滑杆字段的文字标签 */
 .tfield{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#6B6B6B;white-space:nowrap;cursor:default}
 .tfield .sw{cursor:pointer}
+/* 标题图标地址输入框（仅选中「标题 · 左图标徽标」时出现） */
+.tinput{
+  font-family:inherit;font-size:12px;color:#3A3A3A;background:#fff;border:1px solid var(--line);
+  border-radius:6px;padding:4px 8px;width:168px;line-height:1.4;cursor:text;outline:none;
+  transition:border-color .15s;
+}
+.tinput:focus{border-color:var(--accent)}
 .rng{width:88px;accent-color:var(--accent);cursor:pointer}
 .rng-v{font-size:11px;color:var(--muted);min-width:34px}
 /* ---------- 编辑区 ---------- */
@@ -877,6 +1100,8 @@ main{
 .snippets{
   display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--line);
   background:#fff;flex:0 0 auto;
+  /* 必须显式居中：默认 stretch 会把纯文本 span 拉满行高，文字贴顶，与色块/按钮错位 */
+  align-items:center;
 }
 .snippets .lbl{font-size:11px;color:var(--muted);margin-right:6px;align-self:center;letter-spacing:.5px}
 .snippets .mini{
@@ -885,6 +1110,21 @@ main{
   transition:border-color .15s,color .15s;line-height:1.5;
 }
 .snippets .mini:hover{border-color:var(--accent);color:var(--accent)}
+/* ---------- 自定义颜色条（取色器 + 应用按钮） ---------- */
+/* 统一行高（= 色块高度）：让中文标签与等宽色值号的基线也对齐，而不是只把盒子居中 */
+.colorbar{gap:8px;line-height:20px}
+.cw{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.cw input[type=color]{
+  width:24px;height:20px;padding:0;border:1px solid var(--line);border-radius:4px;
+  background:none;cursor:pointer;
+}
+/* 原生取色器的色块自带内边距与描边，去掉才能和页面圆角对齐 */
+.cw input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.cw input[type=color]::-webkit-color-swatch{border:0;border-radius:3px}
+/* 标签贴住自己的色块（右侧留 6px），与前一组拉开（左侧 10px），避免看成两列 */
+.cw-lbl{font-size:11px;color:#6B6B6B;white-space:nowrap;margin:0 -2px 0 2px}
+.cw-v{font-size:11px;color:var(--muted);font-family:ui-monospace,Consolas,monospace}
+.snippets .lbl.end{margin:0 0 0 4px;color:#9A9A9A}
 .stat{padding:6px 14px;border-top:1px solid var(--line);background:#fff;font-size:11px;color:var(--muted);flex:0 0 auto}
 .stat b{color:#B4603F;font-weight:600}
 /* ---------- 预览 ---------- */

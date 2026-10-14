@@ -207,6 +207,15 @@ export const CHEAT_SECTIONS: CheatSection[] = [
     code: '**加粗**  *斜体*  ~~删除线~~\n==高亮==  `行内代码`\n[链接](https://a.com)  ![图片](url)',
   },
   {
+    title: '自定义文字颜色 / 底色（左栏取色器）',
+    code: '{color:#E03131}红色文字{/}\n{bg:#FFF3BF}黄色底纹{/}\n{color:#FFFFFF bg:#0080FF}白字蓝底{/}',
+    note: [
+      '左栏「自定义颜色」里取好色，选中文字后点按钮即可；未选中时会插入占位文字并自动选中，直接打字就能替换。',
+      '颜色值支持 <code>#hex</code>、<code>rgb()</code>、<code>hsl()</code> 和颜色关键字（<code>red</code>、<code>transparent</code> 等），均写成内联样式，复制进公众号不会掉色。',
+      '文字色与底色要写在<b>同一个标签</b>里（<code>{color:… bg:…}</code>）；拆成两个标签嵌套会因为「就近闭合」而互相截断。',
+    ],
+  },
+  {
     title: '代码块（自动语法高亮）',
     code: '```js\nconst a = 1;\n```',
     note: [

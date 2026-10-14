@@ -55,11 +55,15 @@ const THEMES = {
     inlineBg:'#EAF5EF', inlineFg:'#1F6B4A'
   },
   lan: {
+    // 主蓝 = rgb(0,128,255)。整族色由它推导，统一色相 H210：
+    //  primary 主蓝（标题 / 加粗 / 小色条）· accent 深一档（金条 / 圆点 / 链接 / 序号：小字号需要更高对比度）
+    //  deep 实心底色（表格表头 / 深色块）、primaryLight 深色块内的行底色：
+    //   primary 调亮后这两处若仍用它，白字与浅色文字会糊，故各降一档
     name:'湖蓝 · 晴空',
-    primary:'#1B4F87', accent:'#2E86C1', accentSoft:'#E6F0F9',
-    soft:'#F3F8FC', ink:'#333A42', muted:'#88919B', line:'#DCE8F2',
-    codeBg:'#1B4F87', codeFg:'#E4EEF8', codeBar:'#143D6A', primaryLight:'#26639F',
-    inlineBg:'#E9F1F9', inlineFg:'#1B4F87'
+    primary:'#0080FF', accent:'#0066CC', accentSoft:'#E6F2FF',
+    soft:'#F2F8FF', ink:'#333A42', muted:'#88919B', line:'#D9E7F7',
+    codeBg:'#0066CC', codeFg:'#EAF3FF', codeBar:'#00529E', primaryLight:'#0066CC',
+    inlineBg:'#E6F2FF', inlineFg:'#0066CC', deep:'#0059B3'
   }
 };
 
@@ -397,6 +401,15 @@ function parseMarkdown(src){
 /* =========================================================
    3. 行内解析
    ========================================================= */
+/* 自定义颜色的取值清洗：只接受 #hex / rgb() / hsl() / 颜色关键字。
+   颜色值最终会被拼进 style="..."，放行任意字符串等于允许用引号闭合属性注入标签，
+   因此非法值一律返回空串，由调用方按原文输出。 */
+const COLOR_TOKEN = /^(#[0-9a-f]{3,8}|(?:rgb|rgba|hsl|hsla)\([\d\s.,%\/]+\)|[a-z]{3,20})$/i;
+function safeColor(v: string): string{
+  const s = String(v == null ? '' : v).trim();
+  return COLOR_TOKEN.test(s) ? s : '';
+}
+
 function inline(str, ctx){
   const rules = [
     {re:/`([^`]+)`/g, fn:m => `<code style="${S(ctx).inlineCode}">${esc(m[1])}</code>`},
@@ -409,10 +422,32 @@ function inline(str, ctx){
           ? `<span style="color:${T.muted};font-size:12px"> · ${esc(m[2])}</span>` : '';
         return `<a href="${esc(m[2])}" target="_blank" style="color:${T.accent};border-bottom:1px solid ${T.accent}40;padding-bottom:1px;text-decoration:none">${rec(m[1])}</a>${urlPart}`;
      }},
-    {re:/\*\*([^*]+)\*\*/g, fn:(m, rec) => `<strong style="color:${S(ctx).primary};font-weight:600">${rec(m[1])}</strong>`},
-    {re:/__([^_]+)__/g,     fn:(m, rec) => `<strong style="color:${S(ctx).primary};font-weight:600">${rec(m[1])}</strong>`},
+    {re:/\*\*([^*]+)\*\*/g, fn:(m, rec) => `<strong style="color:${ctx.colorTag ? 'inherit' : S(ctx).primary};font-weight:600">${rec(m[1])}</strong>`},
+    {re:/__([^_]+)__/g,     fn:(m, rec) => `<strong style="color:${ctx.colorTag ? 'inherit' : S(ctx).primary};font-weight:600">${rec(m[1])}</strong>`},
     {re:/~~([^~]+)~~/g,     fn:m => `<span style="text-decoration:line-through;color:${S(ctx).muted}">${esc(m[1])}</span>`},
     {re:/==([^=]+)==/g,     fn:(m, rec) => `<span style="background:linear-gradient(transparent 62%, ${S(ctx).accent}33 0);padding:0 1px">${rec(m[1])}</span>`},
+    // 自定义文字颜色 / 底色：{color:#E03131}文字{/} · {bg:#FFF3BF}文字{/} · {color:#FFF bg:#0080FF}文字{/}
+    // 一个标签里可同时写 color 与 bg（两者嵌套写会互相截断，合并写更稳），内容可为任意行内语法
+    {re:/\{(color|bg):([^}\s]+)(?:\s+(color|bg):([^}\s]+))?\}([\s\S]*?)\{\/\}/g,
+     fn:(m, rec) => {
+        // 一个标签里最多两个属性，分别落到 fg / bg，不必用对象中转
+        let fg = '', bg = '';
+        const setProp = (k: string, v: string) => {
+          if(!v) return;
+          if(k === 'color') fg = v; else bg = v;
+        };
+        setProp(m[1], safeColor(m[2]));
+        setProp(m[3], safeColor(m[4]));
+        const decl = [
+          fg ? `color:${fg}` : '',
+          bg ? `background-color:${bg};padding:0 2px;border-radius:3px` : '',
+        ].filter(Boolean).join(';');
+        if(!decl) return esc(m[0]);                  // 颜色值非法：按原文输出，不写坏样式
+        // 指定了文字色时给内容打上 colorTag：其中的 **加粗** 改为继承该色，
+        // 否则加粗会用自己的主题色，把作者选的颜色盖掉（只改了底色的标签不参与）
+        const inner = fg ? inline(m[5], { ...ctx, colorTag: true }) : rec(m[5]);
+        return `<span style="${decl}">${inner}</span>`;
+     }},
     {re:/\*([^*\n]+)\*/g, fn:(m, rec) => `<em style="font-style:normal;color:${S(ctx).muted}">${rec(m[1])}</em>`},
     {re:/_([^_\n]+)_/g,   fn:(m, rec) => `<em style="font-style:normal;color:${S(ctx).muted}">${rec(m[1])}</em>`}
   ];
@@ -491,7 +526,7 @@ function renderNode(n, ctx, isFirst){
           H2N++;
           const no = String(H2N).padStart(2, '0');
           return `<section style="margin:${m2};line-height:0;background:transparent">`
-               + `<span style="display:inline-block;vertical-align:baseline;font-family:'Jetbrains Mono',Georgia,'Times New Roman',serif;font-style:italic;font-size:80px;font-weight:700;color:${T.accent};opacity:.32;line-height:1;letter-spacing:1px">${no}</span>`
+               + `<span style="display:inline-block;vertical-align:baseline;font-family:'Jetbrains Mono',Georgia,'Times New Roman',serif;font-style:italic;font-size:80px;font-weight:700;color:${T.accent};opacity:1;line-height:1;letter-spacing:1px">${no}</span>`
                + `<span style="display:inline-block;vertical-align:baseline;font-family:'Jetbrains Mono'，Georgia,'Times New Roman',serif;font-style:italic;font-size:36px;font-weight:400;color:${T.accent};opacity:.5;line-height:1;margin:0 15px 0 12px">/</span>`
                + `<span style="display:inline-block;vertical-align:baseline;font-size:${fs2}px;line-height:1.5;font-weight:700;color:${T.primary};letter-spacing:.5px">${txt}</span></section>`;
         }
@@ -539,6 +574,24 @@ function renderNode(n, ctx, isFirst){
           return `<h2 style="margin:${m2};line-height:1.5;background:transparent">`
                + `<span style="display:inline-block;font-size:${fs2}px;font-weight:700;color:${T.primary};letter-spacing:.5px;border-bottom:3px solid ${T.accent};padding-bottom:4px">${txt}</span></h2>`;
         }
+        if(hs === 'icon'){
+          // 图标徽标：左侧图标 + 右侧标题 + 尾部发丝线，形如「品牌图标 + 标题」的排版。
+          // 图标有两种来源：
+          //  - 配置了「标题图标」(ctx.brandIcon)：直接用品牌图，需是可被微信抓取的公网地址（图床/CDN），
+          //    否则粘进公众号会丢图；这里不做 base64 → blob 转换，避免预览正常、复制却失败；
+          //  - 未配置：退回纯 CSS 绘制的渐变序号徽标（不用 svg / 图片，公众号可完整保留）。
+          // 两种都用 flex，长标题换行时始终贴在图标右侧，不会绕到图标下方。
+          H2N++;
+          const no = String(H2N).padStart(2, '0');
+          const badge = ctx.brandIcon
+            ? `<span style="-webkit-box-flex:0;flex:0 0 auto;display:inline-block;width:40px;height:40px;overflow:hidden;border-radius:10px;background:#FFFFFF;font-size:0;line-height:0">`
+              + `<img src="${esc(ctx.brandIcon)}" alt="" style="width:40px;height:40px;display:block;object-fit:contain"></span>`
+            : `<span style="-webkit-box-flex:0;flex:0 0 auto;display:inline-block;width:38px;height:38px;line-height:38px;text-align:center;border-radius:11px;background-image:linear-gradient(135deg,${T.accent} 0%,${T.primary} 100%);color:#FFFFFF;font-size:14px;font-weight:700;letter-spacing:.5px">${no}</span>`;
+          return `<section style="margin:${m2};display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;background:transparent">`
+               + badge
+               + `<span style="-webkit-box-flex:1;flex:0 1 auto;min-width:0;margin-left:13px;font-size:${fs2}px;font-weight:700;color:${T.primary};line-height:1.4;letter-spacing:.5px">${txt}</span>`
+               + `<span style="-webkit-box-flex:1;flex:1 1 24px;min-width:24px;height:1px;background:${T.line};margin-left:14px">&nbsp;</span></section>`;
+        }
         // default：左侧金条（原有样式）
         return `<h2 style="margin:${m2};font-size:${fs2}px;line-height:1.5;font-weight:700;color:${T.primary};border-left:4px solid ${T.accent};padding-left:11px;letter-spacing:.5px;background:transparent">${txt}</h2>`;
       }
@@ -575,7 +628,7 @@ function renderNode(n, ctx, isFirst){
       }
       if(qs === 'dark'){
         // 深色块：主题色整块铺底 + 浅色文字，视觉最重，适合金句
-        return `<section style="margin:${m0} 0 ${m0};padding:15px 17px;background:${T.primary};border-radius:8px">${body('#D5D0C5')}</section>`;
+        return `<section style="margin:${m0} 0 ${m0};padding:15px 17px;background:${T.deep || T.primary};border-radius:8px">${body('#D5D0C5')}</section>`;
       }
       if(qs === 'mark'){
         // 引号点缀：浅底圆角块 + 顶部大引号，文艺风格
@@ -635,8 +688,10 @@ function renderNode(n, ctx, isFirst){
 
     case 'table': {
       const A = n.align || [];
+      // 表头是实心色块：优先用 deep（未定义 deep 的主题即 primary），保证白字对比度
+      const thBg = T.deep || T.primary;
       const th = n.head.map((c, i) =>
-        `<th style="padding:9px 10px;background:${T.primary};color:#FFFFFF;font-weight:600;font-size:${fs-1}px;text-align:${A[i]||'left'};border-bottom:1px solid ${T.primary}">${inline(c, ctx)}</th>`
+        `<th style="padding:9px 10px;background:${thBg};color:#FFFFFF;font-weight:600;font-size:${fs-1}px;text-align:${A[i]||'left'};border-bottom:1px solid ${thBg}">${inline(c, ctx)}</th>`
       ).join('');
       const tb = n.rows.map((row, r) => {
         const tds = row.map((c, i) =>
@@ -788,7 +843,7 @@ function renderArchive(n, ctx, isFirst){
   if(st === 'plain')
     return `<section style="margin:${m0}px 0 ${m0}px;padding:14px 0 0;border-top:1px solid ${T.line}">${head}${rows}</section>`;
   if(st === 'dark')
-    return `<section style="margin:${m0}px 0 ${m0}px;padding:17px 18px;background:${T.primary};border-radius:8px">${head}${rows}</section>`;
+    return `<section style="margin:${m0}px 0 ${m0}px;padding:17px 18px;background:${T.deep || T.primary};border-radius:8px">${head}${rows}</section>`;
   return `<section style="margin:${m0}px 0 ${m0}px;padding:15px 17px;background:#FFFFFF;border:1px dashed ${T.line};border-radius:8px">${head}${rows}</section>`;
 }
 
@@ -811,7 +866,7 @@ function renderFollow(n, ctx, isFirst){
       + `<p style="margin:0 0 8px;font-size:${fs+1}px;font-weight:700;color:${T.primary}">${inline(name, ctx)}</p>${bodyInk}</section>`;
   }
   if(st === 'dark'){
-    return `<section style="margin:${m0}px 0 ${m0}px;padding:18px 19px;background:${T.primary};border-radius:8px">`
+    return `<section style="margin:${m0}px 0 ${m0}px;padding:18px 19px;background:${T.deep || T.primary};border-radius:8px">`
       + `<p style="margin:0 0 8px;font-size:${fs+2}px;font-weight:700;color:${T.accent};letter-spacing:1px">${inline(name, ctx)}</p>${bodyDark}`
       + `<p style="margin:12px 0 0;line-height:0"><span style="display:inline-block;width:40px;height:2px;background:${T.accent}">&nbsp;</span></p></section>`;
   }
@@ -821,7 +876,7 @@ function renderFollow(n, ctx, isFirst){
     + bodyInk + `</section>`;
 }
 
-function buildHtml(src, themeKey, fontSize, showUrl, archiveStyle, followStyle, codeStyleKey, hl, headingStyle, quoteStyle){
+function buildHtml(src, themeKey, fontSize, showUrl, archiveStyle, followStyle, codeStyleKey, hl, headingStyle, quoteStyle, brandIcon){
   // 参数兜底：缺参时避免输出 "undefinedpx" 之类的坏样式（布尔参数不能用 ||，会吞掉 false）
   fontSize = Number(fontSize) || 15;
   showUrl  = showUrl  !== undefined ? showUrl  : true;
@@ -829,7 +884,8 @@ function buildHtml(src, themeKey, fontSize, showUrl, archiveStyle, followStyle, 
   CUR = THEMES[themeKey] || THEMES.moqing;
   H2N = 0;
   const ctx = {fontSize, showUrl, archiveStyle, followStyle, codeStyle:codeStyleKey, hl:hl !== false,
-               headingStyle:headingStyle || 'default', quoteStyle:quoteStyle || 'default'};
+               headingStyle:headingStyle || 'default', quoteStyle:quoteStyle || 'default',
+               brandIcon:brandIcon || ''};
   const cs = codeStyle(ctx);
   CUR.inlineCode = `background:${cs.inlineBg};color:${cs.inlineFg};padding:.2em .4em;border-radius:6px;font-family:${MONO};font-size:${(fontSize-2)}px`;
   const nodes = parseMarkdown(src);
