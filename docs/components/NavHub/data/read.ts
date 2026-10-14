@@ -452,5 +452,17 @@ export const read: Category = {
       tagColor: "#209cee",
       accent: "#209cee",
     },
+    {
+      name: "兮心阅读主题合集",
+      url: "https://2478800972.github.io/momo/zhuti.html",
+      displayUrl: "2478800972.github.io/momo",
+      desc: "开源阅读（Legado）主题皮肤合集，98 款日间 + 12 款夜间主题与阅读背景，均为纸质护眼风格原创制作，点开即见预览",
+      favicon: "兮",
+      faviconBg: "#8b5cf6",
+      tag: "阅读App主题",
+      tagBg: "rgba(139, 92, 246, 0.12)",
+      tagColor: "#8b5cf6",
+      accent: "#8b5cf6",
+    },
   ],
 }
