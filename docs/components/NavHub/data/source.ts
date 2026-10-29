@@ -188,5 +188,17 @@ export const source: Category = {
       tagColor: "#066433",
       accent: "#066433",
     },
+    {
+      name: "NS头号玩家",
+      url: "https://nsthwj.cn",
+      displayUrl: "nsthwj.cn",
+      desc: "Switch 游戏合集，兼有 PS4、PC 目录与汉化移植资源",
+      favicon: "NS",
+      faviconBg: "#e60012",
+      tag: "Switch游戏",
+      tagBg: "rgba(230, 0, 18,.12)",
+      tagColor: "#e60012",
+      accent: "#e60012",
+    },
   ],
 }
